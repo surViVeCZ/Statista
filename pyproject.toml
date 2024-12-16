@@ -14,6 +14,7 @@ requests = "^2.32.3"
 dash-bootstrap-components = "^1.6.0"
 tqdm = "^4.67.1"
 chromedriver-autoinstaller = "^0.6.4"
+logging = "^0.4.9.6"
 
 
 [build-system]

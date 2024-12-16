@@ -4,7 +4,6 @@
   transition: width 0.5s ease; /* Smooth fill animation */
 }
 
-/* Add this in your CSS file (e.g., assets/styles.css) */
 @keyframes bounce {
   0% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
@@ -13,4 +12,28 @@
 
 .bounce {
   animation: bounce 1s ease-out;
+}
+
+
+.file-tree-item {
+  transition: all 0.2s ease-in-out;
+}
+
+/* .file-tree-item:hover {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  transform: translateX(5px);
+} */
+
+.file-tree-item span {
+  transition: color 0.2s;
+}
+
+.file-tree-item:hover span {
+  color: #0056b3;
+}
+.file-entry:hover {
+  background-color: #f0f8ff;
+  transition: background-color 0.3s;
+  border-radius: 5px;
 }

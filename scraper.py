@@ -1,41 +1,43 @@
 import os
-from dotenv import load_dotenv
-import requests
-from bs4 import BeautifulSoup
-from urllib.parse import urljoin
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.action_chains import ActionChains
-from tqdm import tqdm
-
-import chromedriver_autoinstaller
-import logging
 import time
-import shutil
-import glob
 import sys
 import io
+import glob
+import shutil
+import logging
+from dotenv import load_dotenv
+from urllib.parse import urljoin
+import requests
+from bs4 import BeautifulSoup
+from tqdm import tqdm
 
-files_to_be_downloaded = 0  # Initialize at the start
-failed_downloads = []  # List to track URLs of failed downloads
-MAX_RETRIES = 2
+# Selenium imports
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait, Select
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
 
-# Remove any existing handlers from the root logger
+# ChromeDriver auto-installer
+import chromedriver_autoinstaller
+
+# Constants and global variables
+files_to_be_downloaded = 0  # Counter for files to download
+failed_downloads = []  # List of failed download URLs
+MAX_RETRIES = 2  # Retry limit for failed downloads
+
+# Logging Configuration
 for handler in logging.root.handlers[:]:
-    logging.root.removeHandler(handler)
+    logging.root.removeHandler(handler)  # Remove existing handlers
 
-# Configure logging for both console and file without duplication
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
     handlers=[
-        logging.StreamHandler(),  # Logs to the console
-        logging.FileHandler("scraper.log", mode="w", encoding="utf-8"),  # Logs to a file
+        logging.StreamHandler(),  # Console logging
+        logging.FileHandler("scraper.log", mode="w", encoding="utf-8"),  # File logging
     ]
 )
 log = logging.getLogger()
@@ -45,15 +47,18 @@ load_dotenv()
 USERNAME = os.getenv("STATISTA_USERNAME")
 PASSWORD = os.getenv("STATISTA_PASSWORD")
 
-# Configuration
+# URLs and Configuration
 LOGIN_URL = "https://www.statista.com/login/campus/"
 TOPICS_URL = "https://www.statista.com/topics/"
 DEST_FOLDER = os.path.abspath("statista_data")
 
+# Ensure destination folder exists
+os.makedirs(DEST_FOLDER, exist_ok=True)
+
 # Ensure ChromeDriver is installed
 chromedriver_autoinstaller.install()
 
-# Initialize requests session for later usage
+# Initialize a session for HTTP requests
 session = requests.Session()
 
 
