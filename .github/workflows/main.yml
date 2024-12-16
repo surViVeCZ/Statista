@@ -1,0 +1,52 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ci:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout Code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set Up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'  # Use a string format
+
+      # Step 3: Install Poetry
+      - name: Install Poetry
+        run: |
+          pip install poetry
+
+      # Step 4: Cache Dependencies
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pypoetry
+          key: poetry-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: poetry-${{ runner.os }}-
+
+      # Step 5: Install Dependencies
+      - name: Install dependencies
+        run: | 
+          poetry install --no-interaction --no-root
+
+      # Step 6: Run Linter (Black)
+      - name: Run Black
+        run: |
+          poetry run black --check .
+
+      # Step 7: Validate Poetry Configuration
+      - name: Check Poetry configuration
+        run: |
+          poetry check 

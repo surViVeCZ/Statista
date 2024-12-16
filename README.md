@@ -8,12 +8,13 @@
 4. [Usage](#usage)
    - [Command-line Scraper](#command-line-scraper)
    - [Dashboard GUI](#dashboard-gui)
-5. [Configuration](#configuration)
-6. [Dependencies](#dependencies)
-7. [Examples](#examples)
-8. [Troubleshooting](#troubleshooting)
-9. [Contributors](#contributors)
-10. [License](#license)
+5. [Preview](#preview)
+6. [Configuration](#configuration)
+7. [Dependencies](#dependencies)
+8. [Examples](#examples)
+9. [Troubleshooting](#troubleshooting)
+10. [Contributors](#contributors)
+11. [License](#license)
 
 ---
 
@@ -86,6 +87,12 @@ poetry run python gui.py
 Access the web app at `http://127.0.0.1:8050` in your browser.
 
 ---
+
+## Preview
+
+Below is a preview of the Statista Scraper dashboard interface:
+
+![Dashboard Preview](assets/Dash.png)
 
 ## Configuration
 
