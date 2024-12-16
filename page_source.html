@@ -1,0 +1,178 @@
+<html lang="en" data-bs-theme="light"><head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1, viewport-fit=cover, width=device-width">
+
+	<title>BUT Single Sign-On</title>
+
+	<link rel="icon" href="/auth/build/images/favicon.e2e038d994c114e33bd4.ico" type="image/x-icon">
+	<link href="/auth/build/css/main.ebe9ba8f5a5119f3d52b.css" rel="stylesheet" nonce="">
+
+	<script type="text/javascript" nonce="">
+		/*!
+		 * Color mode toggler for Bootstrap's docs (https://getbootstrap.com/)
+		 * Copyright 2011-2024 The Bootstrap Authors
+		 * Licensed under the Creative Commons Attribution 3.0 Unported License.
+		 */
+
+		(() => {
+			'use strict'
+
+			const getStoredTheme = () => localStorage.getItem('theme')
+			const setStoredTheme = theme => {
+				localStorage.setItem('theme', theme);
+			}
+
+			const getPreferredTheme = () => {
+				const storedTheme = getStoredTheme()
+				if (storedTheme) {
+					return storedTheme
+				}
+
+				return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+			}
+
+			const setTheme = theme => {
+				document.documentElement.setAttribute('data-bs-theme', theme)
+			}
+
+			setTheme(getPreferredTheme())
+
+			const showActiveTheme = (theme, focus = false) => {
+				const themeSwitcher = document.querySelector('#vut-themeSwitch')
+
+				if (!themeSwitcher) {
+					return
+				}
+
+				themeSwitcher.checked = theme === 'dark';
+
+				if (focus) {
+					themeSwitcher.focus()
+				}
+			}
+
+			window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+				const storedTheme = getStoredTheme()
+				if (storedTheme !== 'light' && storedTheme !== 'dark') {
+					setTheme(getPreferredTheme())
+				}
+			})
+
+			window.addEventListener('DOMContentLoaded', () => {
+				showActiveTheme(getPreferredTheme())
+
+				document.querySelector('#vut-themeSwitch')
+						.addEventListener('click', (e) => {
+							const theme = e.target.checked ? 'dark' : 'light';
+							setStoredTheme(theme)
+							setTheme(theme)
+							showActiveTheme(theme, true)
+						})
+			})
+		})()
+
+	</script>
+</head>
+
+<body>
+<main>
+	<div id="theme">
+		<div class="form-check form-switch">
+			<input class="form-check-input" type="checkbox" id="vut-themeSwitch">
+			<label class="form-check-label" for="vut-themeSwitch" type="button"></label>
+		</div>
+	</div>
+
+	<div class="tr-2"></div>
+	<div class="tr-3"></div>
+	<div class="tr-4"></div>
+	<div class="tr-5"></div>
+	<div class="d-none d-lg-block logo">
+			<img src="/auth/build/images/loga/logo_BUT_EN.3453e9a5e6af733d97bb.svg" alt="Logo BUT" height="80">
+	</div>
+	<div class="d-lg-none logo">
+		<img src="/auth/build/images/loga/symbol.53407e159f11cb250da4.svg" alt="Logo VUT" height="80">
+	</div>
+
+
+
+	<div style="padding-top: 1.5rem;">
+<div class="container">
+	<div class="row">
+		<div class="heading col-12">
+			<h1 class="h3 title">BUT Single Sign-On</h1>
+			<h4 class="h4">Username</h4>
+		</div>
+	</div>
+	<div class="row">
+<form action="/auth/common/home/default?redirect=1&amp;authSectionId=d5e0fc5d30e3a4a751b098f311e0be72aa99664666c36866afe39ef63ffe6153" method="post" id="frm-signInFormLogin" class="col-12 form needs-validation" novalidate="">
+
+	<div id="snippet--accounts">
+	</div>
+
+	<div class="row form-block">
+	<div class="form-group">
+		<label for="frm-signInFormLogin-login" class="form-label">Username</label>
+
+
+
+				<input type="text" name="login" autocomplete="username" id="frm-signInFormLogin-login" required="" data-nette-rules="[{&quot;op&quot;:&quot;:filled&quot;,&quot;msg&quot;:&quot;This field is required.&quot;},{&quot;op&quot;:&quot;:minLength&quot;,&quot;msg&quot;:&quot;The username is too short: must be at least 3 characters long&quot;,&quot;arg&quot;:3}]" class="form-control required">
+
+	</div>
+
+		<div class="form-group">
+			<button name="btnsubmit" class="btn btn-primary btn-md" type="submit">
+				Proceed to verification
+			</button>
+		</div>
+	</div>
+
+<div class="row form-block footer">
+	<div class="col-9">
+		<a href="https://www.vut.cz/cvis/navody/vut-login" target="_blank">I can't login</a>
+	</div>
+	<div class="col-3 text-end ">
+			<a href="/auth/common/home/default?locale=cs&amp;redirect=1&amp;authSectionId=d5e0fc5d30e3a4a751b098f311e0be72aa99664666c36866afe39ef63ffe6153&amp;do=changeLocale">Čeština</a>
+	</div>
+</div>
+<input type="hidden" name="_token_" value="52u6mo85omdX4kXRSe02BFLfUPGrHfegJzDuM="><input type="hidden" name="_do" value="signInFormLogin-submit"></form>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-12 form">
+			<div class="row form-block">
+				<div class="alert alert-info  d-flex" role="alert">
+					<div class="alert-text px-0">
+						<h5>We have a new login</h5>
+						<p>The BUT information system - VUTIS - introduces new application logins during the summer of 2024.</p>
+						<p><b>More information can be found at <a href="https://www.vut.cz/en/cvis/single-authentication" target="_blank">CIS website</a>.</b></p>
+						<hr>
+
+						<p>And one more thing...<br>We have a new login environment ready for you even in the Dark Mode. You can change the mode by clicking the moon/sun icon in the upper right corner.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+	</div>
+
+</main>
+
+<footer class="site-footer row">
+	<div class="col-12 col-md-6">
+		Copyright VUT 2024
+	</div>
+	<div class="col-12 col-md-6 text-md-end">
+		<a href="https://www.vut.cz/uredni-deska/pristupnost">Accessibility Statement</a><br>
+		<a href="https://www.vut.cz/cookies">Information about the use of cookies</a>
+	</div>
+</footer>
+
+<script src="/auth/build/js/runtime.608eed9859be6964bb7d.js" nonce=""></script>
+<script src="/auth/build/js/vendors.95d16e0237e3228f2db9.js" nonce=""></script>
+<script src="/auth/build/js/main.0b1c91c025da1bb7b24e.js" nonce=""></script>
+
+
+</body></html>

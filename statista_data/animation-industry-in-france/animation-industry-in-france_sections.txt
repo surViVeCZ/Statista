@@ -1,0 +1,24 @@
+Chapter: Production and diffusion
+  Number of animated films released in France 2006-2022: https://www.statista.com/statistics/770929/number-movies-animation-out-la-france/
+  Number of certified animated movies in France 2006-2022: https://www.statista.com/statistics/1115333/certified-animation-movies-release-france/
+  Total cost of producing animated films in France 2008-2022: https://www.statista.com/statistics/1085522/total-production-cost-film-movie-france/
+  Median production costs of animated films in France 2008-2020: https://www.statista.com/statistics/1082534/costs-median-production-movies-animation-france/
+  Main production cost items for animated films in France 2022: https://www.statista.com/statistics/1111740/main-posts-cost-production-movies-animation-france/
+  Distribution by nationality of exclusive animation films in France 2022: https://www.statista.com/statistics/770927/division-nationality-movies-animation-first-exclusivity-la-france/
+Chapter: Market values
+  Number of animated movie production companies in France 2004-2021: https://www.statista.com/statistics/1110378/number-animated-movies-production-industry-companies-france/
+  Annual payroll of the animated movie production sector in France 2004-2021: https://www.statista.com/statistics/1110388/annual-payroll-animation-sector-movies-france/
+  Market share of animation film distributors 2013-2022: https://www.statista.com/statistics/781788/market-share-of-exclusive-animation-film-distributors-france/
+  Preferred advertising media for the promotion of animated films in France 2019: https://www.statista.com/statistics/779687/breakdown-investments-advertising-movies-animation-french-by-media-france/
+Chapter: Audience
+  Most successful animated movies at the box office in France 2022: https://www.statista.com/statistics/1111634/most-popular-animated-movies-by-number-of-admissions-france/
+  Most popular Disney animated films at the box office in France 1945-2024: https://www.statista.com/statistics/1111750/movies-animation-disney-success-box-office-france/
+  Breakdown of animated movie attendance in France 2022, by age group: https://www.statista.com/statistics/773972/animated-movie-attendance-by-age-group-france/
+  Animation audience distribution by socio-professional category in France 2022: https://www.statista.com/statistics/768890/division-by-category-socio-professional-public-movies-animation-out-la-france/
+  Animated films: number of admissions by movie nationality in France 2020: https://www.statista.com/statistics/768889/number-entrees-movies-animation-inedits-by-nationality-la-france/
+Chapter: Television
+  Animated programs broadcast on television by region of origin in France 2018: https://www.statista.com/statistics/1111687/animated-programs-broadcast-on-television-by-region-of-origin-france/
+  Hours of animated works supported by the CNC bought by TV channels France 2018-2019: https://www.statista.com/statistics/1245310/animation-supported-works-cnc-channels-france/
+  Hourly volume of animated content broadcast by country in France 2018: https://www.statista.com/statistics/1111673/hourly-volume-animation-program-broadcast-by-country-france/
+  Hours of animated fiction broadcast by France Télévisions in France 2019: https://www.statista.com/statistics/1246027/france-televisions-animated-fiction-broadcast-hours-by-channel-france/
+  Export sales value of French TV animation 2011-2023: https://www.statista.com/statistics/1262735/export-value-sales-tv-animation-french/

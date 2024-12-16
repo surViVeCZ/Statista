@@ -1,0 +1,35 @@
+Chapter: Population
+  Total population of Honduras 2029: https://www.statista.com/statistics/509990/total-population-of-honduras/
+  Population growth in Honduras 2013-2023: https://www.statista.com/statistics/510027/population-growth-in-honduras/
+  Fertility rate in Honduras 2022: https://www.statista.com/statistics/510019/fertility-rate-in-honduras/
+  Crude birth rate in Honduras 2012-2022: https://www.statista.com/statistics/976936/crude-birth-rate-in-honduras/
+  Life expectancy at birth in Honduras 2022: https://www.statista.com/statistics/510023/life-expectancy-at-birth-in-honduras/
+  Life expectancy at birth in Honduras 2022, by gender: https://www.statista.com/statistics/970739/life-expectancy-at-birth-in-honduras-by-gender/
+  Age structure in Honduras 2022: https://www.statista.com/statistics/510029/age-structure-in-honduras/
+  Median age of the population in Honduras 2020: https://www.statista.com/statistics/510082/average-age-of-the-population-in-honduras/
+  Death rate in Honduras 2022: https://www.statista.com/statistics/580163/death-rate-in-honduras/
+  Infant mortality rate in Honduras 2022: https://www.statista.com/statistics/806924/infant-mortality-in-honduras/
+  Urbanization in Honduras 2023: https://www.statista.com/statistics/510046/urbanization-in-honduras/
+  Poverty headcount ratio in Honduras 2023: https://www.statista.com/statistics/818359/poverty-headcount-ratio-in-honduras/
+Chapter: Economy
+  Gross domestic product (GDP) in Honduras 2029: https://www.statista.com/statistics/509933/gross-domestic-product-gdp-in-honduras/
+  Gross domestic product (GDP) per capita in Honduras 2029: https://www.statista.com/statistics/509951/gross-domestic-product-gdp-per-capita-in-honduras/
+  Gross domestic product (GDP) growth rate in Honduras 2029: https://www.statista.com/statistics/509913/gross-domestic-product-gdp-growth-rate-in-honduras/
+  Honduras: Share in global GDP adjusted for PPP 2029: https://www.statista.com/statistics/509956/honduras-share-in-global-gdp-adjusted-for-ppp/
+  Share of economic sectors in the GDP in Honduras 2022: https://www.statista.com/statistics/510033/share-of-economic-sectors-in-the-gdp-in-honduras/
+  Employment by economic sector in Honduras 2022: https://www.statista.com/statistics/510041/employment-by-economic-sector-in-honduras/
+  Labor force participation rate in Honduras 2022: https://www.statista.com/statistics/994064/labor-force-participation-rate-in-honduras/
+  Unemployment rate in Honduras 2023: https://www.statista.com/statistics/509986/unemployment-rate-in-honduras/
+  Youth unemployment rate in Honduras in 2021: https://www.statista.com/statistics/812088/youth-unemployment-rate-in-honduras/
+  Inflation rate in Honduras 2029: https://www.statista.com/statistics/509963/inflation-rate-in-honduras/
+  Import of goods to Honduras 2023: https://www.statista.com/statistics/510059/import-of-goods-to-honduras/
+  Most important import partners of Honduras 2022: https://www.statista.com/statistics/510088/most-important-import-partners-of-honduras/
+  Export of goods to Honduras 2023: https://www.statista.com/statistics/510065/export-of-goods-to-honduras/
+  Most important export partners for Honduras in 2022: https://www.statista.com/statistics/510093/most-important-export-partner-countries-for-honduras/
+  Trade balance of goods of Honduras 2023: https://www.statista.com/statistics/510070/trade-balance-of-honduras/
+Chapter: National finances
+  National debt of Honduras 2029: https://www.statista.com/statistics/531608/national-debt-of-honduras/
+  National debt of Honduras in relation to gross domestic product (GDP) 2029: https://www.statista.com/statistics/510002/national-debt-of-honduras-in-relation-to-gross-domestic-product-gdp/
+  Ratio of military expenditure to gross domestic product (GDP) in Honduras 2022: https://www.statista.com/statistics/810416/ratio-of-military-expenditure-to-gross-domestic-product-gdp-honduras/
+  Ratio of government expenditure to gross domestic product (GDP) in Honduras 2029: https://www.statista.com/statistics/509993/ratio-of-government-expenditure-to-gross-domestic-product-gdp-in-honduras/
+  Honduras budget balance in relation to GDP 2029: https://www.statista.com/statistics/509999/honduras-budget-balance-in-relation-to-gdp/

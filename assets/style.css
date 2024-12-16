@@ -1,0 +1,16 @@
+/* Progress Bar Styling */
+.progress-bar-custom .progress-bar {
+  background-color: #28a745 !important; /* Green fill */
+  transition: width 0.5s ease; /* Smooth fill animation */
+}
+
+/* Add this in your CSS file (e.g., assets/styles.css) */
+@keyframes bounce {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+.bounce {
+  animation: bounce 1s ease-out;
+}
