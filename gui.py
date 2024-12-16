@@ -12,11 +12,20 @@ from dash.dependencies import Input, Output, State, MATCH, ALL
 
 
 # Scraper script's methods
-from scraper import setup_driver, login_with_selenium, search_topic, scrape_topic, get_files_to_be_downloaded, get_failed_downloads
+from scraper import (
+    setup_driver,
+    login_with_selenium,
+    search_topic,
+    scrape_topic,
+    get_files_to_be_downloaded,
+    get_failed_downloads,
+)
 
 # Initialize Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SOLAR])
-app.config.suppress_callback_exceptions = True  # Allow callbacks for dynamically created components
+app.config.suppress_callback_exceptions = (
+    True  # Allow callbacks for dynamically created components
+)
 server = app.server
 
 # Global variables
@@ -33,13 +42,16 @@ DOWNLOAD_DIR = os.path.abspath("statista_data")
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
 # Initialize initial files at app start
-initial_files = {os.path.relpath(os.path.join(root, filename), DOWNLOAD_DIR)
-                 for root, _, filenames in os.walk(DOWNLOAD_DIR)
-                 for filename in filenames}
+initial_files = {
+    os.path.relpath(os.path.join(root, filename), DOWNLOAD_DIR)
+    for root, _, filenames in os.walk(DOWNLOAD_DIR)
+    for filename in filenames
+}
 
 
 class DashLogger(logging.Handler):
     """Custom logging handler to store logs in the global `log_data` list."""
+
     def emit(self, record):
         global log_data
         log_data.append(self.format(record))
@@ -78,29 +90,29 @@ active_card_style = {
     "opacity": "1",
     "pointer-events": "auto",
     "filter": "none",
-    "box-shadow": "0 8px 16px rgba(0, 0, 0, 0.2)", 
-    "border-radius": "12px", 
-    "background": "linear-gradient(to bottom, #ffffff, #f9f9f9)", 
-    "transition": "all 0.7s ease-in-out", 
+    "box-shadow": "0 8px 16px rgba(0, 0, 0, 0.2)",
+    "border-radius": "12px",
+    "background": "linear-gradient(to bottom, #ffffff, #f9f9f9)",
+    "transition": "all 0.7s ease-in-out",
 }
 
 inactive_card_style = {
     "opacity": "0.5",
     "pointer-events": "none",
     "filter": "grayscale(80%)",
-    "box-shadow": "0 4px 8px rgba(0, 0, 0, 0.1)",  
+    "box-shadow": "0 4px 8px rgba(0, 0, 0, 0.1)",
     "border-radius": "12px",
     "background-color": "#e0e0e0",
     "border": "1px solid #cccccc",
-    "transition": "all 0.5s ease-in-out",  
-    "transform": "scale(1)", 
+    "transition": "all 0.5s ease-in-out",
+    "transform": "scale(1)",
     "filter": "blur(1.3px)",
 }
 
 # Define a darker style for card headers with better visual contrast
 darker_header_style = {
-    "background-color": "#1A1A19", 
-    "color": "#ffffff",  
+    "background-color": "#1A1A19",
+    "color": "#ffffff",
     "padding": "10px",
     "border-radius": "10px 10px 0 0",
     "font-weight": "bold",
@@ -111,8 +123,8 @@ darker_header_style = {
 # Add hover effect for cards to lift slightly
 modern_card_hover_effect = {
     ":hover": {
-        "transform": "translateY(-5px)",  
-        "box-shadow": "0 6px 10px rgba(0, 0, 0, 0.15)", 
+        "transform": "translateY(-5px)",
+        "box-shadow": "0 6px 10px rgba(0, 0, 0, 0.15)",
     }
 }
 
@@ -120,447 +132,579 @@ modern_card_hover_effect = {
 active_card_style.update(modern_card_hover_effect)
 
 # Update app layout
-app.layout = dbc.Container([
-    dcc.Store(id="login-state", data=False),  # Tracks login state
-    dcc.Store(id="files-to-download", data=0),  # Tracks total files to download for progress bar
-    dcc.Store(id="selected-files-store", data=[]),  # Tracks selected files for transformation
-
-
-    # Background Pattern
-    html.Div(
-        style={
-            "background-image": "url('/assets/lakmoos_brand_pattern.svg')", 
-            "background-repeat": "no-repeat",
-            "background-size": "cover",
-            "opacity": "0.2",  
-            "position": "absolute",
-            "top": "0",
-            "left": "0",
-            "width": "100%",
-            "height": "100%",
-            "z-index": "0", 
-            "pointer-events": "none",  
-        }
-    ),
-
-# Header
-dbc.Row([
-    dbc.Col([
-        html.Div([
-            html.H1(
-                children=[
-                    "Statista Scraper Dashboard ",
-                    html.Span("by ", style={"font-size": "28px", "font-weight": "normal"}),  
-                    html.Img(
-                        src="assets/logo_cropped.png",  
-                        style={
-                            "height": "2.4em",
-                            "vertical-align": "middle",
-                            "margin-left": "2px"
-                        }
-                    ),
-                ],
-                className="text-center my-1",  
-                style={
-                    "display": "inline-block",
-                    "font-size": "46px",
-                    "margin-bottom": "0px", 
-                }
-            ),
-        ], style={"text-align": "center", "margin-bottom": "0px"}),  
-    ]),
-], style={"margin-bottom": "2px", "margin-top":"15px"}), 
-
-
-    # Tabs Section
-    dbc.Tabs(
-        id="main-tabs",
-        active_tab="collection",
-        style={"padding-left": "20px"},  
-        children=[
-            # Tab 1: Data Collection
-            dbc.Tab(
-                label="Data Collection",
-                tab_id="collection",
-                label_style={
-                    "font-weight": "bold",
-                    "font-size": "16px",
-                    "padding": "12px 20px",
-                },
-                tab_style={
-                    "border-radius": "12px 12px 0 0",
-                    "background": "linear-gradient(to bottom, #ffffff, #f2f2f2)",
-                    "box-shadow": "0 4px 6px rgba(0, 0, 0, 0.1)",
-                    "transition": "all 0.3s ease",
-                    "margin-right": "5px",
-                },
-                active_label_style={
-                    "background": "linear-gradient(to bottom, #007bff, #0056b3)",
-                    "color": "#ffffff",
-                    "box-shadow": "0 4px 8px rgba(0, 0, 0, 0.3)",
-                },
-                children=[
-                    dbc.Row([
-                        dbc.Col([
-                            dbc.Card([
-                                dbc.CardHeader("Login", style={
-                                    "background-color": "#1A1A19", "color": "#ffffff",
-                                    "padding": "10px", "font-weight": "bold", "text-align": "center",
-                                    "border-radius": "10px 10px 0 0"
-                                }),
-                                dbc.CardBody([
-                                    html.Div("Manage your login process here.", className="mb-2"),
-                                    dbc.Button("Login", id="login-button", color="primary", className="mb-3"),
-                                    html.Div(id="login-status", children="Not logged in.", className="text-danger")
-                                ])
-                            ], id="login-card", style={
-                                "opacity": "1", "pointer-events": "auto", "box-shadow": "0 8px 16px rgba(0, 0, 0, 0.2)",
-                                "border-radius": "12px", "background": "linear-gradient(to bottom, #ffffff, #f9f9f9)",
-                                "transition": "all 0.7s ease-in-out"
-                            })
-                        ], width=4),
-                        dbc.Col([
-                            dbc.Card([
-                                dbc.CardHeader("Topic Search", style={
-                                    "background-color": "#1A1A19", "color": "#ffffff",
-                                    "padding": "10px", "font-weight": "bold", "text-align": "center",
-                                    "border-radius": "10px 10px 0 0"
-                                }),
-                                dbc.CardBody([
-                                    dcc.Input(
-                                        id="topic-input",
-                                        placeholder="Enter a topic...",
-                                        type="text",
-                                        className="mb-2 form-control",
-                                    ),
-                                    dbc.Button(
-                                        "Search",
-                                        id="search-button",
-                                        color="success",
-                                        className="mb-3",
-                                        style={"display": "inline-block"}
-                                    ),
-                                    dcc.Loading(
-                                        id="loading-indicator",
-                                        type="circle",
-                                        children=html.Div(
-                                            id="search-results-container",
-                                            style={
-                                                "height": "300px", "overflow-y": "auto", "border": "1px solid #ddd",
-                                                "padding": "10px", "background-color": "#f9f9f9", "border-radius": "8px",
-                                            },
-                                        ),
-                                    )
-                                ])
-                            ], id="search-card", style={
-                                "opacity": "0.5", "pointer-events": "none", "box-shadow": "0 4px 8px rgba(0, 0, 0, 0.1)",
-                                "border-radius": "12px", "background-color": "#e0e0e0",
-                                "filter": "blur(1.3px)", "transition": "all 0.5s ease-in-out"
-                            })
-                        ], width=8)
-                    ]),
-                    dbc.Row([
-                        dbc.Col([
-                            dbc.Card([
-                                dbc.CardHeader("Scraping", style={
-                                    "background-color": "#1A1A19", "color": "#ffffff",
-                                    "padding": "10px", "font-weight": "bold", "text-align": "center",
-                                    "border-radius": "10px 10px 0 0"
-                                }),
-                                dbc.CardBody([
-                                dbc.Button(
-                                    "Start Scraping",
-                                    id="scrape-button",
-                                    color="warning",
-                                    className="mb-3",
-                                    disabled=True
-                                ),
-                                html.Div(
-                                    id="scrape-status",
-                                    children="No scraping started.",
-                                    className="text-warning"
-                                ),
-                                html.Hr(),
-                                html.Div("Downloaded Files:", className="mb-2"),
-                                html.Ul(
-                                    id="downloaded-files-container",
-                                    style={
-                                        "height": "250px",
-                                        "overflow-y": "auto",
-                                        "border": "1px solid #ddd",
-                                        "padding": "10px",
-                                        "background-color": "#f9f9f9",
-                                        "font-family": "monospace",
-                                    },
-                                ),
-                                html.Div(
-                                    id="progress-summary",
-                                    className="mb-2",
-                                    style={
-                                        "text-align": "center",
-                                        "font-size": "1rem",
-                                        "font-weight": "bold",
-                                        "color": "#555",
-                                    },
-                                ),
-                                dbc.Progress(
-                                    id="progress-bar",
-                                    striped=True,
-                                    animated=True,
-                                    value=0,
-                                    style={"height": "20px", "background-color": "#d3d3d3"},
-                                    className="progress-bar-custom"
-                                ),
-                                html.Div(
-                                    id="failed-downloads-container",
-                                    style={
-                                        "color": "red",
-                                        "font-weight": "bold",
-                                        "margin-top": "20px",
-                                        "padding": "10px",
-                                        "background-color": "#fff5f5",
-                                        "border": "1px solid #f5c2c2",
-                                        "border-radius": "8px",
-                                    },
-                                    children="No failed downloads yet."
-                                ),
-
-                            ])
-
-                            ], id="scrape-card", style={
-                                "opacity": "0.5", "pointer-events": "none",
-                                "box-shadow": "0 4px 8px rgba(0, 0, 0, 0.1)",
-                                "border-radius": "12px",
-                                "background-color": "#e0e0e0",
-                                "filter": "blur(1.3px)",
-                                "transition": "all 0.5s ease-in-out"
-                            })
-                        ], width=4),
-                        dbc.Col([
-                                    dbc.Card([
-                                        dbc.CardHeader("Logs", style={
-                                            "background-color": "#1A1A19", "color": "#ffffff",
-                                            "padding": "10px", "font-weight": "bold", "text-align": "center",
-                                            "border-radius": "10px 10px 0 0"
-                                        }),
-                                        dbc.CardBody([
-                                            html.Div("Logs will appear below in real-time:", className="mb-2"),
-                                            html.Pre(id="log-window", className="log-window", style={
-                                                "height": "479px", "overflow-y": "auto", "border": "1px solid #ddd",
-                                                "padding": "10px", "background-color": "#f9f9f9",
-                                                "font-family": "monospace", "border-radius": "8px"
-                                            })
-                                        ])
-                                    ], style={
-                                        "opacity": "1", "pointer-events": "auto", "box-shadow": "0 8px 16px rgba(0, 0, 0, 0.2)",
-                                        "border-radius": "12px", "background": "linear-gradient(to bottom, #ffffff, #f9f9f9)",
-                                        "transition": "all 0.7s ease-in-out"
-                                    })
-                                ], width=8)
-                    ], style={"margin-top": "20px"})
-                ]
-            ),
-            # Tab 2: Data Transformation
-            dbc.Tab(
-                label="Data Transformation",
-                tab_id="transformation",
-                label_style={
-                    "font-weight": "bold",
-                    "font-size": "16px",
-                    "padding": "12px 20px",
-                    "z-index": "200",
-                },
-                tab_style={
-                    "border-radius": "12px 12px 0 0",
-                    "background": "linear-gradient(to bottom, #ffffff, #f2f2f2)",
-                    "box-shadow": "0 4px 6px rgba(0, 0, 0, 0.1)",
-                    "transition": "all 0.3s ease",
-                    "z-index": "200",
-                },
-                active_label_style={
-                    "background": "linear-gradient(to bottom, #007bff, #0056b3)",
-                    "color": "#ffffff",
-                    "box-shadow": "0 4px 8px rgba(0, 0, 0, 0.3)",
-                    "z-index": "200",
-                },
-                children=[
-                    dbc.Row(
-                        [
-                            # File Selection Section
-                            dbc.Col(
-                                dbc.Card(
-                                    [
-                                        dbc.CardHeader(
-                                            "File Selection",
-                                            style={
-                                                "background-color": "#1A1A19",
-                                                "color": "#ffffff",
-                                                "padding": "10px",
-                                                "font-weight": "bold",
-                                                "text-align": "center",
-                                                "border-radius": "10px 10px 0 0",
-                                            },
-                                        ),
-                                        dbc.CardBody(
-                                            [
-                                                dbc.Button("Refresh Files", id="refresh-files-button", className="btn btn-primary", style={"margin-bottom": "10px"}),
-                                                html.Div(
-                                                    id="file-tree",
-                                                    className="file-tree-item",
-                                                    style={
-                                                        "height": "300px",
-                                                        "overflow-y": "auto",
-                                                        "padding": "10px",
-                                                        "background-color": "#f9f9f9",
-                                                        "border-radius": "8px",
-                                                    },
-                                                )                                            
-                                            ]
-                                        ),
-                                    ],
-                                    style={
-                                        "opacity": "1",
-                                        "pointer-events": "auto",
-                                        "box-shadow": "0 8px 16px rgba(0, 0, 0, 0.2)",
-                                        "border-radius": "12px",
-                                        "background": "linear-gradient(to bottom, #ffffff, #f9f9f9)",
-                                        "transition": "all 0.7s ease-in-out",
-                                    },
-                                ),
-                                width=6,
-                            ),
-                            # Transformation Output Section
-                            dbc.Col(
-                                dbc.Card(
-                                    [
-                                        dbc.CardHeader(
-                                            "Transformation Output",
-                                            style={
-                                                "background-color": "#1A1A19",
-                                                "color": "#ffffff",
-                                                "padding": "10px",
-                                                "font-weight": "bold",
-                                                "text-align": "center",
-                                                "border-radius": "10px 10px 0 0",
-                                            },
-                                        ),
-                                        dbc.CardBody(
-                                            [
-                                                dbc.Button(
-                                                    "Transform Data",
-                                                    id="transform-button",
-                                                    color="info",
-                                                    style={"margin-bottom": "10px"},
-                                                ),
-                                                html.Div(
-                                                    id="transformation-status",
-                                                    children="No transformation started.",
-                                                    style={
-                                                        "margin-top": "20px",
-                                                        "color": "green",
-                                                        "overflow-y": "auto",
-                                                        "height": "200px",
-                                                        "border": "1px solid #ddd",
-                                                        "padding": "10px",
-                                                        "background-color": "#f9f9f9",
-                                                        "border-radius": "8px",
-                                                    },
-                                                ),
-                                            ]
-                                        ),
-                                    ],
-                                    style={
-                                        "opacity": "1",
-                                        "pointer-events": "auto",
-                                        "box-shadow": "0 8px 16px rgba(0, 0, 0, 0.2)",
-                                        "border-radius": "12px",
-                                        "background": "linear-gradient(to bottom, #ffffff, #f9f9f9)",
-                                        "transition": "all 0.7s ease-in-out",
-                                    },
-                                ),
-                                width=6,
-                            ),
-                        ],
-                        style={"height": "100%"},
-                    )
-                ],
-            ),
-        ]
-    ),
-
-    # Footer
-    html.Footer(
+app.layout = dbc.Container(
+    [
+        dcc.Store(id="login-state", data=False),  # Tracks login state
+        dcc.Store(
+            id="files-to-download", data=0
+        ),  # Tracks total files to download for progress bar
+        dcc.Store(
+            id="selected-files-store", data=[]
+        ),  # Tracks selected files for transformation
+        # Background Pattern
         html.Div(
-            [
-                html.P(
-                    "Written by the almighty Petr AI/DS because manual data scraping sucks",
-                    className="mb-0",
-                    style={"color": "#ffffff", "text-align": "center", "font-weight": "bold"}
-                ),
-                html.Div(
-                    [
-                        html.Span(
-                            "Data Source: ",
-                            style={"font-weight": "bold", "color": "#ffffff"}
-                        ),
-                        html.A(
-                            "Statista.com",
-                            href="https://www.statista.com",
-                            target="_blank",
-                            style={"color": "#007bff", "text-decoration": "none", "margin-right": "15px"}
-                        ),
-                        html.Span(
-                            "| Dashboard made by: ",
-                            style={"font-weight": "bold", "color": "#ffffff"}
-                        ),
-                        html.A(
-                            "Lakmoos AI",
-                            href="https://lakmoos.com",
-                            target="_blank",
-                            style={"color": "#007bff", "text-decoration": "none"}
-                        )
-                    ],
-                    style={"text-align": "center", "margin-top": "10px"}
-                )
-            ],
             style={
-                "background-color": "#1A1A19",
-                "padding": "20px",
-                "border-top": "1px solid #4b4b4b",
-                "color": "#ffffff",
+                "background-image": "url('/assets/lakmoos_brand_pattern.svg')",
+                "background-repeat": "no-repeat",
+                "background-size": "cover",
+                "opacity": "0.2",
+                "position": "absolute",
+                "top": "0",
+                "left": "0",
                 "width": "100%",
-                "text-align": "center"
+                "height": "100%",
+                "z-index": "0",
+                "pointer-events": "none",
             }
         ),
-        style={
-            "margin-top": "auto", 
-            "padding-top": "15px",
-            "margin-left": "-12px",
-            "margin-right": "-12px",
-            "z-index": "10",  
-            "position": "relative", 
-        }
-    ),
-
-    # Refresh Intervals
-    dcc.Interval(id="log-interval", interval=500, n_intervals=0),
-    dcc.Interval(id="file-interval", interval=500, n_intervals=0)
-], fluid=True,
-    style={
-        "display": "flex",
-        "flex-direction": "column",
-        "min-height": "100vh"  
-    },
+        # Header
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.Div(
+                            [
+                                html.H1(
+                                    children=[
+                                        "Statista Scraper Dashboard ",
+                                        html.Span(
+                                            "by ",
+                                            style={
+                                                "font-size": "28px",
+                                                "font-weight": "normal",
+                                            },
+                                        ),
+                                        html.Img(
+                                            src="assets/logo_cropped.png",
+                                            style={
+                                                "height": "2.4em",
+                                                "vertical-align": "middle",
+                                                "margin-left": "2px",
+                                            },
+                                        ),
+                                    ],
+                                    className="text-center my-1",
+                                    style={
+                                        "display": "inline-block",
+                                        "font-size": "46px",
+                                        "margin-bottom": "0px",
+                                    },
+                                ),
+                            ],
+                            style={"text-align": "center", "margin-bottom": "0px"},
+                        ),
+                    ]
+                ),
+            ],
+            style={"margin-bottom": "2px", "margin-top": "15px"},
+        ),
+        # Tabs Section
+        dbc.Tabs(
+            id="main-tabs",
+            active_tab="collection",
+            style={"padding-left": "20px"},
+            children=[
+                # Tab 1: Data Collection
+                dbc.Tab(
+                    label="Data Collection",
+                    tab_id="collection",
+                    label_style={
+                        "font-weight": "bold",
+                        "font-size": "16px",
+                        "padding": "12px 20px",
+                    },
+                    tab_style={
+                        "border-radius": "12px 12px 0 0",
+                        "background": "linear-gradient(to bottom, #ffffff, #f2f2f2)",
+                        "box-shadow": "0 4px 6px rgba(0, 0, 0, 0.1)",
+                        "transition": "all 0.3s ease",
+                        "margin-right": "5px",
+                    },
+                    active_label_style={
+                        "background": "linear-gradient(to bottom, #007bff, #0056b3)",
+                        "color": "#ffffff",
+                        "box-shadow": "0 4px 8px rgba(0, 0, 0, 0.3)",
+                    },
+                    children=[
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    [
+                                        dbc.Card(
+                                            [
+                                                dbc.CardHeader(
+                                                    "Login",
+                                                    style={
+                                                        "background-color": "#1A1A19",
+                                                        "color": "#ffffff",
+                                                        "padding": "10px",
+                                                        "font-weight": "bold",
+                                                        "text-align": "center",
+                                                        "border-radius": "10px 10px 0 0",
+                                                    },
+                                                ),
+                                                dbc.CardBody(
+                                                    [
+                                                        html.Div(
+                                                            "Manage your login process here.",
+                                                            className="mb-2",
+                                                        ),
+                                                        dbc.Button(
+                                                            "Login",
+                                                            id="login-button",
+                                                            color="primary",
+                                                            className="mb-3",
+                                                        ),
+                                                        html.Div(
+                                                            id="login-status",
+                                                            children="Not logged in.",
+                                                            className="text-danger",
+                                                        ),
+                                                    ]
+                                                ),
+                                            ],
+                                            id="login-card",
+                                            style={
+                                                "opacity": "1",
+                                                "pointer-events": "auto",
+                                                "box-shadow": "0 8px 16px rgba(0, 0, 0, 0.2)",
+                                                "border-radius": "12px",
+                                                "background": "linear-gradient(to bottom, #ffffff, #f9f9f9)",
+                                                "transition": "all 0.7s ease-in-out",
+                                            },
+                                        )
+                                    ],
+                                    width=4,
+                                ),
+                                dbc.Col(
+                                    [
+                                        dbc.Card(
+                                            [
+                                                dbc.CardHeader(
+                                                    "Topic Search",
+                                                    style={
+                                                        "background-color": "#1A1A19",
+                                                        "color": "#ffffff",
+                                                        "padding": "10px",
+                                                        "font-weight": "bold",
+                                                        "text-align": "center",
+                                                        "border-radius": "10px 10px 0 0",
+                                                    },
+                                                ),
+                                                dbc.CardBody(
+                                                    [
+                                                        dcc.Input(
+                                                            id="topic-input",
+                                                            placeholder="Enter a topic...",
+                                                            type="text",
+                                                            className="mb-2 form-control",
+                                                        ),
+                                                        dbc.Button(
+                                                            "Search",
+                                                            id="search-button",
+                                                            color="success",
+                                                            className="mb-3",
+                                                            style={
+                                                                "display": "inline-block"
+                                                            },
+                                                        ),
+                                                        dcc.Loading(
+                                                            id="loading-indicator",
+                                                            type="circle",
+                                                            children=html.Div(
+                                                                id="search-results-container",
+                                                                style={
+                                                                    "height": "300px",
+                                                                    "overflow-y": "auto",
+                                                                    "border": "1px solid #ddd",
+                                                                    "padding": "10px",
+                                                                    "background-color": "#f9f9f9",
+                                                                    "border-radius": "8px",
+                                                                },
+                                                            ),
+                                                        ),
+                                                    ]
+                                                ),
+                                            ],
+                                            id="search-card",
+                                            style={
+                                                "opacity": "0.5",
+                                                "pointer-events": "none",
+                                                "box-shadow": "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                                "border-radius": "12px",
+                                                "background-color": "#e0e0e0",
+                                                "filter": "blur(1.3px)",
+                                                "transition": "all 0.5s ease-in-out",
+                                            },
+                                        )
+                                    ],
+                                    width=8,
+                                ),
+                            ]
+                        ),
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    [
+                                        dbc.Card(
+                                            [
+                                                dbc.CardHeader(
+                                                    "Scraping",
+                                                    style={
+                                                        "background-color": "#1A1A19",
+                                                        "color": "#ffffff",
+                                                        "padding": "10px",
+                                                        "font-weight": "bold",
+                                                        "text-align": "center",
+                                                        "border-radius": "10px 10px 0 0",
+                                                    },
+                                                ),
+                                                dbc.CardBody(
+                                                    [
+                                                        dbc.Button(
+                                                            "Start Scraping",
+                                                            id="scrape-button",
+                                                            color="warning",
+                                                            className="mb-3",
+                                                            disabled=True,
+                                                        ),
+                                                        html.Div(
+                                                            id="scrape-status",
+                                                            children="No scraping started.",
+                                                            className="text-warning",
+                                                        ),
+                                                        html.Hr(),
+                                                        html.Div(
+                                                            "Downloaded Files:",
+                                                            className="mb-2",
+                                                        ),
+                                                        html.Ul(
+                                                            id="downloaded-files-container",
+                                                            style={
+                                                                "height": "250px",
+                                                                "overflow-y": "auto",
+                                                                "border": "1px solid #ddd",
+                                                                "padding": "10px",
+                                                                "background-color": "#f9f9f9",
+                                                                "font-family": "monospace",
+                                                            },
+                                                        ),
+                                                        html.Div(
+                                                            id="progress-summary",
+                                                            className="mb-2",
+                                                            style={
+                                                                "text-align": "center",
+                                                                "font-size": "1rem",
+                                                                "font-weight": "bold",
+                                                                "color": "#555",
+                                                            },
+                                                        ),
+                                                        dbc.Progress(
+                                                            id="progress-bar",
+                                                            striped=True,
+                                                            animated=True,
+                                                            value=0,
+                                                            style={
+                                                                "height": "20px",
+                                                                "background-color": "#d3d3d3",
+                                                            },
+                                                            className="progress-bar-custom",
+                                                        ),
+                                                        html.Div(
+                                                            id="failed-downloads-container",
+                                                            style={
+                                                                "color": "red",
+                                                                "font-weight": "bold",
+                                                                "margin-top": "20px",
+                                                                "padding": "10px",
+                                                                "background-color": "#fff5f5",
+                                                                "border": "1px solid #f5c2c2",
+                                                                "border-radius": "8px",
+                                                            },
+                                                            children="No failed downloads yet.",
+                                                        ),
+                                                    ]
+                                                ),
+                                            ],
+                                            id="scrape-card",
+                                            style={
+                                                "opacity": "0.5",
+                                                "pointer-events": "none",
+                                                "box-shadow": "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                                "border-radius": "12px",
+                                                "background-color": "#e0e0e0",
+                                                "filter": "blur(1.3px)",
+                                                "transition": "all 0.5s ease-in-out",
+                                            },
+                                        )
+                                    ],
+                                    width=4,
+                                ),
+                                dbc.Col(
+                                    [
+                                        dbc.Card(
+                                            [
+                                                dbc.CardHeader(
+                                                    "Logs",
+                                                    style={
+                                                        "background-color": "#1A1A19",
+                                                        "color": "#ffffff",
+                                                        "padding": "10px",
+                                                        "font-weight": "bold",
+                                                        "text-align": "center",
+                                                        "border-radius": "10px 10px 0 0",
+                                                    },
+                                                ),
+                                                dbc.CardBody(
+                                                    [
+                                                        html.Div(
+                                                            "Logs will appear below in real-time:",
+                                                            className="mb-2",
+                                                        ),
+                                                        html.Pre(
+                                                            id="log-window",
+                                                            className="log-window",
+                                                            style={
+                                                                "height": "479px",
+                                                                "overflow-y": "auto",
+                                                                "border": "1px solid #ddd",
+                                                                "padding": "10px",
+                                                                "background-color": "#f9f9f9",
+                                                                "font-family": "monospace",
+                                                                "border-radius": "8px",
+                                                            },
+                                                        ),
+                                                    ]
+                                                ),
+                                            ],
+                                            style={
+                                                "opacity": "1",
+                                                "pointer-events": "auto",
+                                                "box-shadow": "0 8px 16px rgba(0, 0, 0, 0.2)",
+                                                "border-radius": "12px",
+                                                "background": "linear-gradient(to bottom, #ffffff, #f9f9f9)",
+                                                "transition": "all 0.7s ease-in-out",
+                                            },
+                                        )
+                                    ],
+                                    width=8,
+                                ),
+                            ],
+                            style={"margin-top": "20px"},
+                        ),
+                    ],
+                ),
+                # Tab 2: Data Transformation
+                dbc.Tab(
+                    label="Data Transformation",
+                    tab_id="transformation",
+                    label_style={
+                        "font-weight": "bold",
+                        "font-size": "16px",
+                        "padding": "12px 20px",
+                        "z-index": "200",
+                    },
+                    tab_style={
+                        "border-radius": "12px 12px 0 0",
+                        "background": "linear-gradient(to bottom, #ffffff, #f2f2f2)",
+                        "box-shadow": "0 4px 6px rgba(0, 0, 0, 0.1)",
+                        "transition": "all 0.3s ease",
+                        "z-index": "200",
+                    },
+                    active_label_style={
+                        "background": "linear-gradient(to bottom, #007bff, #0056b3)",
+                        "color": "#ffffff",
+                        "box-shadow": "0 4px 8px rgba(0, 0, 0, 0.3)",
+                        "z-index": "200",
+                    },
+                    children=[
+                        dbc.Row(
+                            [
+                                # File Selection Section
+                                dbc.Col(
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader(
+                                                "File Selection",
+                                                style={
+                                                    "background-color": "#1A1A19",
+                                                    "color": "#ffffff",
+                                                    "padding": "10px",
+                                                    "font-weight": "bold",
+                                                    "text-align": "center",
+                                                    "border-radius": "10px 10px 0 0",
+                                                },
+                                            ),
+                                            dbc.CardBody(
+                                                [
+                                                    dbc.Button(
+                                                        "Refresh Files",
+                                                        id="refresh-files-button",
+                                                        className="btn btn-primary",
+                                                        style={"margin-bottom": "10px"},
+                                                    ),
+                                                    html.Div(
+                                                        id="file-tree",
+                                                        className="file-tree-item",
+                                                        style={
+                                                            "height": "300px",
+                                                            "overflow-y": "auto",
+                                                            "padding": "10px",
+                                                            "background-color": "#f9f9f9",
+                                                            "border-radius": "8px",
+                                                        },
+                                                    ),
+                                                ]
+                                            ),
+                                        ],
+                                        style={
+                                            "opacity": "1",
+                                            "pointer-events": "auto",
+                                            "box-shadow": "0 8px 16px rgba(0, 0, 0, 0.2)",
+                                            "border-radius": "12px",
+                                            "background": "linear-gradient(to bottom, #ffffff, #f9f9f9)",
+                                            "transition": "all 0.7s ease-in-out",
+                                        },
+                                    ),
+                                    width=6,
+                                ),
+                                # Transformation Output Section
+                                dbc.Col(
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader(
+                                                "Transformation Output",
+                                                style={
+                                                    "background-color": "#1A1A19",
+                                                    "color": "#ffffff",
+                                                    "padding": "10px",
+                                                    "font-weight": "bold",
+                                                    "text-align": "center",
+                                                    "border-radius": "10px 10px 0 0",
+                                                },
+                                            ),
+                                            dbc.CardBody(
+                                                [
+                                                    dbc.Button(
+                                                        "Transform Data",
+                                                        id="transform-button",
+                                                        color="info",
+                                                        style={"margin-bottom": "10px"},
+                                                    ),
+                                                    html.Div(
+                                                        id="transformation-status",
+                                                        children="No transformation started.",
+                                                        style={
+                                                            "margin-top": "20px",
+                                                            "color": "green",
+                                                            "overflow-y": "auto",
+                                                            "height": "200px",
+                                                            "border": "1px solid #ddd",
+                                                            "padding": "10px",
+                                                            "background-color": "#f9f9f9",
+                                                            "border-radius": "8px",
+                                                        },
+                                                    ),
+                                                ]
+                                            ),
+                                        ],
+                                        style={
+                                            "opacity": "1",
+                                            "pointer-events": "auto",
+                                            "box-shadow": "0 8px 16px rgba(0, 0, 0, 0.2)",
+                                            "border-radius": "12px",
+                                            "background": "linear-gradient(to bottom, #ffffff, #f9f9f9)",
+                                            "transition": "all 0.7s ease-in-out",
+                                        },
+                                    ),
+                                    width=6,
+                                ),
+                            ],
+                            style={"height": "100%"},
+                        )
+                    ],
+                ),
+            ],
+        ),
+        # Footer
+        html.Footer(
+            html.Div(
+                [
+                    html.P(
+                        "Written by the almighty Petr AI/DS because manual data scraping sucks",
+                        className="mb-0",
+                        style={
+                            "color": "#ffffff",
+                            "text-align": "center",
+                            "font-weight": "bold",
+                        },
+                    ),
+                    html.Div(
+                        [
+                            html.Span(
+                                "Data Source: ",
+                                style={"font-weight": "bold", "color": "#ffffff"},
+                            ),
+                            html.A(
+                                "Statista.com",
+                                href="https://www.statista.com",
+                                target="_blank",
+                                style={
+                                    "color": "#007bff",
+                                    "text-decoration": "none",
+                                    "margin-right": "15px",
+                                },
+                            ),
+                            html.Span(
+                                "| Dashboard made by: ",
+                                style={"font-weight": "bold", "color": "#ffffff"},
+                            ),
+                            html.A(
+                                "Lakmoos AI",
+                                href="https://lakmoos.com",
+                                target="_blank",
+                                style={"color": "#007bff", "text-decoration": "none"},
+                            ),
+                        ],
+                        style={"text-align": "center", "margin-top": "10px"},
+                    ),
+                ],
+                style={
+                    "background-color": "#1A1A19",
+                    "padding": "20px",
+                    "border-top": "1px solid #4b4b4b",
+                    "color": "#ffffff",
+                    "width": "100%",
+                    "text-align": "center",
+                },
+            ),
+            style={
+                "margin-top": "auto",
+                "padding-top": "15px",
+                "margin-left": "-12px",
+                "margin-right": "-12px",
+                "z-index": "10",
+                "position": "relative",
+            },
+        ),
+        # Refresh Intervals
+        dcc.Interval(id="log-interval", interval=500, n_intervals=0),
+        dcc.Interval(id="file-interval", interval=500, n_intervals=0),
+    ],
+    fluid=True,
+    style={"display": "flex", "flex-direction": "column", "min-height": "100vh"},
 )
 
 
 # Login callback
 @app.callback(
-    [Output("login-status", "children"),
-     Output("login-status", "className"),
-     Output("login-state", "data")],
+    [
+        Output("login-status", "children"),
+        Output("login-status", "className"),
+        Output("login-state", "data"),
+    ],
     [Input("login-button", "n_clicks")],
-    prevent_initial_call=True
+    prevent_initial_call=True,
 )
 def login_action(n_clicks):
     global driver
@@ -583,15 +727,14 @@ def login_action(n_clicks):
         return "Logged in successfully.", "text-success", True
     return "Login failed.", "text-danger", False
 
+
 # Activate Search card after login
-@app.callback(
-    Output("search-card", "style"),
-    [Input("login-state", "data")]
-)
+@app.callback(Output("search-card", "style"), [Input("login-state", "data")])
 def activate_search_card(is_logged_in):
     if is_logged_in:
         return active_card_style
     return inactive_card_style
+
 
 # Combined callback for handling search, selection, and scraping
 @app.callback(
@@ -601,7 +744,7 @@ def activate_search_card(is_logged_in):
         Output("scrape-button", "disabled"),
         Output("scrape-status", "children"),
         Output("search-button", "disabled"),
-        Output("files-to-download", "data"),  
+        Output("files-to-download", "data"),
     ],
     [
         Input("search-button", "n_clicks"),
@@ -614,7 +757,9 @@ def activate_search_card(is_logged_in):
     ],
     prevent_initial_call=True,
 )
-def handle_search_selection_scraping(search_click, result_clicks, scrape_click, topic_input, current_results):
+def handle_search_selection_scraping(
+    search_click, result_clicks, scrape_click, topic_input, current_results
+):
     global session_topics, selected_topic_url, selected_topic_name, files_to_be_downloaded
 
     # Handle search
@@ -629,7 +774,7 @@ def handle_search_selection_scraping(search_click, result_clicks, scrape_click, 
                 inactive_card_style,
                 True,
                 "No topic selected.",
-                False,  
+                False,
                 0,  # Reset files-to-download
             )
 
@@ -657,7 +802,7 @@ def handle_search_selection_scraping(search_click, result_clicks, scrape_click, 
             inactive_card_style,
             True,
             "No topic selected.",
-            False, 
+            False,
             0,  # Reset files-to-download
         )
 
@@ -670,17 +815,20 @@ def handle_search_selection_scraping(search_click, result_clicks, scrape_click, 
         logging.info(f"Selected topic: {selected_topic_name}")
 
         # Get the number of files to be downloaded for the selected topic
-        files_to_be_downloaded = get_files_to_be_downloaded(selected_topic_url) + 2  # Add extra for report and sections overview
+        files_to_be_downloaded = (
+            get_files_to_be_downloaded(selected_topic_url) + 2
+        )  # Add extra for report and sections overview
 
-      
         updated_results = []
         for idx, card in enumerate(current_results):
             card_style = {
                 "margin-bottom": "10px",
                 "padding": "8px",
-                "box-shadow": "0 0 8px rgba(0, 0, 0, 0.3)"
-                if idx == selected_index
-                else "0 4px 8px rgba(0, 0, 0, 0.1)",
+                "box-shadow": (
+                    "0 0 8px rgba(0, 0, 0, 0.3)"
+                    if idx == selected_index
+                    else "0 4px 8px rgba(0, 0, 0, 0.1)"
+                ),
                 "background-color": "#f9f9f9",
                 "border": "1px solid #ddd",
                 "transition": "box-shadow 0.3s ease-in-out",
@@ -705,15 +853,17 @@ def handle_search_selection_scraping(search_click, result_clicks, scrape_click, 
             )
 
         # Update the Scraping card to display the number of files to be downloaded
-        scrape_topic_text = f"Selected Topic: {selected_topic_name} | Files to download: " \
-                            f"<span style='font-size: 1.2rem; font-weight: bold; color: #007bff;'>{files_to_be_downloaded}</span>"
+        scrape_topic_text = (
+            f"Selected Topic: {selected_topic_name} | Files to download: "
+            f"<span style='font-size: 1.2rem; font-weight: bold; color: #007bff;'>{files_to_be_downloaded}</span>"
+        )
 
         return (
             updated_results,
             active_card_style,
             False,
             f"Selected Topic: {selected_topic_name} | Files to download: {files_to_be_downloaded}",
-            True, 
+            True,
             0,  # Reset files-to-download
         )
 
@@ -726,7 +876,7 @@ def handle_search_selection_scraping(search_click, result_clicks, scrape_click, 
                 dash.no_update,
                 dash.no_update,
                 "Error: No topic selected for scraping.",
-                False,  
+                False,
                 0,  # Reset files-to-download
             )
 
@@ -748,7 +898,7 @@ def handle_search_selection_scraping(search_click, result_clicks, scrape_click, 
         inactive_card_style,
         True,
         "No topic selected.",
-        False,  
+        False,
         0,  # Reset files-to-download
     )
 
@@ -758,8 +908,8 @@ def handle_search_selection_scraping(search_click, result_clicks, scrape_click, 
         Output("downloaded-files-container", "children"),
         Output("progress-bar", "value"),
         Output("progress-summary", "children"),
-        Output("progress-bar", "className"), 
-        Output("failed-downloads-container", "children"),  
+        Output("progress-bar", "className"),
+        Output("failed-downloads-container", "children"),
     ],
     Input("file-interval", "n_intervals"),
 )
@@ -770,31 +920,45 @@ def refresh_files_and_update_progress(n_intervals):
         # Ensure files_to_be_downloaded is initialized
         if files_to_be_downloaded is None or files_to_be_downloaded == 0:
             return (
-                [html.Div("No files available yet.", style={"color": "gray", "text-align": "center"})],
+                [
+                    html.Div(
+                        "No files available yet.",
+                        style={"color": "gray", "text-align": "center"},
+                    )
+                ],
                 0,
                 "No files to download yet.",
                 "",
-                [html.Div("No failed downloads.", style={"color": "gray", "text-align": "center"})],
+                [
+                    html.Div(
+                        "No failed downloads.",
+                        style={"color": "gray", "text-align": "center"},
+                    )
+                ],
             )
 
         # Get the current files in the directory
         current_files = set()
         for root, _, filenames in os.walk(DOWNLOAD_DIR):
             for filename in filenames:
-                relative_path = os.path.relpath(os.path.join(root, filename), DOWNLOAD_DIR)
+                relative_path = os.path.relpath(
+                    os.path.join(root, filename), DOWNLOAD_DIR
+                )
                 current_files.add(relative_path)
 
         # Identify files added after app start
         downloaded_files = current_files - initial_files
         valid_files = [
-            file for file in downloaded_files
+            file
+            for file in downloaded_files
             if not os.path.basename(file).startswith(("study_id", "statistic_id"))
         ]
 
         # Filter out unwanted files
         meaningful_extensions = {".xlsx", ".pdf", ".txt", ".csv"}
         renamed_files = [
-            file for file in valid_files
+            file
+            for file in valid_files
             if os.path.splitext(file)[1] in meaningful_extensions
         ]
 
@@ -864,13 +1028,13 @@ def refresh_files_and_update_progress(n_intervals):
                     },
                 )
             )
-        print(f'Failed inside gui: {failed_count}')
+        print(f"Failed inside gui: {failed_count}")
         # Progress text
         progress_text = f"{downloaded_count} succeeded, {failed_count} failed, {total_processed}/{files_to_be_downloaded} processed ({int(progress)}%)."
         failed_links = [
             html.Div(
                 f"Failed to download: {url}",
-                style={"color": "red", "font-weight": "bold", "margin-bottom": "5px"}
+                style={"color": "red", "font-weight": "bold", "margin-bottom": "5px"},
             )
             for url in failed_downloads
         ]
@@ -882,7 +1046,13 @@ def refresh_files_and_update_progress(n_intervals):
                 progress,
                 f"Download Complete! {int(progress)}%",
                 "bounce",
-                failed_links or [html.Div("No failed downloads.", style={"color": "gray", "text-align": "center"})],
+                failed_links
+                or [
+                    html.Div(
+                        "No failed downloads.",
+                        style={"color": "gray", "text-align": "center"},
+                    )
+                ],
             )
 
         # Return updated values for non-100% progress
@@ -891,17 +1061,33 @@ def refresh_files_and_update_progress(n_intervals):
             progress,
             progress_text,
             "",
-            failed_links or [html.Div("No failed downloads.", style={"color": "gray", "text-align": "center"})],
+            failed_links
+            or [
+                html.Div(
+                    "No failed downloads.",
+                    style={"color": "gray", "text-align": "center"},
+                )
+            ],
         )
 
     except Exception as e:
         logging.error(f"Error updating files and progress: {e}")
         return (
-            [html.Div("Error loading files.", style={"color": "red", "text-align": "center"})],
+            [
+                html.Div(
+                    "Error loading files.",
+                    style={"color": "red", "text-align": "center"},
+                )
+            ],
             0,
             "Error calculating progress.",
             "",
-            [html.Div("Error displaying failed downloads.", style={"color": "red", "text-align": "center"})],
+            [
+                html.Div(
+                    "Error displaying failed downloads.",
+                    style={"color": "red", "text-align": "center"},
+                )
+            ],
         )
 
 
@@ -915,40 +1101,46 @@ def download_file(filepath):
         logging.error(f"File not found: {file_path}")
         return abort(404, description="File not found.")
 
+
 # Update logs
-@app.callback(
-    Output("log-window", "children"),
-    Input("log-interval", "n_intervals")
-)
+@app.callback(Output("log-window", "children"), Input("log-interval", "n_intervals"))
 def update_logs(n_intervals):
     """
     Update the log window with segmented log messages for better readability.
     """
     segmented_logs = []
-    segment_delimiter = "\n" + "=" * 80 + "\n"  
-    
+    segment_delimiter = "\n" + "=" * 80 + "\n"
+
     # Group related log messages into segments
     current_segment = []
     for log_entry in log_data:
-        if "Starting" in log_entry or "Selected" in log_entry or "Analyzing" in log_entry:
+        if (
+            "Starting" in log_entry
+            or "Selected" in log_entry
+            or "Analyzing" in log_entry
+        ):
             if current_segment:
                 segmented_logs.append("\n".join(current_segment))
-                segmented_logs.append(segment_delimiter)  # Add a delimiter between segments
+                segmented_logs.append(
+                    segment_delimiter
+                )  # Add a delimiter between segments
                 current_segment = []
-        
+
         # Add the log entry to the current segment
         current_segment.append(log_entry)
-    
 
     if current_segment:
         segmented_logs.append("\n".join(current_segment))
-    
+
     return "\n".join(segmented_logs)
 
 
 @app.callback(
     [Output("file-tree", "children"), Output("selected-files-store", "data")],
-    [Input("refresh-files-button", "n_clicks"), Input({"type": "file-entry", "file": ALL}, "n_clicks")],
+    [
+        Input("refresh-files-button", "n_clicks"),
+        Input({"type": "file-entry", "file": ALL}, "n_clicks"),
+    ],
     State("selected-files-store", "data"),
 )
 def update_file_tree_and_toggle_selection(refresh_clicks, file_clicks, selected_files):
@@ -995,20 +1187,36 @@ def parse_tree(path, selected_files, level=0, is_topic_section=False):
         "display": "flex",
         "align-items": "center",
     }
-    items.append(html.Div(
-        [
-            html.Span("📂", style={"margin-right": "10px", "font-size": "1.2em", "color": "#333"}),
-            html.Span(folder_name),
-        ],
-        style=folder_style,
-    ))
+    items.append(
+        html.Div(
+            [
+                html.Span(
+                    "📂",
+                    style={
+                        "margin-right": "10px",
+                        "font-size": "1.2em",
+                        "color": "#333",
+                    },
+                ),
+                html.Span(folder_name),
+            ],
+            style=folder_style,
+        )
+    )
 
     # Add files and subfolders
     for item in sorted(os.listdir(path)):
         item_path = os.path.join(path, item)
         if os.path.isdir(item_path):
             # Recursively parse subfolders
-            items.extend(parse_tree(item_path, selected_files, level=level + 1, is_topic_section=is_topic_section))
+            items.extend(
+                parse_tree(
+                    item_path,
+                    selected_files,
+                    level=level + 1,
+                    is_topic_section=is_topic_section,
+                )
+            )
         else:
             is_selected = item_path in selected_files
             if is_topic_section:
@@ -1022,44 +1230,61 @@ def parse_tree(path, selected_files, level=0, is_topic_section=False):
                     "display": "flex",
                     "align-items": "center",
                 }
-                items.append(html.Div(
-                    [
-                        html.Span("📄", style={"margin-right": "10px", "font-size": "1.2em", "color": "#007bff" if is_selected else "#333"}),
-                        html.Span(item),
-                    ],
-                    id={"type": "file-entry", "file": item_path},
-                    style=file_style,
-                ))
+                items.append(
+                    html.Div(
+                        [
+                            html.Span(
+                                "📄",
+                                style={
+                                    "margin-right": "10px",
+                                    "font-size": "1.2em",
+                                    "color": "#007bff" if is_selected else "#333",
+                                },
+                            ),
+                            html.Span(item),
+                        ],
+                        id={"type": "file-entry", "file": item_path},
+                        style=file_style,
+                    )
+                )
             else:
                 # Non-clickable files
                 file_style = {
                     "margin-left": f"{(level + 1) * 40}px",
                     "cursor": "not-allowed",
                     "padding": "5px",
-                    "background-color": "#f5f5f5",  
+                    "background-color": "#f5f5f5",
                     "border-radius": "5px",
                     "color": "#aaaaaa",
                     "display": "flex",
                     "align-items": "center",
                     "opacity": "0.6",
                 }
-                items.append(html.Div(
-                    [
-                        html.Span("📄", style={"margin-right": "10px", "font-size": "1.2em", "color": "#aaaaaa"}),
-                        html.Span(item),
-                    ],
-                    style=file_style,
-                ))
+                items.append(
+                    html.Div(
+                        [
+                            html.Span(
+                                "📄",
+                                style={
+                                    "margin-right": "10px",
+                                    "font-size": "1.2em",
+                                    "color": "#aaaaaa",
+                                },
+                            ),
+                            html.Span(item),
+                        ],
+                        style=file_style,
+                    )
+                )
 
     return items
-
 
 
 @app.callback(
     Output("transformation-status", "children"),
     Input("transform-button", "n_clicks"),
     State("selected-files-store", "data"),
-    prevent_initial_call=True
+    prevent_initial_call=True,
 )
 def transform_files(n_clicks, selected_files):
     """Handle transformation of selected files."""
@@ -1079,7 +1304,6 @@ def transform_files(n_clicks, selected_files):
         return f"Transformed files: {', '.join(transformed_files)}"
     else:
         return "No files transformed."
-
 
 
 if __name__ == "__main__":

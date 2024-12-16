@@ -39,7 +39,7 @@ logging.basicConfig(
     handlers=[
         logging.StreamHandler(),  # Console logging
         logging.FileHandler("scraper.log", mode="w", encoding="utf-8"),  # File logging
-    ]
+    ],
 )
 log = logging.getLogger()
 
@@ -66,11 +66,14 @@ session = requests.Session()
 def setup_driver():
     """Configure and return a Selenium WebDriver."""
     options = Options()
-    options.add_experimental_option("prefs", {
-        "download.default_directory": DEST_FOLDER,
-        "download.prompt_for_download": False,
-        "download.directory_upgrade": True
-    })
+    options.add_experimental_option(
+        "prefs",
+        {
+            "download.default_directory": DEST_FOLDER,
+            "download.prompt_for_download": False,
+            "download.directory_upgrade": True,
+        },
+    )
     return webdriver.Chrome(options=options)
 
 
@@ -82,7 +85,9 @@ def login_with_selenium(driver):
     # Step 1: Accept cookies
     try:
         accept_button = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Accept all')]"))
+            EC.element_to_be_clickable(
+                (By.XPATH, "//button[contains(text(), 'Accept all')]")
+            )
         )
         accept_button.click()
         log.info("✅ Cookies accepted successfully.")
@@ -94,7 +99,9 @@ def login_with_selenium(driver):
         university_dropdown = WebDriverWait(driver, 20).until(
             EC.presence_of_element_located((By.ID, "loginShibboleth_shibbolethLink"))
         )
-        Select(university_dropdown).select_by_visible_text("Brno University of Technology")
+        Select(university_dropdown).select_by_visible_text(
+            "Brno University of Technology"
+        )
         log.info("✅ Selected university: Brno University of Technology.")
 
         check_access_button = WebDriverWait(driver, 10).until(
@@ -136,13 +143,11 @@ def login_with_selenium(driver):
 
     # Confirm successful login
     try:
-        WebDriverWait(driver, 20).until(
-            EC.url_contains("statista.com")
-        )
+        WebDriverWait(driver, 20).until(EC.url_contains("statista.com"))
         log.info(f"🎉 Login successful!")
         cookies = driver.get_cookies()
         for cookie in cookies:
-            session.cookies.set(cookie['name'], cookie['value'])
+            session.cookies.set(cookie["name"], cookie["value"])
         return True
     except Exception as e:
         log.error(f"❌ Login confirmation failed: {e}")
@@ -152,7 +157,7 @@ def login_with_selenium(driver):
 
 def search_topic(topic):
     """Search and return a list of URLs for topics that match the user's query."""
-    log.info(f"🔍 Searching for topics related to: \"{topic}\"...")
+    log.info(f'🔍 Searching for topics related to: "{topic}"...')
     page_number = 1
     matches = []
 
@@ -166,7 +171,9 @@ def search_topic(topic):
 
         # Stop if no topics are found on this page
         if not topic_boxes:
-            log.info("   ⚠️ No topics found on this page. Reached the end of pagination.")
+            log.info(
+                "   ⚠️ No topics found on this page. Reached the end of pagination."
+            )
             break
 
         for box in topic_boxes:
@@ -202,7 +209,7 @@ def scrape_topic(topic_url):
         return
 
     soup = BeautifulSoup(response.text, "html.parser")
-    topic_name = topic_url.rstrip('/').split('/')[-1]
+    topic_name = topic_url.rstrip("/").split("/")[-1]
     topic_folder = os.path.join(DEST_FOLDER, topic_name)
     os.makedirs(topic_folder, exist_ok=True)
     raw_file = os.path.join(topic_folder, f"{topic_name}_sections_raw.txt")
@@ -216,7 +223,9 @@ def scrape_topic(topic_url):
         log.info("\n===== REPORT SECTION =====")
         explore_report_button = soup.find("a", class_="dossierTeaser__link")
         if explore_report_button:
-            report_url = urljoin("https://www.statista.com", explore_report_button["href"])
+            report_url = urljoin(
+                "https://www.statista.com", explore_report_button["href"]
+            )
             log.info(f"🔗 'Explore this report' URL found: {report_url}")
             download_report_with_selenium(report_url, topic_name)
         else:
@@ -236,7 +245,11 @@ def scrape_topic(topic_url):
         # Extract section URLs and log chapters
         with open(raw_file, "w", encoding="utf-8") as file:
             for chapter in chapters:
-                chapter_title = chapter.find("h3").get_text(strip=True) if chapter.find("h3") else "Unknown Chapter"
+                chapter_title = (
+                    chapter.find("h3").get_text(strip=True)
+                    if chapter.find("h3")
+                    else "Unknown Chapter"
+                )
                 if chapter_title not in logged_chapters:
                     file.write(f"Chapter: {chapter_title}\n")
                     log.info(f"📂 Chapter: {chapter_title}")
@@ -277,7 +290,9 @@ def scrape_topic(topic_url):
 
     # Download all XLSX files
     log.info("🔄 Starting XLSX file download for all available section URLs...")
-    with tqdm(total=files_to_be_downloaded, desc="Downloading XLSX files", unit="file") as pbar:
+    with tqdm(
+        total=files_to_be_downloaded, desc="Downloading XLSX files", unit="file"
+    ) as pbar:
         for section_url in section_urls:
             download_xlsx(section_url, topic_folder, pbar)
 
@@ -287,7 +302,10 @@ def scrape_topic(topic_url):
         for failed_url in failed_downloads:
             log.warning(f"  - {failed_url}")
 
-def download_xlsx(section_url, base_folder, pbar, subfolder="topic sections", retry_count=0):
+
+def download_xlsx(
+    section_url, base_folder, pbar, subfolder="topic sections", retry_count=0
+):
     """Download the XLSX file from the section URL and handle errors gracefully."""
     global failed_downloads, failed
 
@@ -298,21 +316,30 @@ def download_xlsx(section_url, base_folder, pbar, subfolder="topic sections", re
     driver = setup_driver()
     try:
         # Transfer session cookies to the Selenium WebDriver
-        driver.get("https://www.statista.com/")  # Open a page to set the domain for cookies
+        driver.get(
+            "https://www.statista.com/"
+        )  # Open a page to set the domain for cookies
         for cookie in session.cookies:
-            driver.add_cookie({
-                "name": cookie.name,
-                "value": cookie.value,
-                "domain": cookie.domain,
-                "path": cookie.path,
-                "secure": cookie.secure or False,
-                "httpOnly": cookie.has_nonstandard_attr('httponly')
-            })
+            driver.add_cookie(
+                {
+                    "name": cookie.name,
+                    "value": cookie.value,
+                    "domain": cookie.domain,
+                    "path": cookie.path,
+                    "secure": cookie.secure or False,
+                    "httpOnly": cookie.has_nonstandard_attr("httponly"),
+                }
+            )
 
         # Navigate to the section URL and initiate download
         driver.get(section_url)
         xls_button = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, "//button[contains(@data-paywall-info-box-track, 'paywall_c2a--xls')]"))
+            EC.element_to_be_clickable(
+                (
+                    By.XPATH,
+                    "//button[contains(@data-paywall-info-box-track, 'paywall_c2a--xls')]",
+                )
+            )
         )
         xls_button.click()
         time.sleep(10)  # Wait for the download to complete
@@ -320,20 +347,24 @@ def download_xlsx(section_url, base_folder, pbar, subfolder="topic sections", re
         log.error(f"❌ Failed to download XLSX file from {section_url}: {e}")
         if retry_count < MAX_RETRIES:
             log.info(f"🔄 Retrying download ({retry_count + 1}/{MAX_RETRIES})...")
-            return download_xlsx(section_url, base_folder, pbar, subfolder, retry_count + 1)
+            return download_xlsx(
+                section_url, base_folder, pbar, subfolder, retry_count + 1
+            )
         else:
             failed_downloads.append(section_url)
             log.error(f"❌ Giving up on {section_url} after {MAX_RETRIES} attempts.")
             failed += 1
-            print(f'Failed: {failed}')
+            print(f"Failed: {failed}")
             return
     finally:
         driver.quit()
 
     # Rename the downloaded file
     try:
-        url_slug = section_url.rstrip('/').split('/')[-1]
-        downloaded_files = glob.glob(os.path.join(DEST_FOLDER, "*.xls*"))  # Matches .xls and .xlsx
+        url_slug = section_url.rstrip("/").split("/")[-1]
+        downloaded_files = glob.glob(
+            os.path.join(DEST_FOLDER, "*.xls*")
+        )  # Matches .xls and .xlsx
         if not downloaded_files:
             log.warning(f"⚠️ No downloaded file found for section: {url_slug}")
             return
@@ -351,6 +382,7 @@ def get_failed_downloads():
     """Return the list of failed download URLs."""
     return failed
 
+
 def download_report_with_selenium(report_url, topic_name):
     """Redirect to 'Explore this report' URL, open the Download dropdown, and click the PDF option."""
     driver = setup_driver()
@@ -361,16 +393,20 @@ def download_report_with_selenium(report_url, topic_name):
     try:
         # Transfer cookies from the session to the Selenium driver
         log.info("🔄 Transferring session cookies to Selenium browser...")
-        driver.get("https://www.statista.com/")  # Open a page to set the domain for cookies
+        driver.get(
+            "https://www.statista.com/"
+        )  # Open a page to set the domain for cookies
         for cookie in session.cookies:
-            driver.add_cookie({
-                "name": cookie.name,
-                "value": cookie.value,
-                "domain": cookie.domain,
-                "path": cookie.path,
-                "secure": cookie.secure or False,
-                "httpOnly": cookie.has_nonstandard_attr('httponly')
-            })
+            driver.add_cookie(
+                {
+                    "name": cookie.name,
+                    "value": cookie.value,
+                    "domain": cookie.domain,
+                    "path": cookie.path,
+                    "secure": cookie.secure or False,
+                    "httpOnly": cookie.has_nonstandard_attr("httponly"),
+                }
+            )
         log.info("✅ Cookies transferred successfully.")
 
         # Redirect to the report page
@@ -419,7 +455,9 @@ def download_report_with_selenium(report_url, topic_name):
 
 def clean_and_reformat_file(input_file, output_file):
     """Clean and reformat the contents of the scraped file."""
-    with open(input_file, "r", encoding="utf-8") as infile, open(output_file, "w", encoding="utf-8") as outfile:
+    with open(input_file, "r", encoding="utf-8") as infile, open(
+        output_file, "w", encoding="utf-8"
+    ) as outfile:
         current_chapter = None
         seen_sections = set()
 
@@ -438,6 +476,7 @@ def clean_and_reformat_file(input_file, output_file):
                 if (current_chapter, section_name) not in seen_sections:
                     outfile.write(f"  {section_name}: {section_url}\n")
                     seen_sections.add((current_chapter, section_name))
+
 
 def get_files_to_be_downloaded(topic_url):
     log.info(f"Analyzing files to be downloaded for topic: {topic_url}")
@@ -489,7 +528,13 @@ def main():
 
             while True:
                 try:
-                    choice = input("Enter the number of the topic you want to scrape (or 'all' to select all): ").strip().lower()
+                    choice = (
+                        input(
+                            "Enter the number of the topic you want to scrape (or 'all' to select all): "
+                        )
+                        .strip()
+                        .lower()
+                    )
                     if choice == "all" or choice == str(len(selected_topics) + 1):
                         # Process all topics
                         for topic_name, topic_url in selected_topics:

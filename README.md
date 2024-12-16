@@ -132,8 +132,7 @@ Scraped files are saved in the `statista_data` directory, organized by topic.
 
 ## Contributors
 
-- **Petr AI/DS**: Developer and maintainer.
-- **Lakmoos AI**: Dashboard design and implementation.
+- **Petr AI/DS**: Developer, design, implementation.
 
 ---
 
