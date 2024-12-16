@@ -12,7 +12,7 @@ from dash.dependencies import Input, Output, State, MATCH, ALL
 
 
 # Scraper script's methods
-from scraper import setup_driver, login_with_selenium, search_topic, scrape_topic, get_files_to_be_downloaded
+from scraper import setup_driver, login_with_selenium, search_topic, scrape_topic, get_files_to_be_downloaded, get_failed_downloads
 
 # Initialize Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SOLAR])
@@ -765,7 +765,7 @@ def handle_search_selection_scraping(search_click, result_clicks, scrape_click, 
 )
 def refresh_files_and_update_progress(n_intervals):
     """Update the file list and progress bar, and display failed downloads."""
-    global files_to_be_downloaded, failed_downloads
+    global files_to_be_downloaded
     try:
         # Ensure files_to_be_downloaded is initialized
         if files_to_be_downloaded is None or files_to_be_downloaded == 0:
@@ -800,7 +800,7 @@ def refresh_files_and_update_progress(n_intervals):
 
         # Update progress
         downloaded_count = len(renamed_files)
-        failed_count = len(failed_downloads)
+        failed_count = get_failed_downloads()
         total_processed = downloaded_count + failed_count
 
         if files_to_be_downloaded > 0:
@@ -864,7 +864,7 @@ def refresh_files_and_update_progress(n_intervals):
                     },
                 )
             )
-
+        print(f'Failed inside gui: {failed_count}')
         # Progress text
         progress_text = f"{downloaded_count} succeeded, {failed_count} failed, {total_processed}/{files_to_be_downloaded} processed ({int(progress)}%)."
         failed_links = [

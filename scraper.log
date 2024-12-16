@@ -1,1 +1,408 @@
-2024-12-16 11:36:47 [INFO] Chromedriver is already installed.
+2024-12-16 16:37:58 [INFO] Chromedriver is already installed.
+2024-12-16 16:38:34 [INFO] 🔄 Starting Selenium login process...
+2024-12-16 16:38:37 [INFO] ✅ Cookies accepted successfully.
+2024-12-16 16:38:37 [INFO] ✅ Selected university: Brno University of Technology.
+2024-12-16 16:38:38 [INFO] ✅ Clicked 'Check access' button.
+2024-12-16 16:38:38 [INFO] ✅ Username entered successfully.
+2024-12-16 16:38:40 [INFO] ✅ Password entered successfully.
+2024-12-16 16:38:40 [INFO] ✅ Login form submitted.
+2024-12-16 16:38:46 [INFO] 🎉 Login successful!
+2024-12-16 16:38:46 [INFO] Login successful.
+2024-12-16 16:38:50 [INFO] 🔍 Searching for topics related to: "france"...
+2024-12-16 16:38:50 [INFO]    Checking page: https://www.statista.com/topics/
+2024-12-16 16:38:51 [INFO]    Checking page: https://www.statista.com/topics/p/2/
+2024-12-16 16:38:52 [INFO]    Checking page: https://www.statista.com/topics/p/3/
+2024-12-16 16:38:52 [INFO]    Checking page: https://www.statista.com/topics/p/4/
+2024-12-16 16:38:53 [INFO]    Checking page: https://www.statista.com/topics/p/5/
+2024-12-16 16:38:53 [INFO]    Checking page: https://www.statista.com/topics/p/6/
+2024-12-16 16:38:54 [INFO]    Checking page: https://www.statista.com/topics/p/7/
+2024-12-16 16:38:54 [INFO]    Checking page: https://www.statista.com/topics/p/8/
+2024-12-16 16:38:55 [INFO]    Checking page: https://www.statista.com/topics/p/9/
+2024-12-16 16:38:56 [INFO]    Checking page: https://www.statista.com/topics/p/10/
+2024-12-16 16:38:56 [INFO]    Checking page: https://www.statista.com/topics/p/11/
+2024-12-16 16:38:57 [INFO]    Checking page: https://www.statista.com/topics/p/12/
+2024-12-16 16:38:57 [INFO]    Checking page: https://www.statista.com/topics/p/13/
+2024-12-16 16:38:58 [INFO]    Checking page: https://www.statista.com/topics/p/14/
+2024-12-16 16:38:58 [INFO]    Checking page: https://www.statista.com/topics/p/15/
+2024-12-16 16:38:59 [INFO]    Checking page: https://www.statista.com/topics/p/16/
+2024-12-16 16:39:00 [INFO]    Checking page: https://www.statista.com/topics/p/17/
+2024-12-16 16:39:01 [INFO]    Checking page: https://www.statista.com/topics/p/18/
+2024-12-16 16:39:01 [INFO]    Checking page: https://www.statista.com/topics/p/19/
+2024-12-16 16:39:02 [INFO]    Checking page: https://www.statista.com/topics/p/20/
+2024-12-16 16:39:02 [INFO]    Checking page: https://www.statista.com/topics/p/21/
+2024-12-16 16:39:03 [INFO]    Checking page: https://www.statista.com/topics/p/22/
+2024-12-16 16:39:04 [INFO]    Checking page: https://www.statista.com/topics/p/23/
+2024-12-16 16:39:04 [INFO]    Checking page: https://www.statista.com/topics/p/24/
+2024-12-16 16:39:05 [INFO]    Checking page: https://www.statista.com/topics/p/25/
+2024-12-16 16:39:05 [INFO]    Checking page: https://www.statista.com/topics/p/26/
+2024-12-16 16:39:06 [INFO]    Checking page: https://www.statista.com/topics/p/27/
+2024-12-16 16:39:06 [INFO]    Checking page: https://www.statista.com/topics/p/28/
+2024-12-16 16:39:06 [INFO]    ⚠️ No topics found on this page. Reached the end of pagination.
+2024-12-16 16:39:06 [INFO] 
+Found the following topics:
+2024-12-16 16:39:06 [INFO] [1] 5G in France
+2024-12-16 16:39:06 [INFO] [2] Abortion in France
+2024-12-16 16:39:06 [INFO] [3] Accommodation in France
+2024-12-16 16:39:06 [INFO] [4] Advertising in France
+2024-12-16 16:39:06 [INFO] [5] Agri-food products with signs identifying quality and origin in France
+2024-12-16 16:39:06 [INFO] [6] Agriculture in France
+2024-12-16 16:39:06 [INFO] [7] Air France-KLM
+2024-12-16 16:39:06 [INFO] [8] Alcohol consumption in France
+2024-12-16 16:39:06 [INFO] [9] Alternative medicine in France
+2024-12-16 16:39:06 [INFO] [10] Animation industry in France
+2024-12-16 16:39:06 [INFO] [11] Art market in France
+2024-12-16 16:39:06 [INFO] [12] Audio advertising in France
+2024-12-16 16:39:06 [INFO] [13] Automotive industry in France
+2024-12-16 16:39:06 [INFO] [14] Automotive retail industry in France
+2024-12-16 16:39:06 [INFO] [15] Bank loans in France
+2024-12-16 16:39:06 [INFO] [16] Banking industry in France
+2024-12-16 16:39:06 [INFO] [17] Beauty and personal care e-commerce in France
+2024-12-16 16:39:06 [INFO] [18] Beer market in France
+2024-12-16 16:39:06 [INFO] [19] Bicycle industry in France
+2024-12-16 16:39:06 [INFO] [20] Bioenergy industry in France
+2024-12-16 16:39:06 [INFO] [21] Black Friday in France
+2024-12-16 16:39:06 [INFO] [22] Books in France
+2024-12-16 16:39:06 [INFO] [23] Business travel in France
+2024-12-16 16:39:06 [INFO] [24] Cafes and coffee shops in France
+2024-12-16 16:39:06 [INFO] [25] Cereals in France
+2024-12-16 16:39:06 [INFO] [26] Champagne in France
+2024-12-16 16:39:06 [INFO] [27] Cheese in France
+2024-12-16 16:39:06 [INFO] [28] Child sex abuse in France
+2024-12-16 16:39:06 [INFO] [29] Children and media in France
+2024-12-16 16:39:06 [INFO] [30] Chocolate in France
+2024-12-16 16:39:06 [INFO] [31] Christmas gift shopping in France
+2024-12-16 16:39:06 [INFO] [32] Cinema industry in France
+2024-12-16 16:39:06 [INFO] [33] Climate change in France
+2024-12-16 16:39:06 [INFO] [34] Clothing and accessories in France
+2024-12-16 16:39:06 [INFO] [35] Coastal tourism in France
+2024-12-16 16:39:06 [INFO] [36] Comic books in France
+2024-12-16 16:39:06 [INFO] [37] Commercial real estate in France
+2024-12-16 16:39:06 [INFO] [38] Companies in France
+2024-12-16 16:39:06 [INFO] [39] Confectionery in France
+2024-12-16 16:39:06 [INFO] [40] Construction industry in France
+2024-12-16 16:39:06 [INFO] [41] Consumer behavior in France
+2024-12-16 16:39:06 [INFO] [42] Consumer electronics in France
+2024-12-16 16:39:06 [INFO] [43] Coronavirus (COVID-19) in France
+2024-12-16 16:39:06 [INFO] [44] Corporate social responsibility in the luxury industry in France
+2024-12-16 16:39:06 [INFO] [45] Cosmetic and hygiene products in France
+2024-12-16 16:39:06 [INFO] [46] Cosmetics and hygiene industry in France
+2024-12-16 16:39:06 [INFO] [47] COVID-19 impact on media consumption in France
+2024-12-16 16:39:06 [INFO] [48] Crime in France
+2024-12-16 16:39:06 [INFO] [49] Customer relationship management in France
+2024-12-16 16:39:06 [INFO] [50] Cybercrime and companies in France
+2024-12-16 16:39:06 [INFO] [51] Dairy market in France
+2024-12-16 16:39:06 [INFO] [52] Democracy in France
+2024-12-16 16:39:06 [INFO] [53] Demographics in France
+2024-12-16 16:39:06 [INFO] [54] Dentists in France
+2024-12-16 16:39:06 [INFO] [55] Digital advertising in France
+2024-12-16 16:39:06 [INFO] [56] Digital payments landscape in France
+2024-12-16 16:39:06 [INFO] [57] Disability in France
+2024-12-16 16:39:06 [INFO] [58] Discrimination in France
+2024-12-16 16:39:06 [INFO] [59] DIY and home improvement market in France
+2024-12-16 16:39:06 [INFO] [60] Domestic tourism in France
+2024-12-16 16:39:06 [INFO] [61] Drones in France
+2024-12-16 16:39:06 [INFO] [62] Dropshipping in France
+2024-12-16 16:39:06 [INFO] [63] Drugs in France
+2024-12-16 16:39:06 [INFO] [64] E-books in France
+2024-12-16 16:39:06 [INFO] [65] E-commerce in France
+2024-12-16 16:39:06 [INFO] [66] E-commerce shipping in France
+2024-12-16 16:39:06 [INFO] [67] Earnings and wages in France
+2024-12-16 16:39:06 [INFO] [68] Eco-anxiety in France
+2024-12-16 16:39:06 [INFO] [69] Economic impact of the coronavirus (COVID-19) in France
+2024-12-16 16:39:06 [INFO] [70] Economy of France
+2024-12-16 16:39:06 [INFO] [71] Electric vehicle charging infrastructure in France
+2024-12-16 16:39:06 [INFO] [72] Electric vehicles in France
+2024-12-16 16:39:06 [INFO] [73] Electricity market in France
+2024-12-16 16:39:06 [INFO] [74] Electronic cigarettes in France
+2024-12-16 16:39:06 [INFO] [75] Emergency services in France
+2024-12-16 16:39:06 [INFO] [76] Emissions in France
+2024-12-16 16:39:06 [INFO] [77] Energy in France
+2024-12-16 16:39:06 [INFO] [78] Enterprise software in France
+2024-12-16 16:39:06 [INFO] [79] Environmental impact of the internet in France
+2024-12-16 16:39:06 [INFO] [80] eSports in France
+2024-12-16 16:39:06 [INFO] [81] European elections in France
+2024-12-16 16:39:06 [INFO] [82] Fake news in France
+2024-12-16 16:39:06 [INFO] [83] Families in France
+2024-12-16 16:39:06 [INFO] [84] Far-right politics in France 2022
+2024-12-16 16:39:06 [INFO] [85] Fashion e-commerce in France
+2024-12-16 16:39:06 [INFO] [86] Fast food industry in France
+2024-12-16 16:39:06 [INFO] [87] Financial markets in France
+2024-12-16 16:39:06 [INFO] [88] Fintech in France
+2024-12-16 16:39:06 [INFO] [89] Fitness industry in France
+2024-12-16 16:39:06 [INFO] [90] Foie gras in France
+2024-12-16 16:39:06 [INFO] [91] Food supplements and functional foods in France
+2024-12-16 16:39:06 [INFO] [92] Food trade in France
+2024-12-16 16:39:06 [INFO] [93] Food trends in France
+2024-12-16 16:39:06 [INFO] [94] Footwear market in France
+2024-12-16 16:39:06 [INFO] [95] France
+2024-12-16 16:39:06 [INFO] [96] Frozen and ready meals France
+2024-12-16 16:39:06 [INFO] [97] Fruit consumption in France
+2024-12-16 16:39:06 [INFO] [98] Furniture and appliance market in France
+2024-12-16 16:39:06 [INFO] [99] Gardening in France
+2024-12-16 16:39:06 [INFO] [100] GDPR and personal data in France
+2024-12-16 16:39:06 [INFO] [101] Geothermal energy in France
+2024-12-16 16:39:06 [INFO] [102] Green finance and responsible investments in France
+2024-12-16 16:39:06 [INFO] [103] Heating in France
+2024-12-16 16:39:06 [INFO] [104] Higher education in France
+2024-12-16 16:39:06 [INFO] [105] Hiking in France
+2024-12-16 16:39:06 [INFO] [106] HIV/AIDS in France
+2024-12-16 16:39:06 [INFO] [107] Home insurance in France
+2024-12-16 16:39:06 [INFO] [108] Hotel industry in France
+2024-12-16 16:39:06 [INFO] [109] Hunting in France
+2024-12-16 16:39:06 [INFO] [110] Hydropower in France
+2024-12-16 16:39:06 [INFO] [111] Hypermarkets and supermarkets in France
+2024-12-16 16:39:06 [INFO] [112] Impact of cybercrime on internet users in France
+2024-12-16 16:39:06 [INFO] [113] Impact of the coronavirus on the tourism industry in France
+2024-12-16 16:39:06 [INFO] [114] Inflation and consumer price indexes in France
+2024-12-16 16:39:06 [INFO] [115] Influencer marketing in France
+2024-12-16 16:39:06 [INFO] [116] Insurance industry in France
+2024-12-16 16:39:06 [INFO] [117] Internet usage by children and young people in France
+2024-12-16 16:39:06 [INFO] [118] Internet usage by seniors in France
+2024-12-16 16:39:06 [INFO] [119] Internet usage in France
+2024-12-16 16:39:06 [INFO] [120] Investments and alternative finance in France
+2024-12-16 16:39:06 [INFO] [121] Leather goods market in France
+2024-12-16 16:39:06 [INFO] [122] Legal services in France
+2024-12-16 16:39:06 [INFO] [123] Legislative elections in France 2024
+2024-12-16 16:39:06 [INFO] [124] LGBTQIA in France
+2024-12-16 16:39:06 [INFO] [125] Life insurance industry in France
+2024-12-16 16:39:06 [INFO] [126] Lingerie and underwear in France
+2024-12-16 16:39:06 [INFO] [127] Made in France
+2024-12-16 16:39:06 [INFO] [128] Magazines in France
+2024-12-16 16:39:06 [INFO] [129] Manga in France
+2024-12-16 16:39:06 [INFO] [130] Marine energy in France
+2024-12-16 16:39:06 [INFO] [131] Media piracy in France
+2024-12-16 16:39:06 [INFO] [132] Mental health in France
+2024-12-16 16:39:06 [INFO] [133] Messaging apps in France
+2024-12-16 16:39:06 [INFO] [134] Migration in France
+2024-12-16 16:39:06 [INFO] [135] Millennials in France
+2024-12-16 16:39:06 [INFO] [136] Mobile app usage in France
+2024-12-16 16:39:06 [INFO] [137] Mobile commerce in France
+2024-12-16 16:39:06 [INFO] [138] Mobile gaming in France
+2024-12-16 16:39:06 [INFO] [139] Mobile network operators in France
+2024-12-16 16:39:06 [INFO] [140] Mobile telephony in France
+2024-12-16 16:39:06 [INFO] [141] Motor insurance in France
+2024-12-16 16:39:06 [INFO] [142] Motorcycle industry in France
+2024-12-16 16:39:06 [INFO] [143] Museums in France
+2024-12-16 16:39:06 [INFO] [144] Music festivals in France
+2024-12-16 16:39:06 [INFO] [145] Music industry in France
+2024-12-16 16:39:06 [INFO] [146] Natural cosmetics in France
+2024-12-16 16:39:06 [INFO] [147] New e-commerce technologies in France
+2024-12-16 16:39:06 [INFO] [148] Newspaper industry in France
+2024-12-16 16:39:06 [INFO] [149] Non-alcoholic beverages in France
+2024-12-16 16:39:06 [INFO] [150] Nuclear power in France
+2024-12-16 16:39:06 [INFO] [151] Obesity and overweight in France
+2024-12-16 16:39:06 [INFO] [152] Omnichannel retail in France
+2024-12-16 16:39:06 [INFO] [153] Online banking in France
+2024-12-16 16:39:06 [INFO] [154] Online dating in France
+2024-12-16 16:39:06 [INFO] [155] Online food delivery in France
+2024-12-16 16:39:06 [INFO] [156] Online gambling in France
+2024-12-16 16:39:06 [INFO] [157] Online harassment in France
+2024-12-16 16:39:06 [INFO] [158] Online marketplaces in France
+2024-12-16 16:39:06 [INFO] [159] Online payments in France
+2024-12-16 16:39:06 [INFO] [160] Online pornography in France
+2024-12-16 16:39:06 [INFO] [161] Online press in France
+2024-12-16 16:39:06 [INFO] [162] Online radio in France
+2024-12-16 16:39:06 [INFO] [163] Online sales seasons in France
+2024-12-16 16:39:06 [INFO] [164] Online video usage in France
+2024-12-16 16:39:06 [INFO] [165] Organic food market in France
+2024-12-16 16:39:06 [INFO] [166] Organic products retail in France
+2024-12-16 16:39:06 [INFO] [167] Outdoor sports in France
+2024-12-16 16:39:06 [INFO] [168] Overseas France
+2024-12-16 16:39:06 [INFO] [169] Parcel market in France
+2024-12-16 16:39:06 [INFO] [170] Pension reform demonstrations in France
+2024-12-16 16:39:06 [INFO] [171] Pet food in France
+2024-12-16 16:39:06 [INFO] [172] Podcast industry in France
+2024-12-16 16:39:06 [INFO] [173] Police in France
+2024-12-16 16:39:06 [INFO] [174] Potato market France
+2024-12-16 16:39:06 [INFO] [175] Poverty in France
+2024-12-16 16:39:06 [INFO] [176] Presidential elections in France 2022
+2024-12-16 16:39:06 [INFO] [177] Primary and secondary education in France
+2024-12-16 16:39:06 [INFO] [178] Public broadcasting in France
+2024-12-16 16:39:06 [INFO] [179] Public hospital crisis in France
+2024-12-16 16:39:06 [INFO] [180] Public spending in France
+2024-12-16 16:39:06 [INFO] [181] Public transport in France
+2024-12-16 16:39:06 [INFO] [182] Publishing houses in France
+2024-12-16 16:39:06 [INFO] [183] Pulp and paper industry in France
+2024-12-16 16:39:06 [INFO] [184] Radio in France
+2024-12-16 16:39:06 [INFO] [185] Reality TV in France
+2024-12-16 16:39:06 [INFO] [186] Record labels in France
+2024-12-16 16:39:06 [INFO] [187] Recruitment industry in France
+2024-12-16 16:39:06 [INFO] [188] Regional elections in France 2021
+2024-12-16 16:39:06 [INFO] [189] Regional tourism in France
+2024-12-16 16:39:06 [INFO] [190] Religion in France
+2024-12-16 16:39:06 [INFO] [191] Remote work in France
+2024-12-16 16:39:06 [INFO] [192] Renewable energy in France
+2024-12-16 16:39:06 [INFO] [193] Repair market of household appliances in France
+2024-12-16 16:39:06 [INFO] [194] Resale market in France
+2024-12-16 16:39:06 [INFO] [195] Residential real estate in France
+2024-12-16 16:39:06 [INFO] [196] Retail channels in France
+2024-12-16 16:39:06 [INFO] [197] Second-hand apparel and textiles in France
+2024-12-16 16:39:06 [INFO] [198] Sexuality in France
+2024-12-16 16:39:06 [INFO] [199] Smart cities in France
+2024-12-16 16:39:06 [INFO] [200] Smart home in France
+2024-12-16 16:39:06 [INFO] [201] Smartphone users in France
+2024-12-16 16:39:06 [INFO] [202] Soccer in France
+2024-12-16 16:39:06 [INFO] [203] Social media advertising and marketing in France
+2024-12-16 16:39:06 [INFO] [204] Social media usage in France
+2024-12-16 16:39:06 [INFO] [205] Solar PV energy in France
+2024-12-16 16:39:06 [INFO] [206] Solar thermal industry in France
+2024-12-16 16:39:06 [INFO] [207] Spirits market in France
+2024-12-16 16:39:06 [INFO] [208] Sports streaming in France
+2024-12-16 16:39:06 [INFO] [209] Sportswear industry in France
+2024-12-16 16:39:06 [INFO] [210] Startups in France
+2024-12-16 16:39:06 [INFO] [211] State of SEO strategies in France
+2024-12-16 16:39:06 [INFO] [212] Strikes and mobilization in France
+2024-12-16 16:39:06 [INFO] [213] Subscription video-on-demand in France
+2024-12-16 16:39:06 [INFO] [214] Sustainable e-commerce in France
+2024-12-16 16:39:06 [INFO] [215] Telecoms in France
+2024-12-16 16:39:06 [INFO] [216] Television consumption in France
+2024-12-16 16:39:06 [INFO] [217] The afternoon snack in France
+2024-12-16 16:39:06 [INFO] [218] The fisheries sector in France
+2024-12-16 16:39:06 [INFO] [219] The meat sector in France
+2024-12-16 16:39:06 [INFO] [220] The tobacco sector in France
+2024-12-16 16:39:06 [INFO] [221] Tour de France
+2024-12-16 16:39:06 [INFO] [222] Transport industry in France
+2024-12-16 16:39:06 [INFO] [223] Travel and tourism in France
+2024-12-16 16:39:06 [INFO] [224] Trust in media in France
+2024-12-16 16:39:06 [INFO] [225] TV advertising in France
+2024-12-16 16:39:06 [INFO] [226] TV shows in France
+2024-12-16 16:39:06 [INFO] [227] Unemployment in France
+2024-12-16 16:39:06 [INFO] [228] Used vehicles in France
+2024-12-16 16:39:06 [INFO] [229] Vaccination in France
+2024-12-16 16:39:06 [INFO] [230] Vegetable industry in France
+2024-12-16 16:39:06 [INFO] [231] Video gaming in France
+2024-12-16 16:39:06 [INFO] [232] Video on demand in France
+2024-12-16 16:39:06 [INFO] [233] Violence against women in France
+2024-12-16 16:39:06 [INFO] [234] Virtual assistant technology in France
+2024-12-16 16:39:06 [INFO] [235] Waste management in France
+2024-12-16 16:39:06 [INFO] [236] Water sports in France
+2024-12-16 16:39:06 [INFO] [237] Wealth inequality in France
+2024-12-16 16:39:06 [INFO] [238] Winter sports and ski holidays in France
+2024-12-16 16:39:06 [INFO] [239] Women's sport in France
+2024-12-16 16:39:06 [INFO] [240] Select all
+2024-12-16 16:39:06 [INFO] Found 239 topics for 'france'.
+2024-12-16 16:39:08 [INFO] Selected topic: 5G in France
+2024-12-16 16:39:08 [INFO] Analyzing files to be downloaded for topic: https://www.statista.com/topics/7325/5g-in-france/
+2024-12-16 16:39:11 [INFO] Starting scraping for topic: 5G in France
+2024-12-16 16:39:11 [INFO] 🌐 Scraping topic page: https://www.statista.com/topics/7325/5g-in-france/
+2024-12-16 16:39:12 [INFO] 🛠 Cleaned file not found. Creating a new one: /mnt/c/Users/petrp/Desktop/Lakmoos/Statista/statista_data/5g-in-france/5g-in-france_sections.txt
+2024-12-16 16:39:12 [INFO] 
+===== REPORT SECTION =====
+2024-12-16 16:39:12 [INFO] 🔗 'Explore this report' URL found: https://www.statista.com/study/86169/5g-in-france/
+2024-12-16 16:39:12 [INFO] 🔄 Transferring session cookies to Selenium browser...
+2024-12-16 16:39:14 [INFO] ✅ Cookies transferred successfully.
+2024-12-16 16:39:14 [INFO] 🔄 Redirecting to report page: https://www.statista.com/study/86169/5g-in-france/
+2024-12-16 16:39:16 [INFO] 🔄 PDF download initiated.
+2024-12-16 16:39:27 [INFO] 📂 Report saved successfully
+2024-12-16 16:39:27 [INFO] 
+===== DATA SCRAPING SECTION =====
+2024-12-16 16:39:27 [INFO] 📂 Chapter: Overview
+2024-12-16 16:39:27 [INFO] 📂 Chapter: 5G implementation
+2024-12-16 16:39:27 [INFO] 📂 Chapter: Opinion
+2024-12-16 16:39:27 [INFO] 📂 Chapter: French telecom market
+2024-12-16 16:39:27 [INFO] 📂 Chapter: Mobile phone standards
+2024-12-16 16:39:27 [INFO] 📂 Chapter: Mobile operator data
+2024-12-16 16:39:27 [INFO] ✅ Raw chapters and sections saved to /mnt/c/Users/petrp/Desktop/Lakmoos/Statista/statista_data/5g-in-france/5g-in-france_sections_raw.txt
+2024-12-16 16:39:27 [INFO] ✅ Cleaned chapters and sections saved to /mnt/c/Users/petrp/Desktop/Lakmoos/Statista/statista_data/5g-in-france/5g-in-france_sections.txt
+2024-12-16 16:39:27 [INFO] 🔄 Reading URLs from the cleaned file: /mnt/c/Users/petrp/Desktop/Lakmoos/Statista/statista_data/5g-in-france/5g-in-france_sections.txt
+2024-12-16 16:39:27 [INFO] 📊 Total files to be downloaded: 40
+2024-12-16 16:39:27 [INFO] 🔄 Starting XLSX file download for all available section URLs...
+2024-12-16 16:39:41 [INFO] 📂 XLSX file saved: 5g-mobile-subscriptions-worldwide.xlsx
+2024-12-16 16:39:57 [INFO] 📂 XLSX file saved: 5g-smartphone-shipments-worldwide.xlsx
+2024-12-16 16:40:13 [INFO] 📂 XLSX file saved: 5g-security-market-size-worldwide.xlsx
+2024-12-16 16:40:28 [INFO] 📂 XLSX file saved: average-5g-availability-in-countries.xlsx
+2024-12-16 16:40:30 [ERROR] ❌ Failed to download XLSX file from 5G upgrade costs and benefits across use cases: https://www.statista.com/statistics/1190049/use-cases-benefits-costs-5g-upgrade-europe/: Message: invalid argument
+  (Session info: chrome=131.0.6778.108)
+Stacktrace:
+#0 0x55eb17f7c31a <unknown>
+#1 0x55eb17a9253d <unknown>
+#2 0x55eb17a7a00f <unknown>
+#3 0x55eb17a78615 <unknown>
+#4 0x55eb17a78d3a <unknown>
+#5 0x55eb17a95009 <unknown>
+#6 0x55eb17b24b35 <unknown>
+#7 0x55eb17b05462 <unknown>
+#8 0x55eb17b23ed7 <unknown>
+#9 0x55eb17b05203 <unknown>
+#10 0x55eb17ad3cc0 <unknown>
+#11 0x55eb17ad4c9e <unknown>
+#12 0x55eb17f49d0b <unknown>
+#13 0x55eb17f4dc92 <unknown>
+#14 0x55eb17f36b3c <unknown>
+#15 0x55eb17f4e807 <unknown>
+#16 0x55eb17f1c0df <unknown>
+#17 0x55eb17f6b578 <unknown>
+#18 0x55eb17f6b740 <unknown>
+#19 0x55eb17f7b196 <unknown>
+#20 0x7f6d46eb2ac3 <unknown>
+
+2024-12-16 16:40:30 [INFO] 🔄 Retrying download (1/2)...
+2024-12-16 16:40:32 [ERROR] ❌ Failed to download XLSX file from 5G upgrade costs and benefits across use cases: https://www.statista.com/statistics/1190049/use-cases-benefits-costs-5g-upgrade-europe/: Message: invalid argument
+  (Session info: chrome=131.0.6778.108)
+Stacktrace:
+#0 0x56406cda631a <unknown>
+#1 0x56406c8bc53d <unknown>
+#2 0x56406c8a400f <unknown>
+#3 0x56406c8a2615 <unknown>
+#4 0x56406c8a2d3a <unknown>
+#5 0x56406c8bf009 <unknown>
+#6 0x56406c94eb35 <unknown>
+#7 0x56406c92f462 <unknown>
+#8 0x56406c94ded7 <unknown>
+#9 0x56406c92f203 <unknown>
+#10 0x56406c8fdcc0 <unknown>
+#11 0x56406c8fec9e <unknown>
+#12 0x56406cd73d0b <unknown>
+#13 0x56406cd77c92 <unknown>
+#14 0x56406cd60b3c <unknown>
+#15 0x56406cd78807 <unknown>
+#16 0x56406cd460df <unknown>
+#17 0x56406cd95578 <unknown>
+#18 0x56406cd95740 <unknown>
+#19 0x56406cda5196 <unknown>
+#20 0x7fe4cae73ac3 <unknown>
+
+2024-12-16 16:40:32 [INFO] 🔄 Retrying download (2/2)...
+2024-12-16 16:40:36 [ERROR] ❌ Failed to download XLSX file from 5G upgrade costs and benefits across use cases: https://www.statista.com/statistics/1190049/use-cases-benefits-costs-5g-upgrade-europe/: Message: invalid argument
+  (Session info: chrome=131.0.6778.108)
+Stacktrace:
+#0 0x55f030c1931a <unknown>
+#1 0x55f03072f53d <unknown>
+#2 0x55f03071700f <unknown>
+#3 0x55f030715615 <unknown>
+#4 0x55f030715d3a <unknown>
+#5 0x55f030732009 <unknown>
+#6 0x55f0307c1b35 <unknown>
+#7 0x55f0307a2462 <unknown>
+#8 0x55f0307c0ed7 <unknown>
+#9 0x55f0307a2203 <unknown>
+#10 0x55f030770cc0 <unknown>
+#11 0x55f030771c9e <unknown>
+#12 0x55f030be6d0b <unknown>
+#13 0x55f030beac92 <unknown>
+#14 0x55f030bd3b3c <unknown>
+#15 0x55f030beb807 <unknown>
+#16 0x55f030bb90df <unknown>
+#17 0x55f030c08578 <unknown>
+#18 0x55f030c08740 <unknown>
+#19 0x55f030c18196 <unknown>
+#20 0x7f6794a8dac3 <unknown>
+
+2024-12-16 16:40:36 [ERROR] ❌ Giving up on 5G upgrade costs and benefits across use cases: https://www.statista.com/statistics/1190049/use-cases-benefits-costs-5g-upgrade-europe/ after 2 attempts.
+2024-12-16 16:40:53 [INFO] 📂 XLSX file saved: 5g-benefits-and-costs-open-innovation-platforms-europe.xlsx
+2024-12-16 16:41:08 [INFO] 📂 XLSX file saved: fibre-broadband-penetration-rate-france.xlsx
+2024-12-16 16:41:24 [INFO] 📂 XLSX file saved: number-antennas-5g-by-operator-france.xlsx
+2024-12-16 16:41:39 [INFO] 📂 XLSX file saved: number-antennas-5g-by-city-france.xlsx
+2024-12-16 16:41:55 [INFO] 📂 XLSX file saved: 5g-sites-coverage-network-operator-bandwidth-france.xlsx
+2024-12-16 16:42:13 [INFO] 📂 XLSX file saved: 5g-index-score-readiness-implementation-factor-france.xlsx
+2024-12-16 16:42:29 [INFO] 📂 XLSX file saved: 5g-sites-coverage-bouygues-telecom-france.xlsx
+2024-12-16 16:42:46 [INFO] 📂 XLSX file saved: 5g-sites-coverage-free-mobile-france.xlsx
+2024-12-16 16:43:01 [INFO] 📂 XLSX file saved: 5g-sites-coverage-orange-france.xlsx
+2024-12-16 16:43:16 [INFO] 📂 XLSX file saved: 5g-sites-coverage-sfr-france.xlsx
+2024-12-16 16:43:33 [INFO] 📂 XLSX file saved: 5g-knowledge-among-population-france.xlsx
+2024-12-16 16:43:49 [INFO] 📂 XLSX file saved: 5g-considered-usages-future-implementation-france.xlsx
+2024-12-16 16:44:06 [INFO] 📂 XLSX file saved: opinion-future-5g-subscription-when-available-france.xlsx
+2024-12-16 16:44:22 [INFO] 📂 XLSX file saved: 5g-considered-usages-future-implementation-france.xlsx
+2024-12-16 16:44:38 [INFO] 📂 XLSX file saved: share-favorable-to-destruction-5g-cell-towers-france.xlsx
+2024-12-16 16:44:42 [ERROR] ❌ Failed to download XLSX file from https://www.statista.com/statistics/1201885/share-people-concerned-health-risks-electromagnetic-fields-france/: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2024-12-16 16:44:42 [INFO] 🔄 Retrying download (1/2)...

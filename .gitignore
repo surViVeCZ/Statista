@@ -1,2 +1,4 @@
 .env
 statista_data/
+scraper.log
+__pycache__

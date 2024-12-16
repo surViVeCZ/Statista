@@ -26,6 +26,7 @@ import chromedriver_autoinstaller
 files_to_be_downloaded = 0  # Counter for files to download
 failed_downloads = []  # List of failed download URLs
 MAX_RETRIES = 2  # Retry limit for failed downloads
+failed = 0
 
 # Logging Configuration
 for handler in logging.root.handlers[:]:
@@ -288,7 +289,7 @@ def scrape_topic(topic_url):
 
 def download_xlsx(section_url, base_folder, pbar, subfolder="topic sections", retry_count=0):
     """Download the XLSX file from the section URL and handle errors gracefully."""
-    global failed_downloads
+    global failed_downloads, failed
 
     # Ensure the subfolder exists
     save_folder = os.path.join(base_folder, subfolder)
@@ -323,6 +324,8 @@ def download_xlsx(section_url, base_folder, pbar, subfolder="topic sections", re
         else:
             failed_downloads.append(section_url)
             log.error(f"❌ Giving up on {section_url} after {MAX_RETRIES} attempts.")
+            failed += 1
+            print(f'Failed: {failed}')
             return
     finally:
         driver.quit()
@@ -344,6 +347,9 @@ def download_xlsx(section_url, base_folder, pbar, subfolder="topic sections", re
         log.error(f"❌ Failed to rename the downloaded file: {e}")
 
 
+def get_failed_downloads():
+    """Return the list of failed download URLs."""
+    return failed
 
 def download_report_with_selenium(report_url, topic_name):
     """Redirect to 'Explore this report' URL, open the Download dropdown, and click the PDF option."""
