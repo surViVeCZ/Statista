@@ -2,3 +2,5 @@
 statista_data/
 scraper.log
 __pycache__
+*.pyc
+*.log

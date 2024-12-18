@@ -21,6 +21,8 @@ from scraper import (
     get_failed_downloads,
 )
 
+from transform import remove_overview
+
 # Initialize Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SOLAR])
 app.config.suppress_callback_exceptions = (
@@ -1179,7 +1181,7 @@ def parse_tree(path, selected_files, level=0, is_topic_section=False):
     is_topic_section = is_topic_section or (folder_name.lower() == "topic sections")
 
     folder_style = {
-        "margin-left": f"{level * 20}px",
+        "margin-left": f"{level * 40}px",
         "padding": "5px",
         "background-color": "transparent",
         "border-radius": "5px",
@@ -1291,19 +1293,15 @@ def transform_files(n_clicks, selected_files):
     if not selected_files:
         return "No files selected for transformation."
 
-    transformed_files = []
-    for file in selected_files:
-        try:
-            file_path = os.path.join(DOWNLOAD_DIR, file)
-            if os.path.exists(file_path):
-                transformed_files.append(file)
-        except Exception as e:
-            logging.error(f"Error transforming file {file}: {e}")
+    base_dir = DOWNLOAD_DIR  # The base directory where files are stored
 
-    if transformed_files:
-        return f"Transformed files: {', '.join(transformed_files)}"
-    else:
-        return "No files transformed."
+    try:
+        remove_overview(selected_files, base_dir)
+        return "Files transformed successfully. Check the 'transformed' folders."
+    except Exception as e:
+        logging.error(f"Error during transformation: {e}")
+        return f"Transformation failed: {e}"
+
 
 
 if __name__ == "__main__":
