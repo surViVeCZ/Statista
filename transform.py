@@ -1,53 +1,84 @@
 import os
 import pandas as pd
+import logging
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    handlers=[
+        logging.StreamHandler(),  # Console logging
+        logging.FileHandler("scraper.log", mode="w", encoding="utf-8"),  # File logging
+    ],
+)
+log = logging.getLogger()
+
+
+def format_relative_path(base_dir, full_path):
+    """Format and return the relative path from the base directory."""
+    try:
+        return os.path.relpath(full_path, base_dir)
+    except ValueError:
+        return full_path
+
 
 def remove_overview(selected_files, base_dir="statista_data"):
     """
-    Removes the sheet named 'Overview' from the selected Excel files
-    and saves the transformed files into a sibling 'transformed' folder.
-
-    Parameters:
-        selected_files (list): List of file paths relative to the base directory.
-        base_dir (str): Base directory containing the files and their parent folders.
+    Transform selected files by removing the 'Overview' sheet and save the results.
+    Outputs a summary log of all transformed files.
     """
+    transformed_files = []  # Store paths of successfully transformed files
+    errors = []  # Store paths of files with errors
+
     for relative_path in selected_files:
         try:
-            # Construct the full input file path
             input_path = os.path.join(base_dir, relative_path)
+
             if not os.path.exists(input_path):
-                print(f"File not found: {input_path}")
+                logging.warning(f"File not found: {relative_path}. Skipping transformation.")
+                errors.append(relative_path)
                 continue
 
-            # Identify the parent directory of the file
+            # transformed output directory
             parent_dir = os.path.dirname(input_path)
-
-            # Create the "transformed" directory at the same level as "topic sections"
             transformed_dir = os.path.join(parent_dir, "transformed")
             os.makedirs(transformed_dir, exist_ok=True)
 
-            # Construct the output file path
             output_path = os.path.join(transformed_dir, os.path.basename(input_path))
+            formatted_path = format_relative_path(base_dir, output_path)
 
-            # Load the Excel file and remove the "Overview" sheet
+            # check sheets
             with pd.ExcelFile(input_path) as xls:
                 sheets = xls.sheet_names
 
                 if "Overview" not in sheets:
-                    print(f"'Overview' sheet not found in {input_path}. Skipping.")
+                    logging.info(f"'Overview' sheet not found in {relative_path}. Skipping file.")
                     continue
 
-                # Load all sheets except "Overview"
                 sheet_data = {
                     sheet: pd.read_excel(xls, sheet_name=sheet)
                     for sheet in sheets if sheet != "Overview"
                 }
 
-            # Save the modified Excel file to the transformed directory
+            # Write the transformed data to a new Excel file
             with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
                 for sheet_name, data in sheet_data.items():
                     data.to_excel(writer, sheet_name=sheet_name, index=False)
 
-            print(f"Transformed file saved: {output_path}")
+            transformed_files.append(formatted_path)
 
         except Exception as e:
-            print(f"Error processing {relative_path}: {e}")
+            logging.error(f"An error occurred while processing file {relative_path}: {e}")
+            errors.append(relative_path)
+
+    # Log summary of the transformation
+    logging.info(f"Selected files to transform: {len(selected_files)}")
+    if transformed_files:
+        logging.info("Successfully saved:")
+        for path in transformed_files:
+            logging.info(f"    {path}")
+    if errors:
+        logging.error("Errors occurred during transformation for the following files:")
+        for path in errors:
+            logging.error(f"    {path}")

@@ -497,6 +497,7 @@ app.layout = dbc.Container(
                     ],
                 ),
                 # Tab 2: Data Transformation
+                # Tab 2: Data Transformation
                 dbc.Tab(
                     label="Data Transformation",
                     tab_id="transformation",
@@ -526,17 +527,7 @@ app.layout = dbc.Container(
                                 dbc.Col(
                                     dbc.Card(
                                         [
-                                            dbc.CardHeader(
-                                                "File Selection",
-                                                style={
-                                                    "background-color": "#1A1A19",
-                                                    "color": "#ffffff",
-                                                    "padding": "10px",
-                                                    "font-weight": "bold",
-                                                    "text-align": "center",
-                                                    "border-radius": "10px 10px 0 0",
-                                                },
-                                            ),
+                                            dbc.CardHeader("File Selection", style=darker_header_style),
                                             dbc.CardBody(
                                                 [
                                                     dbc.Button(
@@ -559,14 +550,7 @@ app.layout = dbc.Container(
                                                 ]
                                             ),
                                         ],
-                                        style={
-                                            "opacity": "1",
-                                            "pointer-events": "auto",
-                                            "box-shadow": "0 8px 16px rgba(0, 0, 0, 0.2)",
-                                            "border-radius": "12px",
-                                            "background": "linear-gradient(to bottom, #ffffff, #f9f9f9)",
-                                            "transition": "all 0.7s ease-in-out",
-                                        },
+                                        style=active_card_style,
                                     ),
                                     width=6,
                                 ),
@@ -574,17 +558,7 @@ app.layout = dbc.Container(
                                 dbc.Col(
                                     dbc.Card(
                                         [
-                                            dbc.CardHeader(
-                                                "Transformation Output",
-                                                style={
-                                                    "background-color": "#1A1A19",
-                                                    "color": "#ffffff",
-                                                    "padding": "10px",
-                                                    "font-weight": "bold",
-                                                    "text-align": "center",
-                                                    "border-radius": "10px 10px 0 0",
-                                                },
-                                            ),
+                                            dbc.CardHeader("Transformation Output", style=darker_header_style),
                                             dbc.CardBody(
                                                 [
                                                     dbc.Button(
@@ -610,22 +584,51 @@ app.layout = dbc.Container(
                                                 ]
                                             ),
                                         ],
-                                        style={
-                                            "opacity": "1",
-                                            "pointer-events": "auto",
-                                            "box-shadow": "0 8px 16px rgba(0, 0, 0, 0.2)",
-                                            "border-radius": "12px",
-                                            "background": "linear-gradient(to bottom, #ffffff, #f9f9f9)",
-                                            "transition": "all 0.7s ease-in-out",
-                                        },
+                                        style=active_card_style,
                                     ),
                                     width=6,
                                 ),
                             ],
-                            style={"height": "100%"},
-                        )
+                            style={"margin-bottom": "20px"},  # Add spacing between this row and the next
+                        ),
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader("Logs", style=darker_header_style),
+                                            dbc.CardBody(
+                                                [
+                                                    html.Div(
+                                                        "Transformation logs will appear below in real-time:",
+                                                        className="mb-2",
+                                                    ),
+                                                    html.Pre(
+                                                        id="transform-log-window",
+                                                        className="log-window",
+                                                        style={
+                                                            "height": "479px",
+                                                            "overflow-y": "auto",
+                                                            "border": "1px solid #ddd",
+                                                            "padding": "10px",
+                                                            "background-color": "#f9f9f9",
+                                                            "font-family": "monospace",
+                                                            "border-radius": "8px",
+                                                        },
+                                                    ),
+                                                ]
+                                            ),
+                                        ],
+                                        style=active_card_style,
+                                    ),
+                                    width=12,
+                                )
+                            ]
+                        ),
+
                     ],
-                ),
+                )
+
             ],
         ),
         # Footer
@@ -1138,6 +1141,42 @@ def update_logs(n_intervals):
 
 
 @app.callback(
+    Output("transform-log-window", "children"),
+    Input("log-interval", "n_intervals"),
+)
+def update_transform_logs(n_intervals):
+    """
+    Update the transform log window with segmented log messages for better readability.
+    """
+    segmented_logs = []
+    segment_delimiter = "\n" + "=" * 80 + "\n"
+
+    # Group related log messages into segments
+    current_segment = []
+    for log_entry in log_data:
+        if (
+            "Starting" in log_entry
+            or "Selected" in log_entry
+            or "Analyzing" in log_entry
+        ):
+            if current_segment:
+                segmented_logs.append("\n".join(current_segment))
+                segmented_logs.append(
+                    segment_delimiter
+                )  # Add a delimiter between segments
+                current_segment = []
+
+        # Add the log entry to the current segment
+        current_segment.append(log_entry)
+
+    if current_segment:
+        segmented_logs.append("\n".join(current_segment))
+
+    return "\n".join(segmented_logs)
+
+
+
+@app.callback(
     [Output("file-tree", "children"), Output("selected-files-store", "data")],
     [
         Input("refresh-files-button", "n_clicks"),
@@ -1209,6 +1248,11 @@ def parse_tree(path, selected_files, level=0, is_topic_section=False):
     # Add files and subfolders
     for item in sorted(os.listdir(path)):
         item_path = os.path.join(path, item)
+
+        # Exclude the 'transformed' folder
+        if os.path.basename(item_path).lower() == "transformed":
+            continue
+        
         if os.path.isdir(item_path):
             # Recursively parse subfolders
             items.extend(
@@ -1291,17 +1335,37 @@ def parse_tree(path, selected_files, level=0, is_topic_section=False):
 def transform_files(n_clicks, selected_files):
     """Handle transformation of selected files."""
     if not selected_files:
-        return "No files selected for transformation."
+        return "⚠️ No files selected for transformation."
 
-    base_dir = DOWNLOAD_DIR  # The base directory where files are stored
+    base_dir = DOWNLOAD_DIR  #
 
+    transformations = [
+        {"name": "Removing overview sheet", "function": remove_overview},
+        # {"name": "Another Transformation", "function": another_function},
+    ]
+
+    transformation_status = []
+    total_steps = len(transformations)
+    
     try:
-        remove_overview(selected_files, base_dir)
-        return "Files transformed successfully. Check the 'transformed' folders."
+        for idx, transformation in enumerate(transformations, start=1):
+            step = f"🔄 Transformation {idx}/{total_steps}: {transformation['name']}... "
+            try:
+                transformation["function"](selected_files, base_dir)  # Call the transformation function
+                step += "✅ Completed"
+            except Exception as e:
+                step += f"❌ Failed ({str(e)})"
+            transformation_status.append(html.Div(step, style={"margin-bottom": "5px"}))
+
+        # Add final status summary
+        transformation_status.append(
+            html.Div("🎉 All transformations completed.", style={"color": "green", "font-weight": "bold"})
+        )
     except Exception as e:
         logging.error(f"Error during transformation: {e}")
-        return f"Transformation failed: {e}"
+        return f"❌ Transformation process failed: {e}"
 
+    return transformation_status
 
 
 if __name__ == "__main__":
