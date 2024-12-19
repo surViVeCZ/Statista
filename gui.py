@@ -21,7 +21,7 @@ from scraper import (
     get_failed_downloads,
 )
 
-from transform import remove_overview
+from transform import remove_overview, remove_header_and_empty_column
 
 # Initialize Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SOLAR])
@@ -527,7 +527,10 @@ app.layout = dbc.Container(
                                 dbc.Col(
                                     dbc.Card(
                                         [
-                                            dbc.CardHeader("File Selection", style=darker_header_style),
+                                            dbc.CardHeader(
+                                                "File Selection",
+                                                style=darker_header_style,
+                                            ),
                                             dbc.CardBody(
                                                 [
                                                     dbc.Button(
@@ -558,7 +561,10 @@ app.layout = dbc.Container(
                                 dbc.Col(
                                     dbc.Card(
                                         [
-                                            dbc.CardHeader("Transformation Output", style=darker_header_style),
+                                            dbc.CardHeader(
+                                                "Transformation Output",
+                                                style=darker_header_style,
+                                            ),
                                             dbc.CardBody(
                                                 [
                                                     dbc.Button(
@@ -589,14 +595,18 @@ app.layout = dbc.Container(
                                     width=6,
                                 ),
                             ],
-                            style={"margin-bottom": "20px"},  # Add spacing between this row and the next
+                            style={
+                                "margin-bottom": "20px"
+                            },  # Add spacing between this row and the next
                         ),
                         dbc.Row(
                             [
                                 dbc.Col(
                                     dbc.Card(
                                         [
-                                            dbc.CardHeader("Logs", style=darker_header_style),
+                                            dbc.CardHeader(
+                                                "Logs", style=darker_header_style
+                                            ),
                                             dbc.CardBody(
                                                 [
                                                     html.Div(
@@ -625,10 +635,8 @@ app.layout = dbc.Container(
                                 )
                             ]
                         ),
-
                     ],
-                )
-
+                ),
             ],
         ),
         # Footer
@@ -1175,7 +1183,6 @@ def update_transform_logs(n_intervals):
     return "\n".join(segmented_logs)
 
 
-
 @app.callback(
     [Output("file-tree", "children"), Output("selected-files-store", "data")],
     [
@@ -1252,7 +1259,7 @@ def parse_tree(path, selected_files, level=0, is_topic_section=False):
         # Exclude the 'transformed' folder
         if os.path.basename(item_path).lower() == "transformed":
             continue
-        
+
         if os.path.isdir(item_path):
             # Recursively parse subfolders
             items.extend(
@@ -1337,21 +1344,28 @@ def transform_files(n_clicks, selected_files):
     if not selected_files:
         return "⚠️ No files selected for transformation."
 
-    base_dir = DOWNLOAD_DIR  #
+    base_dir = DOWNLOAD_DIR
 
     transformations = [
         {"name": "Removing overview sheet", "function": remove_overview},
-        # {"name": "Another Transformation", "function": another_function},
+        {
+            "name": "Removing header rows and empty first column",
+            "function": remove_header_and_empty_column,
+        },
     ]
 
     transformation_status = []
     total_steps = len(transformations)
-    
+
     try:
         for idx, transformation in enumerate(transformations, start=1):
-            step = f"🔄 Transformation {idx}/{total_steps}: {transformation['name']}... "
+            step = (
+                f"🔄 Transformation {idx}/{total_steps}: {transformation['name']}... "
+            )
             try:
-                transformation["function"](selected_files, base_dir)  # Call the transformation function
+                transformation["function"](
+                    selected_files, base_dir
+                )  # Call the transformation function
                 step += "✅ Completed"
             except Exception as e:
                 step += f"❌ Failed ({str(e)})"
@@ -1359,7 +1373,10 @@ def transform_files(n_clicks, selected_files):
 
         # Add final status summary
         transformation_status.append(
-            html.Div("🎉 All transformations completed.", style={"color": "green", "font-weight": "bold"})
+            html.Div(
+                "🎉 All transformations completed.",
+                style={"color": "green", "font-weight": "bold"},
+            )
         )
     except Exception as e:
         logging.error(f"Error during transformation: {e}")
