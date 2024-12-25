@@ -22,6 +22,10 @@ from selenium.webdriver.chrome.options import Options
 # ChromeDriver auto-installer
 import chromedriver_autoinstaller
 
+# search for demonyms
+from denonyms import get_demonym
+
+
 # Constants and global variables
 files_to_be_downloaded = 0  # Counter for files to download
 failed_downloads = []  # List of failed download URLs
@@ -156,8 +160,16 @@ def login_with_selenium(driver):
 
 
 def search_topic(topic):
-    """Search and return a list of URLs for topics that match the user's query."""
+    """Search and return a list of URLs for topics that match
+    the user's query (country name or its demonym)."""
     log.info(f'🔍 Searching for topics related to: "{topic}"...')
+
+    # Get the demonym for the input topic
+    demonym = get_demonym(topic)
+    # Pre-lowercase them for easy matching
+    topic_lower = topic.lower()
+    demonym_lower = demonym.lower() if demonym else None
+
     page_number = 1
     matches = []
 
@@ -180,8 +192,12 @@ def search_topic(topic):
             href = box.get("href", "").strip()
             title_element = box.find("h2", class_="panel-box--title")
             topic_name = title_element.get_text(strip=True) if title_element else ""
+            topic_name_lower = topic_name.lower()
 
-            if topic.lower() in topic_name.lower():
+            # Check if the user input OR its demonym is in the topic name
+            if (topic_lower in topic_name_lower) or (
+                demonym_lower and demonym_lower in topic_name_lower
+            ):
                 matches.append((topic_name, urljoin(TOPICS_URL, href)))
 
         page_number += 1

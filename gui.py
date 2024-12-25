@@ -87,6 +87,22 @@ os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 populate_initial_files()
 
 
+def determine_match_type(input_topic, result_topic):
+    """Classify the match type based on topic similarity."""
+    input_topic_lower = input_topic.lower()
+    result_topic_lower = result_topic.lower()
+
+    if input_topic_lower == result_topic_lower:
+        return "Exact match"
+    elif (
+        input_topic_lower in result_topic_lower
+        or result_topic_lower in input_topic_lower
+    ):
+        return "Close match"
+    else:
+        return "Somewhat match"
+
+
 # Define styles for active and inactive cards
 active_card_style = {
     "opacity": "1",
@@ -780,6 +796,7 @@ def handle_search_selection_scraping(
         topics = search_topic(topic_input)
         session_topics = topics or []
 
+        # If no topics found, return early
         if not topics:
             logging.warning(f"No topics found for '{topic_input}'.")
             return (
@@ -792,24 +809,82 @@ def handle_search_selection_scraping(
             )
 
         logging.info(f"Found {len(topics)} topics for '{topic_input}'.")
-        result_cards = [
-            dbc.Card(
-                dbc.CardBody(
-                    [
-                        html.H6(name, className="card-title"),
-                        html.Button(
-                            "Select",
-                            id={"type": "search-result", "index": idx},
-                            className="btn btn-outline-primary",
-                            style={"float": "right", "margin-top": "-32px"},
-                        ),
-                    ]
-                ),
-                id={"type": "result-card", "index": idx},  # Add ID to card for tracking
-                style={"margin-bottom": "10px", "padding": "8px"},
+
+        # 1) Priority map
+        match_priority_map = {"Exact match": 1, "Close match": 2, "Somewhat match": 3}
+
+        # 2) Build (name, url, match_type)
+        temp_topics = []
+        for name, url in topics:
+            mtype = determine_match_type(topic_input, name)
+            temp_topics.append((name, url, mtype))
+
+        # 3) Sort them by priority
+        sorted_topics = sorted(temp_topics, key=lambda x: match_priority_map[x[2]])
+
+        # 4) Overwrite session_topics in sorted order
+        session_topics = [(name, url) for (name, url, mtype) in sorted_topics]
+
+        # 5) Build the result_cards from sorted data
+        result_cards = []
+        for idx, (name, url) in enumerate(session_topics):
+            match_type = sorted_topics[idx][2]
+            match_color = {
+                "Exact match": "#28a745",
+                "Close match": "#ffc107",
+                "Somewhat match": "#dc3545",
+            }.get(
+                match_type, "#6c757d"
+            )  # Default grey
+
+            result_cards.append(
+                dbc.Card(
+                    dbc.CardBody(
+                        html.Div(
+                            [
+                                html.Div(
+                                    [
+                                        html.Div(
+                                            name,
+                                            className="card-title",
+                                            style={
+                                                "font-weight": "bold",
+                                                "font-size": "1.1em",
+                                                "margin-bottom": "5px",
+                                            },
+                                        ),
+                                        html.Div(
+                                            match_type,
+                                            style={
+                                                "color": match_color,
+                                                "font-weight": "bold",
+                                                "font-size": "0.9em",
+                                            },
+                                        ),
+                                    ],
+                                    style={"flex": "1", "padding-right": "10px"},
+                                ),
+                                html.Div(
+                                    html.Button(
+                                        "Select",
+                                        id={"type": "search-result", "index": idx},
+                                        className="btn btn-outline-primary",
+                                    ),
+                                    style={"align-self": "center"},
+                                ),
+                            ],
+                            style={
+                                "display": "flex",
+                                "align-items": "center",
+                                "justify-content": "space-between",
+                            },
+                        )
+                    ),
+                    id={"type": "result-card", "index": idx},
+                    style={"margin-bottom": "10px", "padding": "8px"},
+                )
             )
-            for idx, (name, _) in enumerate(session_topics)
-        ]
+
         return (
             result_cards,
             inactive_card_style,
