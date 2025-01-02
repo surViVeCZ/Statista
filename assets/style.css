@@ -37,3 +37,8 @@
   transition: background-color 0.3s;
   border-radius: 5px;
 }
+
+#region-selector:hover {
+  background-color: #eaeaea;
+  border-color: #007bff;
+}

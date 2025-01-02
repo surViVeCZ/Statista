@@ -175,46 +175,160 @@ app.layout = dbc.Container(
                 "pointer-events": "none",
             }
         ),
-        # Header
-        dbc.Row(
+        html.Div(
             [
-                dbc.Col(
-                    [
-                        html.Div(
+                # Region Selector Row
+                html.Div(
+                    id="region-selector-container",
+                    style={"display": "none"},  # Initially hidden
+                    children=[
+                        dbc.Row(
                             [
-                                html.H1(
-                                    children=[
-                                        "Statista Scraper Dashboard ",
-                                        html.Span(
-                                            "by ",
+                                dbc.Col(
+                                    html.Div(),
+                                    width=True,
+                                ),
+                                dbc.Col(
+                                    dbc.InputGroup(
+                                        [
+                                            # Hint Icon with Tooltip
+                                            html.Div(
+                                                [
+                                                    html.Span(
+                                                        "?",
+                                                        id="region-hint",
+                                                        style={
+                                                            "color": "white",
+                                                            "background-color": "#007bff",
+                                                            "cursor": "pointer",
+                                                            "font-weight": "bold",
+                                                            "font-size": "0.9rem",
+                                                            "border-radius": "50%",
+                                                            "display": "inline-flex",
+                                                            "justify-content": "center",
+                                                            "align-items": "center",
+                                                            "width": "20px",
+                                                            "height": "20px",
+                                                            "box-shadow": "0 2px 4px rgba(0, 0, 0, 0.1)",
+                                                            "margin-right": "3px",
+                                                        },
+                                                    ),
+                                                    dbc.Tooltip(
+                                                        "Default is global Statista. Always use this unless a topic search was insufficient. Some reports are available on dedicated Statista pages only.",
+                                                        target="region-hint",
+                                                        placement="top",
+                                                        style={"font-size": "0.9rem"},
+                                                    ),
+                                                ],
+                                                style={
+                                                    "display": "flex",
+                                                    "align-items": "center",
+                                                },
+                                            ),
+                                            # Region Flag and Selector
+                                            dbc.InputGroupText(
+                                                id="region-flag-container",
+                                                children="🌍",  # Default emoji for "global"
+                                                style={
+                                                    "display": "flex",
+                                                    "align-items": "center",
+                                                    "justify-content": "center",
+                                                    "font-size": "1.5rem",
+                                                    "height": "35px",
+                                                    "width": "220px",
+                                                },
+                                            ),
+                                            dbc.Select(
+                                                id="region-selector",
+                                                options=[
+                                                    {
+                                                        "label": "Statista - Global",
+                                                        "value": "global",
+                                                    },
+                                                    {
+                                                        "label": "Statista - Germany",
+                                                        "value": "de",
+                                                    },
+                                                    {
+                                                        "label": "Statista - Spain",
+                                                        "value": "es",
+                                                    },
+                                                    {
+                                                        "label": "Statista - France",
+                                                        "value": "fr",
+                                                    },
+                                                ],
+                                                value="global",
+                                                style={
+                                                    "font-size": "1rem",
+                                                    "border-radius": "15px",
+                                                    "padding": "10px",
+                                                    "background-color": "#f9f9f9",
+                                                    "color": "#333",
+                                                    "width": "180px",
+                                                    "margin-left": "-10px",
+                                                    "margin-top": "-5px",
+                                                },
+                                            ),
+                                        ],
+                                        size="lg",
+                                        style={
+                                            "max-width": "500px",
+                                            "margin-top": "30px",
+                                        },
+                                    ),
+                                    width="auto",
+                                ),
+                            ],
+                            justify="end",
+                        ),
+                    ],
+                ),
+                # Header
+                dbc.Container(
+                    [
+                        # Main Title Row
+                        dbc.Row(
+                            dbc.Col(
+                                html.Div(
+                                    [
+                                        html.H1(
+                                            children=[
+                                                "Statista Scraper Dashboard ",
+                                                html.Span(
+                                                    "by ",
+                                                    style={
+                                                        "font-size": "28px",
+                                                        "font-weight": "normal",
+                                                    },
+                                                ),
+                                                html.Img(
+                                                    src="assets/logo_cropped.png",
+                                                    style={
+                                                        "height": "2.4em",
+                                                        "vertical-align": "middle",
+                                                        "margin-left": "2px",
+                                                    },
+                                                ),
+                                            ],
+                                            className="text-center my-1",
                                             style={
-                                                "font-size": "28px",
-                                                "font-weight": "normal",
-                                            },
-                                        ),
-                                        html.Img(
-                                            src="assets/logo_cropped.png",
-                                            style={
-                                                "height": "2.4em",
-                                                "vertical-align": "middle",
-                                                "margin-left": "2px",
+                                                "display": "inline-block",
+                                                "font-size": "46px",
+                                                "margin-bottom": "0px",
                                             },
                                         ),
                                     ],
-                                    className="text-center my-1",
-                                    style={
-                                        "display": "inline-block",
-                                        "font-size": "46px",
-                                        "margin-bottom": "0px",
-                                    },
+                                    style={"text-align": "center"},
                                 ),
-                            ],
-                            style={"text-align": "center", "margin-bottom": "0px"},
+                                width=12,  # Full-width for centering
+                            )
                         ),
-                    ]
+                    ],
+                    fluid=True,
+                    style={"margin-bottom": "20px"},
                 ),
-            ],
-            style={"margin-bottom": "2px", "margin-top": "15px"},
+            ]
         ),
         # Tabs Section
         dbc.Tabs(
@@ -513,7 +627,6 @@ app.layout = dbc.Container(
                     ],
                 ),
                 # Tab 2: Data Transformation
-                # Tab 2: Data Transformation
                 dbc.Tab(
                     label="Data Transformation",
                     tab_id="transformation",
@@ -723,6 +836,62 @@ app.layout = dbc.Container(
     fluid=True,
     style={"display": "flex", "flex-direction": "column", "min-height": "100vh"},
 )
+
+
+@app.callback(
+    Output("region-selector-container", "style"),
+    Input("main-tabs", "active_tab"),
+)
+def toggle_region_selector(active_tab):
+    if active_tab == "collection":
+        # Normal styling when enabled
+        return {
+            "display": "block",
+            "opacity": "1",  # Fully visible
+            "pointer-events": "auto",  # Interactive
+            "filter": "none",  # No blur
+            "transition": "all 0.3s ease",  # Smooth transition
+        }
+    elif active_tab == "transformation":
+        # Greyed out and blurred styling when disabled
+        return {
+            "display": "block",
+            "opacity": "0.5",  # Semi-transparent
+            "pointer-events": "none",  # Non-interactive
+            "filter": "blur(1px)",  # Add slight blur effect
+            "transition": "all 0.3s ease",  # Smooth transition
+        }
+    else:
+        # Hide the container for other tabs
+        return {"display": "none"}
+
+
+@app.callback(
+    Output("region-flag-container", "children"),  # Update the flag container
+    Input("region-selector", "value"),  # Watch for region selector changes
+)
+def update_region_flag(selected_region):
+    """
+    Update the flag (emoji or SVG) based on the selected region.
+    """
+    if selected_region == "global":
+        return "Statista version🌍"  # Emoji for global
+    else:
+        # Return an SVG image for specific regions
+        return html.Div(
+            [
+                "Statista version ",
+                html.Img(
+                    src=f"/assets/{selected_region}.svg",
+                    style={
+                        "height": "24px",
+                        "width": "24px",
+                        "margin-left": "5px",
+                    },
+                ),
+            ],
+            style={"display": "flex", "align-items": "center"},
+        )
 
 
 # Login callback
@@ -1116,7 +1285,7 @@ def refresh_files_and_update_progress(n_intervals):
                     },
                 )
             )
-        print(f"Failed inside gui: {failed_count}")
+        # print(f"Failed inside gui: {failed_count}")
         # Progress text
         progress_text = f"{downloaded_count} succeeded, {failed_count} failed, {total_processed}/{files_to_be_downloaded} processed ({int(progress)}%)."
         failed_links = [
@@ -1406,6 +1575,15 @@ def parse_tree(path, selected_files, level=0, is_topic_section=False):
                 )
 
     return items
+
+
+@app.callback(
+    Output("selected-region", "children"),
+    Input("region-selector", "value"),
+)
+def update_region(selected_region):
+    logging.info(f"Region selected: {selected_region}")
+    return f"Currently selected region: {selected_region}"
 
 
 @app.callback(
