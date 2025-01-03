@@ -260,115 +260,82 @@ app_layout = dbc.Container(
                         dbc.Row(
                             [
                                 dbc.Col(
-                                    [
-                                        dbc.Card(
-                                            [
-                                                dbc.CardHeader(
-                                                    "Login",
-                                                    style={
-                                                        "background-color": "#1A1A19",
-                                                        "color": "#ffffff",
-                                                        "padding": "10px",
-                                                        "font-weight": "bold",
-                                                        "text-align": "center",
-                                                        "border-radius": "10px 10px 0 0",
-                                                    },
-                                                ),
-                                                dbc.CardBody(
-                                                    [
-                                                        html.Div(
-                                                            "Manage your login process here.",
-                                                            className="mb-2",
-                                                        ),
-                                                        dbc.Button(
-                                                            "Login",
-                                                            id="login-button",
-                                                            color="primary",
-                                                            className="mb-3",
-                                                        ),
-                                                        html.Div(
-                                                            id="login-status",
-                                                            children="Not logged in.",
-                                                            className="text-danger",
-                                                        ),
-                                                    ]
-                                                ),
-                                            ],
-                                            id="login-card",
-                                            style={
-                                                "opacity": "1",
-                                                "pointer-events": "auto",
-                                                "box-shadow": "0 8px 16px rgba(0, 0, 0, 0.2)",
-                                                "border-radius": "12px",
-                                                "background": "linear-gradient(to bottom, #ffffff, #f9f9f9)",
-                                                "transition": "all 0.7s ease-in-out",
-                                            },
-                                        )
-                                    ],
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader(
+                                                "Login",
+                                                style=darker_header_style,
+                                            ),
+                                            dbc.CardBody(
+                                                [
+                                                    html.Div(
+                                                        "Manage your login process here.",
+                                                        className="mb-2",
+                                                    ),
+                                                    dbc.Button(
+                                                        "Login",
+                                                        id="login-button",
+                                                        color="primary",
+                                                        className="mb-3",
+                                                    ),
+                                                    html.Div(
+                                                        id="login-status",
+                                                        children="Not logged in.",
+                                                        className="text-danger",
+                                                    ),
+                                                ]
+                                            ),
+                                        ],
+                                        id="login-card",
+                                        style=active_card_style,
+                                    ),
                                     width=4,
                                 ),
                                 dbc.Col(
-                                    [
-                                        dbc.Card(
-                                            [
-                                                dbc.CardHeader(
-                                                    "Topic Search",
-                                                    style={
-                                                        "background-color": "#1A1A19",
-                                                        "color": "#ffffff",
-                                                        "padding": "10px",
-                                                        "font-weight": "bold",
-                                                        "text-align": "center",
-                                                        "border-radius": "10px 10px 0 0",
-                                                    },
-                                                ),
-                                                dbc.CardBody(
-                                                    [
-                                                        dcc.Input(
-                                                            id="topic-input",
-                                                            placeholder="Enter a topic...",
-                                                            type="text",
-                                                            className="mb-2 form-control",
-                                                        ),
-                                                        dbc.Button(
-                                                            "Search",
-                                                            id="search-button",
-                                                            color="success",
-                                                            className="mb-3",
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader(
+                                                "Topic Search",
+                                                style=darker_header_style,
+                                            ),
+                                            dbc.CardBody(
+                                                [
+                                                    dcc.Input(
+                                                        id="topic-input",
+                                                        placeholder="Enter a topic...",
+                                                        type="text",
+                                                        className="mb-2 form-control",
+                                                    ),
+                                                    dbc.Button(
+                                                        "Search",
+                                                        id="search-button",
+                                                        color="success",
+                                                        className="mb-3",
+                                                        style={
+                                                            "display": "inline-block"
+                                                        },
+                                                    ),
+                                                    dcc.Loading(
+                                                        id="loading-indicator",
+                                                        type="circle",
+                                                        children=html.Div(
+                                                            id="search-results-container",
                                                             style={
-                                                                "display": "inline-block"
+                                                                "height": "300px",
+                                                                "overflow-y": "auto",
+                                                                "border": "1px solid #ddd",
+                                                                "padding": "10px",
+                                                                "background-color": "#f9f9f9",
+                                                                "border-radius": "8px",
                                                             },
                                                         ),
-                                                        dcc.Loading(
-                                                            id="loading-indicator",
-                                                            type="circle",
-                                                            children=html.Div(
-                                                                id="search-results-container",
-                                                                style={
-                                                                    "height": "300px",
-                                                                    "overflow-y": "auto",
-                                                                    "border": "1px solid #ddd",
-                                                                    "padding": "10px",
-                                                                    "background-color": "#f9f9f9",
-                                                                    "border-radius": "8px",
-                                                                },
-                                                            ),
-                                                        ),
-                                                    ]
-                                                ),
-                                            ],
-                                            id="search-card",
-                                            style={
-                                                "opacity": "0.5",
-                                                "pointer-events": "none",
-                                                "box-shadow": "0 4px 8px rgba(0, 0, 0, 0.1)",
-                                                "border-radius": "12px",
-                                                "background-color": "#e0e0e0",
-                                                "filter": "blur(1.3px)",
-                                                "transition": "all 0.5s ease-in-out",
-                                            },
-                                        )
-                                    ],
+                                                    ),
+                                                ]
+                                            ),
+                                        ],
+                                        id="search-card",
+                                        style=inactive_card_style,
+                                    ),
                                     width=8,
                                 ),
                             ]
@@ -376,148 +343,200 @@ app_layout = dbc.Container(
                         dbc.Row(
                             [
                                 dbc.Col(
-                                    [
-                                        dbc.Card(
-                                            [
-                                                dbc.CardHeader(
-                                                    "Scraping",
-                                                    style={
-                                                        "background-color": "#1A1A19",
-                                                        "color": "#ffffff",
-                                                        "padding": "10px",
-                                                        "font-weight": "bold",
-                                                        "text-align": "center",
-                                                        "border-radius": "10px 10px 0 0",
-                                                    },
-                                                ),
-                                                dbc.CardBody(
-                                                    [
-                                                        dbc.Button(
-                                                            "Start Scraping",
-                                                            id="scrape-button",
-                                                            color="warning",
-                                                            className="mb-3",
-                                                            disabled=True,
-                                                        ),
-                                                        html.Div(
-                                                            id="scrape-status",
-                                                            children="No scraping started.",
-                                                            className="text-warning",
-                                                        ),
-                                                        html.Hr(),
-                                                        html.Div(
-                                                            "Downloaded Files:",
-                                                            className="mb-2",
-                                                        ),
-                                                        html.Ul(
-                                                            id="downloaded-files-container",
-                                                            style={
-                                                                "height": "250px",
-                                                                "overflow-y": "auto",
-                                                                "border": "1px solid #ddd",
-                                                                "padding": "10px",
-                                                                "background-color": "#f9f9f9",
-                                                                "font-family": "monospace",
-                                                            },
-                                                        ),
-                                                        html.Div(
-                                                            id="progress-summary",
-                                                            className="mb-2",
-                                                            style={
-                                                                "text-align": "center",
-                                                                "font-size": "1rem",
-                                                                "font-weight": "bold",
-                                                                "color": "#555",
-                                                            },
-                                                        ),
-                                                        dbc.Progress(
-                                                            id="progress-bar",
-                                                            striped=True,
-                                                            animated=True,
-                                                            value=0,
-                                                            style={
-                                                                "height": "20px",
-                                                                "background-color": "#d3d3d3",
-                                                            },
-                                                            className="progress-bar-custom",
-                                                        ),
-                                                        html.Div(
-                                                            id="failed-downloads-container",
-                                                            style={
-                                                                "color": "red",
-                                                                "font-weight": "bold",
-                                                                "margin-top": "20px",
-                                                                "padding": "10px",
-                                                                "background-color": "#fff5f5",
-                                                                "border": "1px solid #f5c2c2",
-                                                                "border-radius": "8px",
-                                                            },
-                                                            children="No failed downloads yet.",
-                                                        ),
-                                                    ]
-                                                ),
-                                            ],
-                                            id="scrape-card",
-                                            style={
-                                                "opacity": "0.5",
-                                                "pointer-events": "none",
-                                                "box-shadow": "0 4px 8px rgba(0, 0, 0, 0.1)",
-                                                "border-radius": "12px",
-                                                "background-color": "#e0e0e0",
-                                                "filter": "blur(1.3px)",
-                                                "transition": "all 0.5s ease-in-out",
-                                            },
-                                        )
-                                    ],
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader(
+                                                "Scraping",
+                                                style=darker_header_style,
+                                            ),
+                                            dbc.CardBody(
+                                                [
+                                                    dbc.Row(
+                                                        [
+                                                            dbc.Col(
+                                                                dbc.Button(
+                                                                    "Start Scraping",
+                                                                    id="scrape-button",
+                                                                    color="warning",
+                                                                    className="mb-3",
+                                                                    disabled=True,
+                                                                ),
+                                                                width="auto",
+                                                            ),
+                                                            dbc.Col(
+                                                                html.Div(
+                                                                    [
+                                                                        # Toggle Switch for Advanced Scraping
+                                                                        html.Label(
+                                                                            [
+                                                                                dcc.Checklist(
+                                                                                    id="advanced-scraping-checkbox",
+                                                                                    options=[
+                                                                                        {
+                                                                                            "label": " ",
+                                                                                            "value": "enabled",
+                                                                                        }
+                                                                                    ],
+                                                                                    style={
+                                                                                        "transform": "scale(1.5)",
+                                                                                        "margin-right": "10px",
+                                                                                        "margin-top": "-10px",
+                                                                                    },
+                                                                                    inputClassName="custom-checkbox",
+                                                                                    labelClassName="custom-checkbox-label",
+                                                                                ),
+                                                                                html.Span(
+                                                                                    "Advanced Scraping",
+                                                                                    style={
+                                                                                        "margin-right": "5px",
+                                                                                        "font-size": "1rem",
+                                                                                        "color": "#333",
+                                                                                        "margin-top": "-15px",
+                                                                                    },
+                                                                                ),
+                                                                            ],
+                                                                            style={
+                                                                                "display": "flex",
+                                                                                "align-items": "center",
+                                                                                "cursor": "pointer",
+                                                                            },
+                                                                        ),
+                                                                        html.Span(
+                                                                            "?",
+                                                                            id="advanced-scraping-hint",
+                                                                            style={
+                                                                                "color": "white",
+                                                                                "background-color": "#007bff",
+                                                                                "cursor": "pointer",
+                                                                                "font-weight": "bold",
+                                                                                "font-size": "0.9rem",
+                                                                                "border-radius": "50%",
+                                                                                "display": "inline-flex",
+                                                                                "justify-content": "center",
+                                                                                "align-items": "center",
+                                                                                "width": "20px",
+                                                                                "height": "20px",
+                                                                                "box-shadow": "0 2px 4px rgba(0, 0, 0, 0.1)",
+                                                                                "margin-left": "5px",
+                                                                                "margin-top": "-15px",
+                                                                            },
+                                                                        ),
+                                                                        dbc.Tooltip(
+                                                                            "Advanced scraping might find related topics, resulting in more data. However, accuracy might decrease.",
+                                                                            target="advanced-scraping-hint",
+                                                                            placement="top",
+                                                                            style={
+                                                                                "font-size": "0.9rem"
+                                                                            },
+                                                                        ),
+                                                                    ],
+                                                                    style={
+                                                                        "display": "flex",
+                                                                        "align-items": "center",
+                                                                    },
+                                                                ),
+                                                                width="auto",
+                                                            ),
+                                                        ],
+                                                        align="center",
+                                                        justify="start",
+                                                        className="align-items-center",
+                                                    ),
+                                                    html.Div(
+                                                        id="scrape-status",
+                                                        children="No scraping started.",
+                                                        className="text-warning",
+                                                        style={"margin-top": "10px"},
+                                                    ),
+                                                    html.Hr(),
+                                                    html.Div(
+                                                        "Downloaded Files:",
+                                                        className="mb-2",
+                                                    ),
+                                                    html.Ul(
+                                                        id="downloaded-files-container",
+                                                        style={
+                                                            "height": "250px",
+                                                            "overflow-y": "auto",
+                                                            "border": "1px solid #ddd",
+                                                            "padding": "10px",
+                                                            "background-color": "#f9f9f9",
+                                                            "font-family": "monospace",
+                                                        },
+                                                    ),
+                                                    html.Div(
+                                                        id="progress-summary",
+                                                        className="mb-2",
+                                                        style={
+                                                            "text-align": "center",
+                                                            "font-size": "1rem",
+                                                            "font-weight": "bold",
+                                                            "color": "#555",
+                                                        },
+                                                    ),
+                                                    dbc.Progress(
+                                                        id="progress-bar",
+                                                        striped=True,
+                                                        animated=True,
+                                                        value=0,
+                                                        style={
+                                                            "height": "20px",
+                                                            "background-color": "#d3d3d3",
+                                                        },
+                                                        className="progress-bar-custom",
+                                                    ),
+                                                    html.Div(
+                                                        id="failed-downloads-container",
+                                                        style={
+                                                            "color": "red",
+                                                            "font-weight": "bold",
+                                                            "margin-top": "20px",
+                                                            "padding": "10px",
+                                                            "background-color": "#fff5f5",
+                                                            "border": "1px solid #f5c2c2",
+                                                            "border-radius": "8px",
+                                                        },
+                                                        children="No failed downloads yet.",
+                                                    ),
+                                                ]
+                                            ),
+                                        ],
+                                        id="scrape-card",
+                                        style=inactive_card_style,
+                                    ),
                                     width=4,
                                 ),
                                 dbc.Col(
-                                    [
-                                        dbc.Card(
-                                            [
-                                                dbc.CardHeader(
-                                                    "Logs",
-                                                    style={
-                                                        "background-color": "#1A1A19",
-                                                        "color": "#ffffff",
-                                                        "padding": "10px",
-                                                        "font-weight": "bold",
-                                                        "text-align": "center",
-                                                        "border-radius": "10px 10px 0 0",
-                                                    },
-                                                ),
-                                                dbc.CardBody(
-                                                    [
-                                                        html.Div(
-                                                            "Logs will appear below in real-time:",
-                                                            className="mb-2",
-                                                        ),
-                                                        html.Pre(
-                                                            id="log-window",
-                                                            className="log-window",
-                                                            style={
-                                                                "height": "479px",
-                                                                "overflow-y": "auto",
-                                                                "border": "1px solid #ddd",
-                                                                "padding": "10px",
-                                                                "background-color": "#f9f9f9",
-                                                                "font-family": "monospace",
-                                                                "border-radius": "8px",
-                                                            },
-                                                        ),
-                                                    ]
-                                                ),
-                                            ],
-                                            style={
-                                                "opacity": "1",
-                                                "pointer-events": "auto",
-                                                "box-shadow": "0 8px 16px rgba(0, 0, 0, 0.2)",
-                                                "border-radius": "12px",
-                                                "background": "linear-gradient(to bottom, #ffffff, #f9f9f9)",
-                                                "transition": "all 0.7s ease-in-out",
-                                            },
-                                        )
-                                    ],
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader(
+                                                "Logs",
+                                                style=darker_header_style,
+                                            ),
+                                            dbc.CardBody(
+                                                [
+                                                    html.Div(
+                                                        "Logs will appear below in real-time:",
+                                                        className="mb-2",
+                                                    ),
+                                                    html.Pre(
+                                                        id="log-window",
+                                                        className="log-window",
+                                                        style={
+                                                            "height": "485px",
+                                                            "overflow-y": "auto",
+                                                            "border": "1px solid #ddd",
+                                                            "padding": "10px",
+                                                            "background-color": "#f9f9f9",
+                                                            "font-family": "monospace",
+                                                            "border-radius": "8px",
+                                                        },
+                                                    ),
+                                                ]
+                                            ),
+                                        ],
+                                        style=active_card_style,
+                                    ),
                                     width=8,
                                 ),
                             ],

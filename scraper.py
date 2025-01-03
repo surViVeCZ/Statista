@@ -25,6 +25,8 @@ import chromedriver_autoinstaller
 # search for demonyms
 from denonyms import get_demonym
 
+# URL for advanced scraping option
+xlsx_report_page = "https://www.statista.com/studies-and-reports/all-reports?idCountry=0&idBranch=0&idLanguage=0&reportType=0&documentTypes%5B%5D=xls&sortMethod=idRelevance&p=1"
 
 # Constants and global variables
 files_to_be_downloaded = 0  # Counter for files to download
