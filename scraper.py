@@ -164,7 +164,7 @@ def login_with_selenium(driver):
 def search_topic(topic):
     """Search and return a list of URLs for topics that match
     the user's query (country name or its demonym)."""
-    log.info(f'🔍 Searching for topics related to: "{topic}"...')
+    log.info(f'🔍 1/2 Searching for topics related to: "{topic}"...')
 
     # Get the demonym for the input topic
     demonym = get_demonym(topic)
@@ -185,9 +185,7 @@ def search_topic(topic):
 
         # Stop if no topics are found on this page
         if not topic_boxes:
-            log.info(
-                "   ⚠️ No topics found on this page. Reached the end of pagination."
-            )
+            log.info("   ⚠️ Reached the end of pagination.")
             break
 
         for box in topic_boxes:
@@ -209,10 +207,10 @@ def search_topic(topic):
         return []
 
     # Log and return matches
-    log.info("\nFound the following topics:")
-    for i, (name, _) in enumerate(matches, 1):
-        log.info(f"[{i}] {name}")
-    log.info(f"[{len(matches) + 1}] Select all")
+    # log.info("\nFound the following topics:")
+    # for i, (name, _) in enumerate(matches, 1):
+    #     log.info(f"[{i}] {name}")
+    # log.info(f"[{len(matches) + 1}] Select all")
     return matches
 
 

@@ -17,7 +17,7 @@ from app_layout import (
     inactive_card_style,
     modern_card_hover_effect,
 )
-
+from advanced_search import extract_report_results
 
 # Scraper script's methods
 from scraper import (
@@ -238,11 +238,16 @@ def activate_search_card(is_logged_in):
 def handle_search_selection_scraping(
     search_click, result_clicks, scrape_click, topic_input, current_results
 ):
-    global session_topics, selected_topic_url, selected_topic_name, files_to_be_downloaded
+    global session_topics, selected_topic_url, selected_topic_name, files_to_be_downloaded, driver
 
     # Handle search
     if ctx.triggered_id == "search-button":
+        # normal topic search
         topics = search_topic(topic_input)
+
+        # Advanced xlsx reports search
+        advanced_matches = extract_report_results(driver, topic_input)
+
         session_topics = topics or []
 
         # If no topics found, return early
@@ -257,7 +262,7 @@ def handle_search_selection_scraping(
                 0,  # Reset files-to-download
             )
 
-        logging.info(f"Found {len(topics)} topics for '{topic_input}'.")
+        logging.info(f"🎉 Found {len(topics)} topics for '{topic_input}'.")
 
         # 1) Priority map
         match_priority_map = {"Exact match": 1, "Close match": 2, "Somewhat match": 3}

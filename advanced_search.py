@@ -30,8 +30,9 @@ def construct_url(topic=None, page=1):
     return f"{BASE_URL}?{urlencode(params)}"
 
 
-def extract_report_results(driver, topic=None):
+def extract_report_results(driver, topic):
     """Extract and display report results with title, URL, and published date."""
+    log.info(f'🔍 2/2 Searching for reports related to: "{topic}"...')
     try:
         total_results = 0
         page = 1
@@ -39,7 +40,7 @@ def extract_report_results(driver, topic=None):
         while True:
             # Construct the URL for the current page
             page_url = construct_url(topic, page)
-            log.info(f"Navigating to page {page}: {page_url}")
+            log.info(f"   Navigating to page {page}")
             driver.get(page_url)
 
             # Try to load the report results; exit if no results are found
@@ -48,15 +49,16 @@ def extract_report_results(driver, topic=None):
                     EC.presence_of_all_elements_located((By.CLASS_NAME, "reportResult"))
                 )
             except Exception:
-                log.info(f"No results found on page {page}. Stopping pagination.")
+                log.info(f"   ⚠️ No results found on page {page}. Stopping pagination.")
                 break
 
             if not results:
                 log.info("No more results found.")
                 break
 
-            log.info(f"Found {len(results)} reports on page {page}.")
+            # log.info(f"Found {len(results)} reports on page {page}.")
             total_results += len(results)
+            log.info(f"🎉 Found {total_results} reports for {topic}")
 
             for result in results:
                 # Extract the URL
@@ -85,7 +87,7 @@ def extract_report_results(driver, topic=None):
         log.error(f"An error occurred while extracting report results: {e}")
 
 
-def open_xlsx_report_page(topic=None):
+def open_xlsx_report_page(topic):
     """
     Navigate to the dynamically constructed XLSX report page and display results.
     :param topic: The topic to search for in the reports. Defaults to None.
