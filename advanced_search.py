@@ -11,9 +11,9 @@ from scraper import setup_driver, login_with_selenium, log
 BASE_URL = "https://www.statista.com/studies-and-reports/all-reports"
 
 
-def construct_url(topic=None):
+def construct_url(topic=None, page=1):
     """
-    Construct the dynamic URL based on the provided topic.
+    Construct the dynamic URL based on the provided topic and page number.
     If no topic is provided, return the default page URL.
     """
     params = {
@@ -23,42 +23,63 @@ def construct_url(topic=None):
         "reportType": 0,
         "documentTypes[]": "xls",
         "sortMethod": "idRelevance",
-        "p": 1,
+        "p": page,  # page
     }
     if topic:
-        # Replace spaces with '+' because URLs are too cool for normal spaces
         params["q"] = topic.replace(" ", "+")
     return f"{BASE_URL}?{urlencode(params)}"
 
 
-def extract_report_results(driver):
+def extract_report_results(driver, topic=None):
     """Extract and display report results with title, URL, and published date."""
     try:
-        # Wait for those fancy report results to load
-        results = WebDriverWait(driver, 20).until(
-            EC.presence_of_all_elements_located((By.CLASS_NAME, "reportResult"))
-        )
-        log.info("Report results located.")
+        total_results = 0
+        page = 1
 
-        # Iterate through the results and extract the required details
-        for result in results:
-            # Extract the URL
-            url = result.get_attribute("href")
-            title = result.find_element(By.TAG_NAME, "h3").text.strip()
+        while True:
+            # Construct the URL for the current page
+            page_url = construct_url(topic, page)
+            log.info(f"Navigating to page {page}: {page_url}")
+            driver.get(page_url)
 
-            # Extract the publication date
-            published_in_element = result.find_element(
-                By.XPATH,
-                ".//span[contains(text(),'Published in')]/following-sibling::span",
-            )
-            published_in = (
-                published_in_element.text.strip() if published_in_element else "N/A"
-            )
+            # Try to load the report results; exit if no results are found
+            try:
+                results = WebDriverWait(driver, 5).until(
+                    EC.presence_of_all_elements_located((By.CLASS_NAME, "reportResult"))
+                )
+            except Exception:
+                log.info(f"No results found on page {page}. Stopping pagination.")
+                break
 
-            print(f"Title: {title}")
-            print(f"URL: {url}")
-            print(f"Published in: {published_in}")
-            print("-" * 50)
+            if not results:
+                log.info("No more results found.")
+                break
+
+            log.info(f"Found {len(results)} reports on page {page}.")
+            total_results += len(results)
+
+            for result in results:
+                # Extract the URL
+                url = result.get_attribute("href")
+                title = result.find_element(By.TAG_NAME, "h3").text.strip()
+
+                # Extract the publication date
+                published_in_element = result.find_element(
+                    By.XPATH,
+                    ".//span[contains(text(),'Published in')]/following-sibling::span",
+                )
+                published_in = (
+                    published_in_element.text.strip() if published_in_element else "N/A"
+                )
+
+                print(f"Title: {title}")
+                print(f"URL: {url}")
+                print(f"Published in: {published_in}")
+                print("-" * 50)
+
+            page += 1
+
+        return total_results
 
     except Exception as e:
         log.error(f"An error occurred while extracting report results: {e}")
@@ -71,28 +92,14 @@ def open_xlsx_report_page(topic=None):
     """
     driver = setup_driver()
     try:
-        # Construct the URL
-        page_url = construct_url(topic)
-        log.info(f"Constructed URL: {page_url}")
-
-        # Login to the website
         log.info("Starting login process...")
         if not login_with_selenium(driver):
             log.error("Login failed. Exiting script.")
             return
 
-        # Navigate to the constructed URL
-        log.info(f"Navigating to XLSX report page: {page_url}")
-        driver.get(page_url)
-
-        # Wait for the page to load completely
-        WebDriverWait(driver, 20).until(
-            EC.presence_of_element_located((By.TAG_NAME, "body"))
-        )
-        log.info("XLSX report page loaded successfully.")
-
         # Extract and display report results
-        extract_report_results(driver)
+        advanced_reports = extract_report_results(driver, topic)
+        log.info(f"Total advanced reports found: {advanced_reports}")
 
     except Exception as e:
         log.error(f"An error occurred: {e}")
@@ -108,7 +115,7 @@ if __name__ == "__main__":
     )
     log = logging.getLogger()
 
-    # Prompt the user for a topic
+    # Prompt the user for a topic (will be removed later, needs to be integrated into the gui)
     topic = input(
         "Enter a topic to search (or press Enter to load the default page): "
     ).strip()
