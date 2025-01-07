@@ -471,9 +471,10 @@ def download_report_with_selenium(report_url, topic_name):
 
 def clean_and_reformat_file(input_file, output_file):
     """Clean and reformat the contents of the scraped file."""
-    with open(input_file, "r", encoding="utf-8") as infile, open(
-        output_file, "w", encoding="utf-8"
-    ) as outfile:
+    with (
+        open(input_file, "r", encoding="utf-8") as infile,
+        open(output_file, "w", encoding="utf-8") as outfile,
+    ):
         current_chapter = None
         seen_sections = set()
 
