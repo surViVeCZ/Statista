@@ -53,11 +53,13 @@ app_layout = dbc.Container(
     [
         dcc.Store(id="login-state", data=False),  # Tracks login state
         dcc.Store(
-            id="files-to-download", data=0
-        ),  # Tracks total files to download for progress bar
-        dcc.Store(
             id="selected-files-store", data=[]
         ),  # Tracks selected files for transformation
+        dcc.Store(id="advanced-matches-store", data=0),  # For advanced_matches
+        dcc.Store(id="files-to-download-store", data=0),  # For files_to_be_downloaded
+        dcc.Store(
+            id="selected-topic-name-store", data=None
+        ),  # Store the selected topic name
         # Background Pattern
         html.Div(
             style={
@@ -373,10 +375,11 @@ app_layout = dbc.Container(
                                                                                     id="advanced-scraping-checkbox",
                                                                                     options=[
                                                                                         {
-                                                                                            "label": " ",
+                                                                                            "label": "",
                                                                                             "value": "enabled",
-                                                                                        }
+                                                                                        }  # Empty label for the checkbox itself
                                                                                     ],
+                                                                                    value=[],  # Initially unchecked
                                                                                     style={
                                                                                         "transform": "scale(1.5)",
                                                                                         "margin-right": "10px",
@@ -386,7 +389,7 @@ app_layout = dbc.Container(
                                                                                     labelClassName="custom-checkbox-label",
                                                                                 ),
                                                                                 html.Span(
-                                                                                    "Advanced Scraping",
+                                                                                    "Enable Advanced Scraping",
                                                                                     style={
                                                                                         "margin-right": "5px",
                                                                                         "font-size": "1rem",
@@ -447,6 +450,14 @@ app_layout = dbc.Container(
                                                         children="No scraping started.",
                                                         className="text-warning",
                                                         style={"margin-top": "10px"},
+                                                    ),
+                                                    html.Div(
+                                                        id="files-to-download-display",
+                                                        children="Files to Download: 0",  # Display the value
+                                                        style={
+                                                            "margin-top": "10px",
+                                                            "font-weight": "bold",
+                                                        },
                                                     ),
                                                     html.Hr(),
                                                     html.Div(
@@ -523,7 +534,7 @@ app_layout = dbc.Container(
                                                         id="log-window",
                                                         className="log-window",
                                                         style={
-                                                            "height": "485px",
+                                                            "height": "520px",
                                                             "overflow-y": "auto",
                                                             "border": "1px solid #ddd",
                                                             "padding": "10px",

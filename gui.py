@@ -31,8 +31,18 @@ from scraper import (
 
 from transform import remove_overview, remove_header_and_empty_column
 
+
+def SelectedTopicComponent():
+    return html.Div(
+        id="selected-topic-info",
+        children="Selected Topic: None | Files to Download: 0",
+        style={"margin-top": "10px", "font-weight": "bold"},
+    )
+
+
 # Initialize Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SOLAR])
+app.config.prevent_initial_callbacks = "initial_duplicate"
 app.config.suppress_callback_exceptions = (
     True  # Allow callbacks for dynamically created components
 )
@@ -46,6 +56,7 @@ selected_topic_url = None
 downloaded_files = []  # List of downloaded files
 failed_downloads = []
 files_to_be_downloaded = 0
+advanced_matches = 0
 
 # Directory for downloads
 DOWNLOAD_DIR = os.path.abspath("statista_data")
@@ -214,7 +225,31 @@ def activate_search_card(is_logged_in):
     return inactive_card_style
 
 
-# Combined callback for handling search, selection, and scraping
+@app.callback(
+    Output("files-to-download-store", "data"),
+    [
+        Input("advanced-scraping-checkbox", "value"),
+        Input("advanced-matches-store", "data"),
+        Input("files-to-download-store", "data"),
+    ],
+)
+def handle_checkbox_toggle(checkbox_value, advanced_matches, files_to_be_downloaded):
+    checkbox_enabled = "enabled" in checkbox_value if checkbox_value else False
+    if checkbox_enabled:
+        files_to_be_downloaded = max(files_to_be_downloaded + advanced_matches, 0)
+    else:
+        files_to_be_downloaded = max(files_to_be_downloaded - advanced_matches, 0)
+    return files_to_be_downloaded
+
+
+@app.callback(
+    Output("files-to-download-display", "children"),
+    Input("files-to-download-store", "data"),
+)
+def update_files_to_download_display(files_to_be_downloaded):
+    return f"Files to Download: {files_to_be_downloaded}"
+
+
 @app.callback(
     [
         Output("search-results-container", "children"),
@@ -222,7 +257,10 @@ def activate_search_card(is_logged_in):
         Output("scrape-button", "disabled"),
         Output("scrape-status", "children"),
         Output("search-button", "disabled"),
-        Output("files-to-download", "data"),
+        Output("advanced-matches-store", "data"),  # Update advanced_matches
+        Output(
+            "files-to-download-store", "data", allow_duplicate=True
+        ),  # Allow duplicate
     ],
     [
         Input("search-button", "n_clicks"),
@@ -232,25 +270,26 @@ def activate_search_card(is_logged_in):
     [
         State("topic-input", "value"),
         State("search-results-container", "children"),
+        State("files-to-download-store", "data"),
     ],
     prevent_initial_call=True,
 )
 def handle_search_selection_scraping(
-    search_click, result_clicks, scrape_click, topic_input, current_results
+    search_click,
+    result_clicks,
+    scrape_click,
+    topic_input,
+    current_results,
+    files_to_be_downloaded,
 ):
-    global session_topics, selected_topic_url, selected_topic_name, files_to_be_downloaded, driver
+    global session_topics, selected_topic_url, selected_topic_name, driver
 
     # Handle search
     if ctx.triggered_id == "search-button":
-        # normal topic search
         topics = search_topic(topic_input)
-
-        # Advanced xlsx reports search
         advanced_matches = extract_report_results(driver, topic_input)
-
         session_topics = topics or []
 
-        # If no topics found, return early
         if not topics:
             logging.warning(f"No topics found for '{topic_input}'.")
             return (
@@ -259,37 +298,28 @@ def handle_search_selection_scraping(
                 True,
                 "No topic selected.",
                 False,
-                0,  # Reset files-to-download
+                0,  # Reset advanced_matches
+                0,  # Reset files_to_be_downloaded
             )
 
         logging.info(f"🎉 Found {len(topics)} topics for '{topic_input}'.")
 
-        # 1) Priority map
+        # Sort topics by match priority
         match_priority_map = {"Exact match": 1, "Close match": 2, "Somewhat match": 3}
-
-        # 2) Build (name, url, match_type)
-        temp_topics = []
-        for name, url in topics:
-            mtype = determine_match_type(topic_input, name)
-            temp_topics.append((name, url, mtype))
-
-        # 3) Sort them by priority
+        temp_topics = [
+            (name, url, determine_match_type(topic_input, name)) for name, url in topics
+        ]
         sorted_topics = sorted(temp_topics, key=lambda x: match_priority_map[x[2]])
-
-        # 4) Overwrite session_topics in sorted order
         session_topics = [(name, url) for (name, url, mtype) in sorted_topics]
 
-        # 5) Build the result_cards from sorted data
+        # Create result cards
         result_cards = []
-        for idx, (name, url) in enumerate(session_topics):
-            match_type = sorted_topics[idx][2]
+        for idx, (name, url, match_type) in enumerate(sorted_topics):
             match_color = {
                 "Exact match": "#28a745",
                 "Close match": "#ffc107",
                 "Somewhat match": "#dc3545",
-            }.get(
-                match_type, "#6c757d"
-            )  # Default grey
+            }.get(match_type, "#6c757d")
 
             result_cards.append(
                 dbc.Card(
@@ -345,68 +375,24 @@ def handle_search_selection_scraping(
             True,
             "No topic selected.",
             False,
-            0,  # Reset files-to-download
+            advanced_matches,
+            0,  # Reset files_to_be_downloaded
         )
 
     # Handle selection
     if ctx.triggered_id and "search-result" in str(ctx.triggered_id):
-        triggered_id = ctx.triggered_id
-        selected_index = triggered_id["index"]
-        selected_topic_name, topic_url = session_topics[selected_index]
-        selected_topic_url = topic_url  # Keep track of the URL internally
+        selected_index = ctx.triggered_id["index"]
+        selected_topic_name, selected_topic_url = session_topics[selected_index]
+        files_to_be_downloaded = get_files_to_be_downloaded(selected_topic_url)
         logging.info(f"Selected topic: {selected_topic_name}")
-
-        # Get the number of files to be downloaded for the selected topic
-        files_to_be_downloaded = (
-            get_files_to_be_downloaded(selected_topic_url) + 2
-        )  # Add extra for report and sections overview
-
-        updated_results = []
-        for idx, card in enumerate(current_results):
-            card_style = {
-                "margin-bottom": "10px",
-                "padding": "8px",
-                "box-shadow": (
-                    "0 0 8px rgba(0, 0, 0, 0.3)"
-                    if idx == selected_index
-                    else "0 4px 8px rgba(0, 0, 0, 0.1)"
-                ),
-                "background-color": "#f9f9f9",
-                "border": "1px solid #ddd",
-                "transition": "box-shadow 0.3s ease-in-out",
-            }
-            button_text = "Selected" if idx == selected_index else "Select"
-            button_color = "success" if idx == selected_index else "outline-primary"
-            updated_results.append(
-                dbc.Card(
-                    dbc.CardBody(
-                        [
-                            html.H6(session_topics[idx][0], className="card-title"),
-                            html.Button(
-                                button_text,
-                                id={"type": "search-result", "index": idx},
-                                className=f"btn btn-{button_color}",
-                                style={"float": "right", "margin-top": "-32px"},
-                            ),
-                        ]
-                    ),
-                    style=card_style,
-                )
-            )
-
-        # Update the Scraping card to display the number of files to be downloaded
-        scrape_topic_text = (
-            f"Selected Topic: {selected_topic_name} | Files to download: "
-            f"<span style='font-size: 1.2rem; font-weight: bold; color: #007bff;'>{files_to_be_downloaded}</span>"
-        )
-
         return (
-            updated_results,
+            current_results,
             active_card_style,
             False,
-            f"Selected Topic: {selected_topic_name} | Files to download: {files_to_be_downloaded}",
+            f"Selected Topic: {selected_topic_name}",
             True,
-            0,  # Reset files-to-download
+            dash.no_update,  # Keep advanced_matches unchanged
+            files_to_be_downloaded,  # Update files-to-download-store
         )
 
     # Handle scraping
@@ -419,7 +405,8 @@ def handle_search_selection_scraping(
                 dash.no_update,
                 "Error: No topic selected for scraping.",
                 False,
-                0,  # Reset files-to-download
+                dash.no_update,
+                dash.no_update,
             )
 
         logging.info(f"Starting scraping for topic: {selected_topic_name}")
@@ -431,8 +418,9 @@ def handle_search_selection_scraping(
             dash.no_update,
             dash.no_update,
             f"Scraping started for topic: {selected_topic_name}.",
-            True,  # Keep the search button disabled
-            files_to_be_downloaded,  # Pass the total files count to the GUI
+            True,
+            dash.no_update,
+            dash.no_update,
         )
 
     return (
@@ -441,7 +429,8 @@ def handle_search_selection_scraping(
         True,
         "No topic selected.",
         False,
-        0,  # Reset files-to-download
+        dash.no_update,
+        dash.no_update,
     )
 
 
@@ -453,11 +442,10 @@ def handle_search_selection_scraping(
         Output("progress-bar", "className"),
         Output("failed-downloads-container", "children"),
     ],
-    Input("file-interval", "n_intervals"),
+    [Input("file-interval", "n_intervals")],
+    [State("files-to-download-store", "data")],
 )
-def refresh_files_and_update_progress(n_intervals):
-    """Update the file list and progress bar, and display failed downloads."""
-    global files_to_be_downloaded
+def refresh_files_and_update_progress(n_intervals, files_to_be_downloaded):
     try:
         # Ensure files_to_be_downloaded is initialized
         if files_to_be_downloaded is None or files_to_be_downloaded == 0:
