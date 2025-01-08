@@ -229,16 +229,32 @@ def activate_search_card(is_logged_in):
     Output("files-to-download-store", "data"),
     [
         Input("advanced-scraping-checkbox", "value"),
-        Input("advanced-matches-store", "data"),
-        Input("files-to-download-store", "data"),
+        State("advanced-matches-store", "data"),
+        State("files-to-download-store", "data"),
     ],
+    prevent_initial_call=True,
 )
 def handle_checkbox_toggle(checkbox_value, advanced_matches, files_to_be_downloaded):
+    """
+    Handle the advanced scraping checkbox toggle.
+    Advanced matches are only subtracted when the checkbox changes from enabled to disabled.
+    """
     checkbox_enabled = "enabled" in checkbox_value if checkbox_value else False
-    if checkbox_enabled:
-        files_to_be_downloaded = max(files_to_be_downloaded + advanced_matches, 0)
-    else:
-        files_to_be_downloaded = max(files_to_be_downloaded - advanced_matches, 0)
+
+    # Maintain state of the checkbox between callbacks
+    if not hasattr(handle_checkbox_toggle, "previous_checkbox_enabled"):
+        handle_checkbox_toggle.previous_checkbox_enabled = False
+
+    if checkbox_enabled and not handle_checkbox_toggle.previous_checkbox_enabled:
+        # Checkbox was just enabled
+        files_to_be_downloaded += advanced_matches
+    elif not checkbox_enabled and handle_checkbox_toggle.previous_checkbox_enabled:
+        # Checkbox was just disabled
+        files_to_be_downloaded -= advanced_matches
+
+    # Update the previous state
+    handle_checkbox_toggle.previous_checkbox_enabled = checkbox_enabled
+
     return files_to_be_downloaded
 
 
@@ -287,7 +303,7 @@ def handle_search_selection_scraping(
     # Handle search
     if ctx.triggered_id == "search-button":
         topics = search_topic(topic_input)
-        advanced_matches = extract_report_results(driver, topic_input)
+        _, advanced_matches = extract_report_results(driver, topic_input)
         session_topics = topics or []
 
         if not topics:

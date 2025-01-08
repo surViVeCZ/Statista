@@ -4,3 +4,4 @@ scraper.log
 __pycache__
 *.pyc
 *.log
+*xlsx
