@@ -17,7 +17,7 @@ from app_layout import (
     inactive_card_style,
     modern_card_hover_effect,
 )
-from advanced_search import extract_report_results
+from advanced_search import extract_report_results, download_reports
 
 # Scraper script's methods
 from scraper import (
@@ -57,6 +57,7 @@ downloaded_files = []  # List of downloaded files
 failed_downloads = []
 files_to_be_downloaded = 0
 advanced_matches = 0
+advanced_reports = None
 
 # Directory for downloads
 DOWNLOAD_DIR = os.path.abspath("statista_data")
@@ -274,9 +275,7 @@ def update_files_to_download_display(files_to_be_downloaded):
         Output("scrape-status", "children"),
         Output("search-button", "disabled"),
         Output("advanced-matches-store", "data"),  # Update advanced_matches
-        Output(
-            "files-to-download-store", "data", allow_duplicate=True
-        ),  # Allow duplicate
+        Output("files-to-download-store", "data", allow_duplicate=True),
     ],
     [
         Input("search-button", "n_clicks"),
@@ -287,6 +286,7 @@ def update_files_to_download_display(files_to_be_downloaded):
         State("topic-input", "value"),
         State("search-results-container", "children"),
         State("files-to-download-store", "data"),
+        State("advanced-scraping-checkbox", "value"),
     ],
     prevent_initial_call=True,
 )
@@ -297,13 +297,15 @@ def handle_search_selection_scraping(
     topic_input,
     current_results,
     files_to_be_downloaded,
+    checkbox_value,
 ):
-    global session_topics, selected_topic_url, selected_topic_name, driver
+    global session_topics, selected_topic_url, selected_topic_name, driver, advanced_reports
+    checkbox_enabled = "enabled" in checkbox_value if checkbox_value else False
 
     # Handle search
     if ctx.triggered_id == "search-button":
         topics = search_topic(topic_input)
-        _, advanced_matches = extract_report_results(driver, topic_input)
+        advanced_reports, advanced_matches = extract_report_results(driver, topic_input)
         session_topics = topics or []
 
         if not topics:
@@ -428,6 +430,9 @@ def handle_search_selection_scraping(
         logging.info(f"Starting scraping for topic: {selected_topic_name}")
         scrape_thread = Thread(target=scrape_topic, args=(selected_topic_url,))
         scrape_thread.start()
+        if checkbox_enabled:
+            logging.info("Triggering report download due to checkbox being enabled.")
+            download_reports(driver, advanced_reports, topic_input)
 
         return (
             dash.no_update,
@@ -532,7 +537,16 @@ def refresh_files_and_update_progress(n_intervals, files_to_be_downloaded):
         for relative_path in renamed_files:
             filename = os.path.basename(relative_path)
             file_extension = os.path.splitext(filename)[1]
-            file_description = file_type_descriptions.get(file_extension, "file")
+
+            is_adv_file = filename.endswith("adv.xlsx")
+            if is_adv_file:
+                file_description = "report"
+                background_color = "#f5f5f5"
+                text_color = "#9e9e9e"
+            else:
+                file_description = file_type_descriptions.get(file_extension, "file")
+                background_color = "#f9f9f9"
+                text_color = "#007bff"
 
             styled_links.append(
                 html.Div(
@@ -543,7 +557,7 @@ def refresh_files_and_update_progress(n_intervals, files_to_be_downloaded):
                             target="_blank",
                             style={
                                 "text-decoration": "none",
-                                "color": "#007bff",
+                                "color": text_color,
                                 "white-space": "nowrap",
                                 "overflow": "hidden",
                                 "text-overflow": "ellipsis",
@@ -567,14 +581,13 @@ def refresh_files_and_update_progress(n_intervals, files_to_be_downloaded):
                         "padding": "8px",
                         "border": "1px solid #ddd",
                         "border-radius": "8px",
-                        "background-color": "#f9f9f9",
+                        "background-color": background_color,
                         "font-family": "Arial, sans-serif",
-                        "box-shadow": "0 1px 3px rgba(0, 0, 0, 0.1)",
                         "margin-bottom": "5px",
                     },
                 )
             )
-        # print(f"Failed inside gui: {failed_count}")
+
         # Progress text
         progress_text = f"{downloaded_count} succeeded, {failed_count} failed, {total_processed}/{files_to_be_downloaded} processed ({int(progress)}%)."
         failed_links = [

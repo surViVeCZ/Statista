@@ -425,7 +425,7 @@ app_layout = dbc.Container(
                                                                             },
                                                                         ),
                                                                         dbc.Tooltip(
-                                                                            "Advanced scraping might find related topics, resulting in more data. However, accuracy might decrease.",
+                                                                            "Advanced scraping might find related topics, resulting in more data. However, accuracy might decrease! These results are always related to a more general topic (if you type in pharmaceuticals Germany, the advanced search looks for reports for the whole Germany).",
                                                                             target="advanced-scraping-hint",
                                                                             placement="top",
                                                                             style={

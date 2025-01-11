@@ -12,12 +12,6 @@ import shutil
 from scraper import setup_driver, login_with_selenium, log
 
 SOURCE_FOLDER = os.path.abspath("statista_data")
-DEST_FOLDER = os.path.abspath("advanced_reports")
-
-# Ensure destination folder exists
-if not os.path.exists(DEST_FOLDER):
-    os.makedirs(DEST_FOLDER)
-    log.info(f"📂 Created folder: {DEST_FOLDER}")
 
 # Define the base URL for Statista because, apparently, hardcoding is still cool sometimes
 BASE_URL = "https://www.statista.com/studies-and-reports/all-reports"
@@ -105,31 +99,7 @@ def extract_report_results(driver, topic):
         return reports, 0
 
 
-def move_and_rename_files():
-    """
-    Move downloaded files from the 'statista_data' folder to the 'advanced_reports' folder,
-    and rename them based on the report titles.
-    """
-    source_folder = os.path.abspath("statista_data")
-    dest_folder = os.path.abspath("advanced_reports")
-
-    if not os.path.exists(dest_folder):
-        os.makedirs(dest_folder)
-
-    for file_path in glob.glob(os.path.join(source_folder, "*.xlsx")):
-        try:
-            file_name = os.path.basename(file_path)
-            report_slug = file_name.split("_", 1)[1].rsplit(".", 1)[0]
-            new_name = report_slug.replace("-", " ").title() + ".xlsx"
-            new_path = os.path.join(dest_folder, new_name)
-
-            shutil.move(file_path, new_path)
-            log.info(f"📂 File moved and renamed: {new_name}")
-        except Exception as e:
-            log.error(f"❌ Failed to move and rename file {file_path}: {e}")
-
-
-def download_reports(driver, reports):
+def download_reports(driver, reports, topic):
     """
     Visit each report URL, download the corresponding file, and move it to the destination folder immediately.
     :param driver: Selenium WebDriver instance.
@@ -160,18 +130,26 @@ def download_reports(driver, reports):
             )  # Adjust timeout as needed based on file size and download speed
 
             # Move and rename the file proactively
-            move_latest_file_to_destination(report["title"])
+            move_latest_file_to_destination(report["title"], topic)
         except Exception as e:
             log.error(f"An error occurred while downloading from {url}: {e}")
 
 
-def move_latest_file_to_destination(title):
+def move_latest_file_to_destination(title, topic):
     """
-    Move the latest downloaded file from the 'statista_data' folder to the 'advanced_reports' folder
+    Move the latest downloaded file from the 'statista_data' folder to the destination folder
     and rename it based on the report title.
     :param title: The title of the report to use for renaming.
+    :param topic: The topic to replace in the destination folder path.
     """
     try:
+        dest_folder = os.path.abspath(f"statista_data/{topic}/advanced_reports")
+
+        # Ensure destination folder exists
+        if not os.path.exists(dest_folder):
+            os.makedirs(dest_folder)
+            log.info(f"📂 Created folder: {dest_folder}")
+
         # Find the latest downloaded file in the source folder
         files = glob.glob(os.path.join(SOURCE_FOLDER, "*.xlsx"))
         if not files:
@@ -183,11 +161,12 @@ def move_latest_file_to_destination(title):
 
         # Generate a new name based on the report title
         sanitized_title = title.replace("/", "-").replace("\\", "-").strip()
-        new_name = f"{sanitized_title}.xlsx"
-        dest_path = os.path.join(DEST_FOLDER, new_name)
+        new_name = f"{sanitized_title} adv.xlsx"
+        dest_path = os.path.join(dest_folder, new_name)
 
-        # Move the file to "advanced_reports" folder
+        # Move the file to the destination folder
         shutil.move(latest_file, dest_path)
+        # log.info(f"✅ Moved file to {dest_path}")
     except Exception as e:
         log.error(f"❌ Failed to move and rename file: {e}")
 
@@ -210,10 +189,7 @@ def open_xlsx_report_page(topic):
         log.info(f"Total reports found: {len(reports)}")
 
         # Download reports
-        download_reports(driver, reports)
-
-        # Move and rename files
-        move_and_rename_files()
+        download_reports(driver, reports, topic)
 
     except Exception as e:
         log.error(f"An error occurred: {e}")
