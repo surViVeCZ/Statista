@@ -734,27 +734,43 @@ def update_transform_logs(n_intervals):
     [
         Input("refresh-files-button", "n_clicks"),
         Input({"type": "file-entry", "file": ALL}, "n_clicks"),
+        Input({"type": "folder-entry", "folder": ALL}, "n_clicks"),
     ],
     State("selected-files-store", "data"),
 )
-def update_file_tree_and_toggle_selection(refresh_clicks, file_clicks, selected_files):
-    """Update the file tree and handle file selection."""
+def update_file_tree_and_toggle_selection(
+    refresh_clicks, file_clicks, folder_clicks, selected_files
+):
     ctx = dash.callback_context
+    selected_files = selected_files or []
 
     if not ctx.triggered:
-        # Default case when nothing is triggered
-        selected_files = selected_files or []
         return parse_tree(DOWNLOAD_DIR, selected_files), selected_files
 
     triggered_id = ctx.triggered_id
 
-    # Handle refresh button
-    if triggered_id == "refresh-files-button":
-        selected_files = selected_files or []
-        return parse_tree(DOWNLOAD_DIR, selected_files), selected_files
+    # Handle folder selection
+    if isinstance(triggered_id, dict) and triggered_id["type"] == "folder-entry":
+        folder_path = triggered_id["folder"]
+        folder_files = [
+            os.path.join(root, file)
+            for root, _, files in os.walk(folder_path)
+            for file in files
+        ]
 
-    # Handle file selection
-    if isinstance(triggered_id, dict) and triggered_id["type"] == "file-entry":
+        if all(file in selected_files for file in folder_files):
+            # Deselect all files in the folder
+            selected_files = [
+                file for file in selected_files if file not in folder_files
+            ]
+        else:
+            # Select all files in the folder
+            selected_files.extend(
+                file for file in folder_files if file not in selected_files
+            )
+
+    # Handle individual file selection
+    elif isinstance(triggered_id, dict) and triggered_id["type"] == "file-entry":
         clicked_file = triggered_id["file"]
         if clicked_file in selected_files:
             selected_files.remove(clicked_file)
@@ -764,114 +780,131 @@ def update_file_tree_and_toggle_selection(refresh_clicks, file_clicks, selected_
     return parse_tree(DOWNLOAD_DIR, selected_files), selected_files
 
 
-def parse_tree(path, selected_files, level=0, is_topic_section=False):
-    """Recursively parse folders and files, with specific logic for 'topic_sections'."""
+def parse_tree(path, selected_files, level=0):
+    """Recursively parse folders and files, handling transformed folder and unclickable files."""
     items = []
 
-    # Check if the current folder is 'topic_sections'
     folder_name = os.path.basename(path)
-    is_topic_section = is_topic_section or (folder_name.lower() == "topic sections")
+    is_transformed_folder = folder_name.lower() == "transformed"
+    is_excluded_folder = folder_name.lower() in ["topic sections", "statista_data"]
 
+    # Determine if all files in the folder are selected
+    folder_files = [
+        os.path.join(root, file) for root, _, files in os.walk(path) for file in files
+    ]
+    is_folder_selected = all(file in selected_files for file in folder_files)
+
+    # Folder entry styling
     folder_style = {
         "margin-left": f"{level * 40}px",
         "padding": "5px",
         "background-color": "transparent",
         "border-radius": "5px",
         "font-weight": "bold",
+        "cursor": "pointer" if not is_transformed_folder else "not-allowed",
         "display": "flex",
         "align-items": "center",
     }
-    items.append(
-        html.Div(
-            [
-                html.Span(
-                    "📂",
-                    style={
-                        "margin-right": "10px",
-                        "font-size": "1.2em",
-                        "color": "#333",
-                    },
-                ),
-                html.Span(folder_name),
-            ],
-            style=folder_style,
+
+    folder_children = [
+        html.Span(
+            "📂",
+            style={
+                "margin-right": "10px",
+                "font-size": "1.2em",
+                "color": "#007bff" if is_folder_selected else "#333",
+            },
+        ),
+        html.Span(folder_name),
+    ]
+
+    # Add "Select All" button only if the folder is not excluded
+    if not is_transformed_folder and not is_excluded_folder:
+        folder_children.append(
+            html.Button(
+                "Select All" if not is_folder_selected else "Deselect All",
+                id={"type": "folder-entry", "folder": path},
+                style={
+                    "margin-left": "10px",
+                    "background-color": (
+                        "#007bff" if not is_folder_selected else "#dc3545"
+                    ),
+                    "color": "white",
+                    "border": "none",
+                    "cursor": "pointer",
+                    "border-radius": "5px",
+                    "padding": "5px 10px",
+                    "font-size": "0.9em",
+                },
+            )
         )
-    )
+
+    items.append(html.Div(folder_children, style=folder_style))
 
     # Add files and subfolders
     for item in sorted(os.listdir(path)):
         item_path = os.path.join(path, item)
 
-        # Exclude the 'transformed' folder
-        if os.path.basename(item_path).lower() == "transformed":
-            continue
-
         if os.path.isdir(item_path):
             # Recursively parse subfolders
-            items.extend(
-                parse_tree(
-                    item_path,
-                    selected_files,
-                    level=level + 1,
-                    is_topic_section=is_topic_section,
-                )
-            )
+            items.extend(parse_tree(item_path, selected_files, level=level + 1))
         else:
-            is_selected = item_path in selected_files
-            if is_topic_section:
-                file_style = {
-                    "margin-left": f"{(level + 1) * 40}px",
-                    "cursor": "pointer",
-                    "padding": "5px",
-                    "background-color": "#e6f7ff" if is_selected else "transparent",
-                    "border-radius": "5px",
-                    "color": "#007bff" if is_selected else "black",
-                    "display": "flex",
-                    "align-items": "center",
-                }
+            # Check if the file is in the transformed folder or unclickable
+            file_extension = os.path.splitext(item)[1].lower()
+            is_unclickable = (
+                is_transformed_folder
+                or item.endswith("sections.txt")
+                or file_extension == ".pdf"
+            )
+
+            css_class = "transformed" if is_transformed_folder else "normal"
+            is_selected = not is_unclickable and item_path in selected_files
+            selected_class = "selected" if is_selected else ""
+
+            file_style = {
+                "margin-left": f"{(level + 1) * 40}px",
+                "cursor": "not-allowed" if is_unclickable else "pointer",
+                "padding": "5px",
+                "color": (
+                    "#155724"
+                    if is_transformed_folder
+                    else ("#aaaaaa" if is_unclickable else "#007bff")
+                ),
+                "opacity": (
+                    "1.0"
+                    if is_transformed_folder
+                    else "0.6" if is_unclickable else "1.0"
+                ),
+            }
+
+            if is_unclickable:
+                # Add unclickable file
                 items.append(
                     html.Div(
                         [
                             html.Span(
                                 "📄",
-                                style={
-                                    "margin-right": "10px",
-                                    "font-size": "1.2em",
-                                    "color": "#007bff" if is_selected else "#333",
-                                },
+                                style={"margin-right": "10px", "font-size": "1.2em"},
                             ),
                             html.Span(item),
                         ],
-                        id={"type": "file-entry", "file": item_path},
+                        className=f"file-tree-item {css_class}",
                         style=file_style,
                     )
                 )
             else:
-                # Non-clickable files
-                file_style = {
-                    "margin-left": f"{(level + 1) * 40}px",
-                    "cursor": "not-allowed",
-                    "padding": "5px",
-                    "background-color": "#f5f5f5",
-                    "border-radius": "5px",
-                    "color": "#aaaaaa",
-                    "display": "flex",
-                    "align-items": "center",
-                    "opacity": "0.6",
-                }
+                # Add clickable file with selection handling
                 items.append(
                     html.Div(
                         [
                             html.Span(
                                 "📄",
-                                style={
-                                    "margin-right": "10px",
-                                    "font-size": "1.2em",
-                                    "color": "#aaaaaa",
-                                },
+                                style={"margin-right": "10px", "font-size": "1.2em"},
                             ),
                             html.Span(item),
                         ],
+                        id={"type": "file-entry", "file": item_path},
+                        className=f"file-tree-item {css_class} {selected_class}",
                         style=file_style,
                     )
                 )

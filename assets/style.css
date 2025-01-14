@@ -15,28 +15,51 @@
 }
 
 
+/* Base file tree styling */
+/* Base file tree styling */
 .file-tree-item {
   transition: all 0.2s ease-in-out;
 }
 
-/* .file-tree-item:hover {
-  background-color: #f0f0f0;
-  border-radius: 8px;
-  transform: translateX(5px);
-} */
-
-.file-tree-item span {
-  transition: color 0.2s;
-}
-
-.file-tree-item:hover span {
-  color: #0056b3;
-}
-.file-entry:hover {
-  background-color: #f0f8ff;
-  transition: background-color 0.3s;
+/* Hover effects */
+.file-tree-item.normal:hover {
+  background-color: #f0f8ff; /* Light blue */
   border-radius: 5px;
+  transition: background-color 0.3s;
 }
+
+.file-tree-item.transformed:hover {
+  background-color: #e6f4ea; /* Light green */
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+/* Selected files */
+.file-tree-item.selected {
+  background-color: #d1e7ff; /* Light blue background for selected files */
+  color: #004085; /* Dark blue text for contrast */
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+
+/* Transformed files (unclickable) */
+.file-tree-item.transformed {
+  background-color: transparent; /* No background */
+  color: #155724; /* Green text */
+  cursor: not-allowed; /* Unclickable cursor */
+  opacity: 1.0;
+}
+
+/* Hover text color */
+.file-tree-item.normal:hover span {
+  color: #0056b3; /* Blue text on hover */
+}
+
+.file-tree-item.transformed:hover span {
+  color: #155724; /* Green text on hover */
+}
+
 
 #region-selector:hover {
   background-color: #eaeaea;
