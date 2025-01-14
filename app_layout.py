@@ -571,6 +571,7 @@ app_layout = dbc.Container(
                         "box-shadow": "0 4px 6px rgba(0, 0, 0, 0.1)",
                         "transition": "all 0.3s ease",
                         "z-index": "200",
+                        "margin-right": "5px",
                     },
                     active_label_style={
                         "background": "linear-gradient(to bottom, #007bff, #0056b3)",
@@ -692,6 +693,73 @@ app_layout = dbc.Container(
                                     width=12,
                                 )
                             ]
+                        ),
+                    ],
+                ),
+                # Tab 3: Data Overview
+                dbc.Tab(
+                    label="Data Overview",
+                    tab_id="overview",
+                    label_style={
+                        "font-weight": "bold",
+                        "font-size": "16px",
+                        "padding": "12px 20px",
+                    },
+                    tab_style={
+                        "border-radius": "12px 12px 0 0",
+                        "background": "linear-gradient(to bottom, #ffffff, #f2f2f2)",
+                        "box-shadow": "0 4px 6px rgba(0, 0, 0, 0.1)",
+                        "transition": "all 0.3s ease",
+                    },
+                    active_label_style={
+                        "background": "linear-gradient(to bottom, #007bff, #0056b3)",
+                        "color": "#ffffff",
+                        "box-shadow": "0 4px 8px rgba(0, 0, 0, 0.3)",
+                    },
+                    children=[
+                        dbc.Row(
+                            [
+                                dbc.Col(
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader(
+                                                "Data Summary",
+                                                style=darker_header_style,
+                                            ),
+                                            dbc.CardBody(
+                                                "Summary of the data will be displayed here."
+                                            ),
+                                        ],
+                                        style=active_card_style,
+                                    ),
+                                    width=6,
+                                ),
+                                dbc.Col(
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader(
+                                                "Visualization",
+                                                style=darker_header_style,
+                                            ),
+                                            dbc.CardBody(
+                                                "Graphs and visualizations of the data will be displayed here."
+                                            ),
+                                        ],
+                                        style=active_card_style,
+                                    ),
+                                    width=6,
+                                ),
+                            ],
+                            style={"margin-bottom": "20px"},
+                        ),
+                        html.Div(
+                            "Statista version (greyed out)",
+                            style={
+                                "text-align": "center",
+                                "color": "#6c757d",
+                                "font-size": "0.9rem",
+                                "margin-top": "10px",
+                            },
                         ),
                     ],
                 ),

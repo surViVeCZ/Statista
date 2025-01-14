@@ -144,7 +144,7 @@ def toggle_region_selector(active_tab):
             "filter": "none",  # No blur
             "transition": "all 0.3s ease",  # Smooth transition
         }
-    elif active_tab == "transformation":
+    elif active_tab == "transformation" or active_tab == "overview":
         # Greyed out and blurred styling when disabled
         return {
             "display": "block",
