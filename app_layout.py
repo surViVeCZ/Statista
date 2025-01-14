@@ -8,11 +8,12 @@ active_card_style = {
     "opacity": "1",
     "pointer-events": "auto",
     "filter": "none",
-    "box-shadow": "0 8px 16px rgba(0, 0, 0, 0.2)",
+    "box-shadow": "0 4px 8px rgba(0, 0, 0, 0.1), 0 12px 24px rgba(0, 0, 0, 0.15), 0 16px 32px rgba(0, 0, 0, 0.1)",
     "border-radius": "12px",
     "background": "linear-gradient(to bottom, #ffffff, #f9f9f9)",
     "transition": "all 0.7s ease-in-out",
 }
+
 
 inactive_card_style = {
     "opacity": "0.5",
@@ -723,43 +724,58 @@ app_layout = dbc.Container(
                                     dbc.Card(
                                         [
                                             dbc.CardHeader(
-                                                "Data Summary",
+                                                "Downloaded Topics",
                                                 style=darker_header_style,
                                             ),
                                             dbc.CardBody(
-                                                "Summary of the data will be displayed here."
+                                                html.Div(
+                                                    id="downloaded-topics-container",
+                                                    style={
+                                                        "height": "700px",
+                                                        "overflow-y": "auto",
+                                                        "padding": "10px",
+                                                        "background-color": "#f9f9f9",
+                                                        "border-radius": "8px",
+                                                    },
+                                                ),
                                             ),
                                         ],
                                         style=active_card_style,
                                     ),
-                                    width=6,
+                                    width=4,  # Adjust width as needed
                                 ),
                                 dbc.Col(
                                     dbc.Card(
                                         [
                                             dbc.CardHeader(
-                                                "Visualization",
+                                                "Selected Topic",
                                                 style=darker_header_style,
                                             ),
                                             dbc.CardBody(
-                                                "Graphs and visualizations of the data will be displayed here."
+                                                [
+                                                    html.Div(
+                                                        id="selected-topic",
+                                                        style={
+                                                            "font-weight": "bold",
+                                                            "margin-bottom": "10px",
+                                                        },
+                                                    ),
+                                                    html.Div(
+                                                        id="topic-visualization-container",
+                                                        children="Select a topic to view its details.",
+                                                        style={
+                                                            "height": "500px",
+                                                            "overflow-y": "auto",
+                                                        },
+                                                    ),
+                                                ]
                                             ),
                                         ],
                                         style=active_card_style,
                                     ),
-                                    width=6,
+                                    width=8,
                                 ),
-                            ],
-                            style={"margin-bottom": "20px"},
-                        ),
-                        html.Div(
-                            "Statista version (greyed out)",
-                            style={
-                                "text-align": "center",
-                                "color": "#6c757d",
-                                "font-size": "0.9rem",
-                                "margin-top": "10px",
-                            },
+                            ]
                         ),
                     ],
                 ),
@@ -827,8 +843,8 @@ app_layout = dbc.Container(
             },
         ),
         # Refresh Intervals
-        dcc.Interval(id="log-interval", interval=500, n_intervals=0),
-        dcc.Interval(id="file-interval", interval=500, n_intervals=0),
+        dcc.Interval(id="log-interval", interval=1000, n_intervals=0),
+        dcc.Interval(id="file-interval", interval=1000, n_intervals=0),
     ],
     fluid=True,
     style={"display": "flex", "flex-direction": "column", "min-height": "100vh"},

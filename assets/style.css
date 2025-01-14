@@ -65,3 +65,20 @@
   background-color: #eaeaea;
   border-color: #007bff;
 }
+
+
+
+.topic-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.topic-card {
+  border-radius: 8px;
+  border: none;
+}
+
+.topic-card:hover .badge-info {
+  background-color: #0056b3;
+  color: white;
+}

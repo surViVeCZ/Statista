@@ -10,6 +10,9 @@ import dash_bootstrap_components as dbc
 import dash_daq as daq
 from dash.dependencies import Input, Output, State, MATCH, ALL
 
+import plotly.express as px
+
+
 # dashboard visualization
 from app_layout import (
     app_layout,
@@ -971,6 +974,258 @@ def transform_files(n_clicks, selected_files):
         return f"❌ Transformation process failed: {e}"
 
     return transformation_status
+
+
+@app.callback(
+    Output("downloaded-topics-container", "children"),
+    Input("refresh-files-button", "n_clicks"),
+)
+def update_downloaded_topics(n_clicks):
+    topic_dir = os.path.join(DOWNLOAD_DIR)
+    if not os.path.exists(topic_dir):
+        return html.Div("No topics available.", style={"color": "gray"})
+
+    topics = sorted(
+        [
+            folder
+            for folder in os.listdir(topic_dir)
+            if os.path.isdir(os.path.join(topic_dir, folder))
+        ]
+    )
+
+    if not topics:
+        return html.Div("No topics downloaded yet.", style={"color": "gray"})
+
+    # Save the topics in a global variable for selection callback
+    global session_topics
+    session_topics = topics
+
+    # Calculate metrics
+    total_files = 0
+    total_size = 0
+    for root, _, files in os.walk(topic_dir):
+        total_files += len(files)
+        total_size += sum(os.path.getsize(os.path.join(root, file)) for file in files)
+
+    total_size_mb = total_size / (1024 * 1024)  # Convert to MB
+
+    # Header with metrics
+    header = html.Div(
+        [
+            html.H5(
+                [
+                    "Number of Topics: ",
+                    html.Span(
+                        len(topics),
+                        style={"color": "#007bff", "font-weight": "bold"},  # Blue color
+                    ),
+                ],
+                style={"margin-bottom": "10px", "font-weight": "bold"},
+            ),
+            html.H5(
+                [
+                    "Total Files: ",
+                    html.Span(
+                        total_files,
+                        style={"color": "#007bff", "font-weight": "bold"},  # Blue color
+                    ),
+                ],
+                style={"margin-bottom": "10px", "font-weight": "bold"},
+            ),
+            html.H5(
+                [
+                    "Total Size: ",
+                    html.Span(
+                        f"{total_size_mb:.2f} MB",
+                        style={"color": "#007bff", "font-weight": "bold"},  # Blue color
+                    ),
+                ],
+                style={"margin-bottom": "10px", "font-weight": "bold"},
+            ),
+        ],
+        style={
+            "margin-bottom": "20px",
+            "padding": "15px",
+            "background-color": "#f7f7f7",
+            "border-radius": "8px",
+            "box-shadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",
+        },
+    )
+
+    # Modern topic buttons with hover effect
+    topic_buttons = [
+        dbc.Card(
+            dbc.CardBody(
+                html.Div(
+                    [
+                        html.Span(
+                            topic,
+                            style={
+                                "font-size": "16px",
+                                "font-weight": "bold",
+                                "color": "#333",
+                                "margin-right": "10px",
+                            },
+                        ),
+                        dbc.Badge(
+                            "View Details",
+                            id={"type": "topic-item", "index": idx},  # Add unique id
+                            color="info",
+                            className="ms-1",
+                            style={"cursor": "pointer"},
+                        ),
+                    ],
+                    style={
+                        "display": "flex",
+                        "align-items": "center",
+                        "justify-content": "space-between",
+                    },
+                )
+            ),
+            style={
+                "margin-bottom": "10px",
+                "box-shadow": "0 4px 6px rgba(0, 0, 0, 0.1)",
+                "transition": "all 0.3s ease",
+            },
+            className="topic-card",
+        )
+        for idx, topic in enumerate(topics)
+    ]
+
+    return html.Div([header] + topic_buttons)
+
+
+@app.callback(
+    [
+        Output("selected-topic", "children"),  # Display the selected topic name
+        Output("topic-visualization-container", "children"),  # Update visualizations
+    ],
+    Input({"type": "topic-item", "index": ALL}, "n_clicks"),  # Track topic clicks
+    prevent_initial_call=True,
+)
+def handle_topic_selection(n_clicks):
+    ctx = dash.callback_context
+
+    if not ctx.triggered:
+        return dash.no_update, dash.no_update
+
+    triggered_id = ctx.triggered_id
+    if isinstance(triggered_id, dict) and "index" in triggered_id:
+        topic_index = triggered_id["index"]
+        topic_name = session_topics[topic_index]
+        topic_path = os.path.join(DOWNLOAD_DIR, topic_name)
+
+        # Count file types and calculate total size
+        file_types = {}
+        total_files = 0
+        total_size = 0
+        for root, _, files in os.walk(topic_path):
+            total_files += len(files)
+            total_size += sum(
+                os.path.getsize(os.path.join(root, file)) for file in files
+            )
+            for file in files:
+                ext = os.path.splitext(file)[1].lower()
+                file_types[ext] = file_types.get(ext, 0) + 1
+
+        total_size_mb = total_size / (1024 * 1024)  # Convert to MB
+
+        # Check for the existence of "advanced reports" folder
+        advanced_reports_folder = os.path.join(topic_path, "advanced_reports")
+        is_advanced_search = os.path.exists(advanced_reports_folder) and any(
+            os.scandir(advanced_reports_folder)
+        )  # Check if the folder has files
+
+        # Header with metrics for selected topic
+        header = html.Div(
+            [
+                html.H5(
+                    [
+                        "Selected Topic: ",
+                        html.Span(
+                            topic_name,
+                            style={
+                                "color": "#007bff",
+                                "font-weight": "bold",
+                            },  # Blue color
+                        ),
+                    ],
+                    style={"margin-bottom": "10px", "font-weight": "bold"},
+                ),
+                html.H5(
+                    [
+                        "Total Files: ",
+                        html.Span(
+                            total_files,
+                            style={
+                                "color": "#007bff",
+                                "font-weight": "bold",
+                            },  # Blue color
+                        ),
+                    ],
+                    style={"margin-bottom": "10px", "font-weight": "bold"},
+                ),
+                html.H5(
+                    [
+                        "Total Size: ",
+                        html.Span(
+                            f"{total_size_mb:.2f} MB",
+                            style={
+                                "color": "#007bff",
+                                "font-weight": "bold",
+                            },  # Blue color
+                        ),
+                    ],
+                    style={"margin-bottom": "10px", "font-weight": "bold"},
+                ),
+                html.H5(
+                    [
+                        "Advanced Search: ",
+                        html.Span(
+                            "True" if is_advanced_search else "False",
+                            style={
+                                "color": "#007bff",
+                                "font-weight": "bold",
+                            },  # Blue color
+                        ),
+                    ],
+                    style={"margin-bottom": "10px", "font-weight": "bold"},
+                ),
+            ],
+            style={
+                "margin-bottom": "20px",
+                "padding": "15px",
+                "background-color": "#f7f7f7",
+                "border-radius": "8px",
+                "box-shadow": "0px 4px 8px rgba(0, 0, 0, 0.1)",
+            },
+        )
+
+        # Create data for visualization
+        file_type_labels = list(file_types.keys())
+        file_type_counts = list(file_types.values())
+
+        # Generate Plotly figure
+        fig = px.pie(
+            values=file_type_counts,
+            names=file_type_labels,
+            title=f"File Type Distribution for {topic_name}",
+            hole=0.4,  # Donut chart
+        )
+        fig.update_layout(
+            title_x=0.5,
+            title_font_size=18,
+            legend_title="File Types",
+            margin=dict(t=40, b=20, l=20, r=20),
+        )
+
+        # Return header and visualization
+        return (
+            header,  # Updated header for selected topic
+            dcc.Graph(figure=fig),  # Visualization
+        )
+
+    return dash.no_update, dash.no_update
 
 
 if __name__ == "__main__":
