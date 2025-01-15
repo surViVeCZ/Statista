@@ -56,6 +56,7 @@ log_data = []
 driver = None
 session_topics = []
 selected_topic_url = None
+selected_topic_name = None
 downloaded_files = []  # List of downloaded files
 failed_downloads = []
 files_to_be_downloaded = 0
@@ -404,7 +405,7 @@ def handle_search_selection_scraping(
     if ctx.triggered_id and "search-result" in str(ctx.triggered_id):
         selected_index = ctx.triggered_id["index"]
         selected_topic_name, selected_topic_url = session_topics[selected_index]
-        files_to_be_downloaded = get_files_to_be_downloaded(selected_topic_url)
+        files_to_be_downloaded = get_files_to_be_downloaded(selected_topic_url) + 2
         logging.info(f"Selected topic: {selected_topic_name}")
         return (
             current_results,
@@ -429,13 +430,11 @@ def handle_search_selection_scraping(
                 dash.no_update,
                 dash.no_update,
             )
-
         logging.info(f"Starting scraping for topic: {selected_topic_name}")
-        scrape_thread = Thread(target=scrape_topic, args=(selected_topic_url,))
-        scrape_thread.start()
+        scrape_topic(selected_topic_url)
         if checkbox_enabled:
             logging.info("Triggering report download due to checkbox being enabled.")
-            download_reports(driver, advanced_reports, topic_input)
+            download_reports(driver, advanced_reports, selected_topic_name)
 
         return (
             dash.no_update,
@@ -491,7 +490,7 @@ def refresh_files_and_update_progress(n_intervals, files_to_be_downloaded):
                 ],
             )
 
-        # Get the current files in the directory
+        # Get the current files in the directory, including the advanced_reports folder
         current_files = set()
         for root, _, filenames in os.walk(DOWNLOAD_DIR):
             for filename in filenames:
@@ -500,23 +499,29 @@ def refresh_files_and_update_progress(n_intervals, files_to_be_downloaded):
                 )
                 current_files.add(relative_path)
 
-        # Identify files added after app start
+        # Detect newly downloaded files
         downloaded_files = current_files - initial_files
-        valid_files = [
-            file
-            for file in downloaded_files
-            if not os.path.basename(file).startswith(("study_id", "statistic_id"))
-        ]
-
-        # Filter out unwanted files
         meaningful_extensions = {".xlsx", ".pdf", ".txt", ".csv"}
         renamed_files = [
             file
-            for file in valid_files
+            for file in downloaded_files
             if os.path.splitext(file)[1] in meaningful_extensions
         ]
 
-        # Update progress
+        # Include advanced files in renamed_files
+        advanced_folder_path = os.path.join(DOWNLOAD_DIR, "advanced_reports")
+        advanced_files = []
+        if os.path.exists(advanced_folder_path):
+            for root, _, filenames in os.walk(advanced_folder_path):
+                for filename in filenames:
+                    relative_path = os.path.relpath(
+                        os.path.join(root, filename), DOWNLOAD_DIR
+                    )
+                    advanced_files.append(relative_path)
+
+        renamed_files.extend(advanced_files)
+
+        # Update progress and styled links
         downloaded_count = len(renamed_files)
         failed_count = get_failed_downloads()
         total_processed = downloaded_count + failed_count
@@ -527,29 +532,25 @@ def refresh_files_and_update_progress(n_intervals, files_to_be_downloaded):
         else:
             progress = 0
 
-        # Define descriptions for file types
+        # Format the display for downloaded files
         file_type_descriptions = {
             ".txt": "text file",
             ".pdf": "pdf report",
             ".csv": "excel table",
             ".xlsx": "excel table",
         }
-
-        # Create styled list items for renamed files
         styled_links = []
         for relative_path in renamed_files:
             filename = os.path.basename(relative_path)
             file_extension = os.path.splitext(filename)[1]
+            file_description = (
+                "report"
+                if filename.endswith("adv.xlsx")
+                else file_type_descriptions.get(file_extension, "file")
+            )
 
-            is_adv_file = filename.endswith("adv.xlsx")
-            if is_adv_file:
-                file_description = "report"
-                background_color = "#f5f5f5"
-                text_color = "#9e9e9e"
-            else:
-                file_description = file_type_descriptions.get(file_extension, "file")
-                background_color = "#f9f9f9"
-                text_color = "#007bff"
+            # Set text color for reports to gray
+            text_color = "#6c757d" if file_description == "report" else "#007bff"
 
             styled_links.append(
                 html.Div(
@@ -584,7 +585,7 @@ def refresh_files_and_update_progress(n_intervals, files_to_be_downloaded):
                         "padding": "8px",
                         "border": "1px solid #ddd",
                         "border-radius": "8px",
-                        "background-color": background_color,
+                        "background-color": "#f9f9f9",
                         "font-family": "Arial, sans-serif",
                         "margin-bottom": "5px",
                     },
@@ -601,28 +602,11 @@ def refresh_files_and_update_progress(n_intervals, files_to_be_downloaded):
             for url in failed_downloads
         ]
 
-        # If progress reaches 100%, add bounce effect
-        if progress == 100:
-            return (
-                styled_links,
-                progress,
-                f"Download Complete! {int(progress)}%",
-                "bounce",
-                failed_links
-                or [
-                    html.Div(
-                        "No failed downloads.",
-                        style={"color": "gray", "text-align": "center"},
-                    )
-                ],
-            )
-
-        # Return updated values for non-100% progress
         return (
             styled_links,
             progress,
             progress_text,
-            "",
+            "bounce" if progress == 100 else "",
             failed_links
             or [
                 html.Div(
@@ -789,7 +773,11 @@ def parse_tree(path, selected_files, level=0):
 
     folder_name = os.path.basename(path)
     is_transformed_folder = folder_name.lower() == "transformed"
-    is_excluded_folder = folder_name.lower() in ["topic sections", "statista_data"]
+    is_excluded_folder = folder_name.lower() in [
+        "topic sections",
+        "statista_data",
+        "advanced_reports",
+    ]
 
     # Determine if all files in the folder are selected
     folder_files = [
@@ -799,7 +787,7 @@ def parse_tree(path, selected_files, level=0):
 
     # Folder entry styling
     folder_style = {
-        "margin-left": f"{level * 40}px",
+        "margin-left": f"{level * 60}px",
         "padding": "5px",
         "background-color": "transparent",
         "border-radius": "5px",
@@ -865,7 +853,7 @@ def parse_tree(path, selected_files, level=0):
             selected_class = "selected" if is_selected else ""
 
             file_style = {
-                "margin-left": f"{(level + 1) * 40}px",
+                "margin-left": f"{(level + 1) * 60}px",
                 "cursor": "not-allowed" if is_unclickable else "pointer",
                 "padding": "5px",
                 "color": (

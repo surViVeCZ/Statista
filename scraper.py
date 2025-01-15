@@ -331,10 +331,8 @@ def download_xlsx(
 
     driver = setup_driver()
     try:
-        # Transfer session cookies to the Selenium WebDriver
-        driver.get(
-            "https://www.statista.com/"
-        )  # Open a page to set the domain for cookies
+        # Transfer cookies from the session to Selenium
+        driver.get("https://www.statista.com/")  # Set domain for cookies
         for cookie in session.cookies:
             driver.add_cookie(
                 {
@@ -348,29 +346,36 @@ def download_xlsx(
             )
 
         # Navigate to the section URL and initiate download
+        # log.info(f"🔄 Navigating to section URL: {section_url}")
         driver.get(section_url)
-        xls_button = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable(
-                (
-                    By.XPATH,
-                    "//button[contains(@data-paywall-info-box-track, 'paywall_c2a--xls')]",
+
+        # Locate and click the XLS button
+        try:
+            xls_button = WebDriverWait(driver, 10).until(
+                EC.element_to_be_clickable(
+                    (
+                        By.XPATH,
+                        "//button[contains(@data-paywall-info-box-track, 'paywall_c2a--xls')]",
+                    )
                 )
             )
-        )
-        xls_button.click()
-        time.sleep(10)  # Wait for the download to complete
+            xls_button.click()
+            # log.info("📂 XLSX download initiated.")
+            time.sleep(10)  # Wait for download to complete
+        except Exception as e:
+            log.error(f"❌ Failed to locate or click XLSX download button: {e}")
+            raise
+
     except Exception as e:
-        log.error(f"❌ Failed to download XLSX file from {section_url}: {e}")
+        log.error(f"❌ Error during XLSX download from {section_url}: {e}")
         if retry_count < MAX_RETRIES:
-            log.info(f"🔄 Retrying download ({retry_count + 1}/{MAX_RETRIES})...")
+            log.info(f"🔄 Retrying ({retry_count + 1}/{MAX_RETRIES})...")
             return download_xlsx(
                 section_url, base_folder, pbar, subfolder, retry_count + 1
             )
         else:
             failed_downloads.append(section_url)
-            log.error(f"❌ Giving up on {section_url} after {MAX_RETRIES} attempts.")
             failed += 1
-            print(f"Failed: {failed}")
             return
     finally:
         driver.quit()
@@ -378,13 +383,12 @@ def download_xlsx(
     # Rename the downloaded file
     try:
         url_slug = section_url.rstrip("/").split("/")[-1]
-        downloaded_files = glob.glob(
-            os.path.join(DEST_FOLDER, "*.xls*")
-        )  # Matches .xls and .xlsx
+        downloaded_files = glob.glob(os.path.join(DEST_FOLDER, "*.xls*"))
         if not downloaded_files:
             log.warning(f"⚠️ No downloaded file found for section: {url_slug}")
             return
 
+        # Move the file to the appropriate folder
         downloaded_file = max(downloaded_files, key=os.path.getctime)
         save_path = os.path.join(save_folder, f"{url_slug}.xlsx")
         shutil.move(downloaded_file, save_path)
@@ -425,13 +429,17 @@ def download_report_with_selenium(report_url, topic_name):
             )
         log.info("✅ Cookies transferred successfully.")
 
+        # Ensure cookies are set
+        time.sleep(5)  # Allow time for cookies to propagate
+        driver.refresh()  # Refresh to apply cookies
+
         # Redirect to the report page
         log.info(f"🔄 Redirecting to report page: {report_url}")
         driver.get(report_url)
 
         # Hover over the Download button
         try:
-            download_button = WebDriverWait(driver, 10).until(
+            download_button = WebDriverWait(driver, 15).until(
                 EC.presence_of_element_located((By.ID, "downloadButton"))
             )
             action = ActionChains(driver)
@@ -442,7 +450,7 @@ def download_report_with_selenium(report_url, topic_name):
 
         # Wait for the dropdown to appear and click the PDF option
         try:
-            pdf_option = WebDriverWait(driver, 10).until(
+            pdf_option = WebDriverWait(driver, 15).until(
                 EC.element_to_be_clickable((By.CLASS_NAME, "dropdownButton__link--pdf"))
             )
             driver.execute_script("arguments[0].click();", pdf_option)
@@ -464,7 +472,7 @@ def download_report_with_selenium(report_url, topic_name):
         # Assume the most recently downloaded file is the target
         downloaded_file = max(downloaded_files, key=os.path.getctime)
         shutil.move(downloaded_file, report_file_path)
-        log.info(f"📂 Report saved successfully")
+        log.info(f"📂 Report saved successfully at: {report_file_path}")
     except Exception as e:
         log.error(f"❌ Failed to rename the downloaded file: {e}")
 

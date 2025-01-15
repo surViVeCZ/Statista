@@ -143,7 +143,13 @@ def move_latest_file_to_destination(title, topic):
     :param topic: The topic to replace in the destination folder path.
     """
     try:
-        dest_folder = os.path.abspath(f"statista_data/{topic}/advanced_reports")
+        # Sanitize the topic name to ensure consistency
+        sanitized_topic = topic.lower().replace(" ", "-").strip()
+
+        # Construct the destination folder path
+        dest_folder = os.path.abspath(
+            f"statista_data/{sanitized_topic}/advanced_reports"
+        )
 
         # Ensure destination folder exists
         if not os.path.exists(dest_folder):
@@ -166,7 +172,7 @@ def move_latest_file_to_destination(title, topic):
 
         # Move the file to the destination folder
         shutil.move(latest_file, dest_path)
-        # log.info(f"✅ Moved file to {dest_path}")
+        log.info(f"✅ Moved file to {dest_path}")
     except Exception as e:
         log.error(f"❌ Failed to move and rename file: {e}")
 
