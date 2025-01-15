@@ -378,42 +378,44 @@ def download_xlsx(
                 )
             )
             xls_button.click()
-            # log.info("📂 XLSX download initiated.")
-            time.sleep(10)  # Wait for download to complete
+            log.info("📂 XLSX download initiated.")
         except Exception as e:
             log.error(f"❌ Failed to locate or click XLSX download button: {e}")
             raise
 
-    except Exception as e:
-        log.error(f"❌ Error during XLSX download from {section_url}: {e}")
-        if retry_count < MAX_RETRIES:
-            log.info(f"🔄 Retrying ({retry_count + 1}/{MAX_RETRIES})...")
-            return download_xlsx(
-                section_url, base_folder, pbar, subfolder, retry_count + 1
-            )
-        else:
+        # Dynamic waiting for file download
+        downloaded_file = None
+        wait_time = 0
+        while wait_time < 30:
+            downloaded_files = glob.glob(os.path.join(DEST_FOLDER, "*.xls*"))
+            if downloaded_files:
+                downloaded_file = max(downloaded_files, key=os.path.getctime)
+                break
+            time.sleep(2)  # Check every 2 seconds
+            wait_time += 2
+
+        if not downloaded_file:
+            log.warning(f"⚠️ No downloaded file found for section: {section_url}")
             failed_downloads.append(section_url)
             failed += 1
             return
-    finally:
-        driver.quit()
 
-    # Rename the downloaded file
-    try:
+        # Rename and move the file
         url_slug = section_url.rstrip("/").split("/")[-1]
-        downloaded_files = glob.glob(os.path.join(DEST_FOLDER, "*.xls*"))
-        if not downloaded_files:
-            log.warning(f"⚠️ No downloaded file found for section: {url_slug}")
-            return
-
-        # Move the file to the appropriate folder
-        downloaded_file = max(downloaded_files, key=os.path.getctime)
         save_path = os.path.join(save_folder, f"{url_slug}.xlsx")
         shutil.move(downloaded_file, save_path)
         log.info(f"📂 XLSX file saved: {os.path.basename(save_path)}")
         pbar.update(1)
     except Exception as e:
-        log.error(f"❌ Failed to rename the downloaded file: {e}")
+        log.error(f"❌ Error during XLSX download: {e}")
+        if retry_count < MAX_RETRIES:
+            log.info(f"🔄 Retrying download ({retry_count + 1}/{MAX_RETRIES})...")
+            download_xlsx(section_url, base_folder, pbar, subfolder, retry_count + 1)
+        else:
+            failed_downloads.append(section_url)
+            failed += 1
+    finally:
+        driver.quit()
 
 
 def get_failed_downloads():
@@ -423,6 +425,8 @@ def get_failed_downloads():
 
 def download_report_with_selenium(report_url, topic_name):
     """Redirect to 'Explore this report' URL, open the Download dropdown, and click the PDF option."""
+    global failed_downloads, failed
+
     driver = setup_driver()
     topic_folder = os.path.join(DEST_FOLDER, topic_name)
     os.makedirs(topic_folder, exist_ok=True)
@@ -464,6 +468,8 @@ def download_report_with_selenium(report_url, topic_name):
             action.move_to_element(download_button).perform()
         except Exception as e:
             log.error(f"❌ Failed to hover over the Download button: {e}")
+            failed_downloads.append(report_url)
+            failed += 1
             return
 
         # Wait for the dropdown to appear and click the PDF option
@@ -476,6 +482,8 @@ def download_report_with_selenium(report_url, topic_name):
             time.sleep(10)  # Wait for the download to complete
         except Exception as e:
             log.error(f"❌ Failed to locate or click the PDF download option: {e}")
+            failed_downloads.append(report_url)
+            failed += 1
             return
     finally:
         driver.quit()
@@ -485,6 +493,8 @@ def download_report_with_selenium(report_url, topic_name):
         downloaded_files = glob.glob(os.path.join(DEST_FOLDER, "*.pdf"))
         if not downloaded_files:
             log.warning("⚠️ No downloaded file found.")
+            failed_downloads.append(report_url)
+            failed += 1
             return
 
         # Assume the most recently downloaded file is the target
@@ -493,6 +503,8 @@ def download_report_with_selenium(report_url, topic_name):
         log.info(f"📂 Report saved successfully at: {report_file_path}")
     except Exception as e:
         log.error(f"❌ Failed to rename the downloaded file: {e}")
+        failed_downloads.append(report_url)
+        failed += 1
 
 
 def clean_and_reformat_file(input_file, output_file):
