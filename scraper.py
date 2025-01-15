@@ -70,16 +70,34 @@ session = requests.Session()
 
 
 def setup_driver():
-    """Configure and return a Selenium WebDriver."""
+    """Configure and return a Selenium WebDriver with headless mode."""
     options = Options()
+
+    # Headless mode with additional compatibility arguments
+    options.add_argument("--headless=new")  # New headless mode for Chrome
+    options.add_argument("--disable-gpu")  # Disable GPU to avoid rendering issues
+    options.add_argument("--window-size=1920,1080")  # Set window size for visibility
+    options.add_argument("--force-device-scale-factor=1")  # Prevent scaling issues
+    options.add_argument("--disable-dev-shm-usage")  # Prevent /dev/shm errors in Docker
+    options.add_argument("--no-sandbox")  # Needed for running as root in some cases
+    options.add_argument("--disable-extensions")  # Ensure extensions don't interfere
+    options.add_argument("--disable-infobars")  # Suppress Chrome automation warnings
+    options.add_argument(
+        "--disable-blink-features=AutomationControlled"
+    )  # Avoid detection
+
+    # Experimental options for downloads
     options.add_experimental_option(
         "prefs",
         {
             "download.default_directory": DEST_FOLDER,
             "download.prompt_for_download": False,
             "download.directory_upgrade": True,
+            "safebrowsing.enabled": True,
         },
     )
+
+    # Return configured WebDriver
     return webdriver.Chrome(options=options)
 
 
