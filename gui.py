@@ -32,7 +32,11 @@ from scraper import (
     get_failed_downloads,
 )
 
-from transform import remove_overview, remove_header_and_empty_column
+from transform import (
+    tr1_remove_overview,
+    tr2_remove_header_and_empty_column,
+    pipeline_transform,
+)
 
 
 def SelectedTopicComponent():
@@ -924,43 +928,41 @@ def transform_files(n_clicks, selected_files):
         return "⚠️ No files selected for transformation."
 
     base_dir = DOWNLOAD_DIR
-
-    transformations = [
-        {"name": "Removing overview sheet", "function": remove_overview},
-        {
-            "name": "Removing header rows and empty first column",
-            "function": remove_header_and_empty_column,
-        },
-    ]
-
     transformation_status = []
-    total_steps = len(transformations)
 
     try:
-        for idx, transformation in enumerate(transformations, start=1):
+        # Log the beginning of the pipeline
+        step = "🔄 Starting the transformation pipeline... Initializing steps."
+        transformation_status.append(html.Div(step, style={"margin-bottom": "5px"}))
+        logging.info(step)
+
+        # Execute the pipeline
+        try:
+            logging.info("Step 1: Running the transformation pipeline.")
+            pipeline_transform(selected_files, base_dir)
             step = (
-                f"🔄 Transformation {idx}/{total_steps}: {transformation['name']}... "
+                "✅ Pipeline completed successfully. All steps executed without errors."
             )
-            try:
-                transformation["function"](
-                    selected_files, base_dir
-                )  # Call the transformation function
-                step += "✅ Completed"
-            except Exception as e:
-                step += f"❌ Failed ({str(e)})"
             transformation_status.append(html.Div(step, style={"margin-bottom": "5px"}))
-
-        # Add final status summary
-        transformation_status.append(
-            html.Div(
-                "🎉 All transformations completed.",
-                style={"color": "green", "font-weight": "bold"},
+            logging.info(step)
+        except Exception as pipeline_error:
+            # Log the specific failure in the pipeline
+            step = (
+                f"❌ Pipeline failed during execution: {str(pipeline_error)}. "
+                "Check individual transformation logs for details."
             )
-        )
-    except Exception as e:
-        logging.error(f"Error during transformation: {e}")
-        return f"❌ Transformation process failed: {e}"
+            transformation_status.append(html.Div(step, style={"margin-bottom": "5px"}))
+            logging.error(step)
 
+    except Exception as outer_error:
+        # Handle any unexpected errors during the overall process
+        logging.error(f"Unexpected error during the pipeline: {outer_error}")
+        return html.Div(
+            f"❌ Transformation process encountered a critical error: {outer_error}",
+            style={"color": "red", "font-weight": "bold"},
+        )
+
+    # Return the detailed transformation status
     return transformation_status
 
 

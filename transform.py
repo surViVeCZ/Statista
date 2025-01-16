@@ -1,6 +1,9 @@
 import os
 import pandas as pd
 import logging
+import warnings
+
+warnings.filterwarnings("ignore", category=UserWarning, module="openpyxl")
 
 
 logging.basicConfig(
@@ -23,7 +26,7 @@ def format_relative_path(base_dir, full_path):
         return full_path
 
 
-def remove_overview(selected_files, base_dir="statista_data"):
+def tr1_remove_overview(selected_files, base_dir="statista_data"):
     """
     Transform selected files by removing the 'Overview' sheet and save the results.
     Outputs a summary log of all transformed files.
@@ -94,10 +97,12 @@ def remove_overview(selected_files, base_dir="statista_data"):
         for path in errors:
             logging.error(f"    {path}")
 
+    return transformed_files  # Return the transformed files for the next step
 
-def remove_header_and_empty_column(selected_files, base_dir="statista_data"):
+
+def tr2_remove_header_and_empty_column(selected_files, base_dir="statista_data"):
     """
-    Transform selected files by removing the first header rows and the empty first column, then save the results.
+    Transform selected files by cleaning headers, removing metadata rows, and dropping empty columns.
     Outputs a summary log of all transformed files.
     """
     transformed_files = []
@@ -107,6 +112,14 @@ def remove_header_and_empty_column(selected_files, base_dir="statista_data"):
         try:
             input_path = os.path.join(base_dir, relative_path)
 
+            # Skip files containing "adv" in the name
+            if "adv" in os.path.basename(input_path).lower():
+                logging.info(
+                    f"Skipping file {relative_path} as it contains 'adv' in the name."
+                )
+                transformed_files.append(format_relative_path(base_dir, input_path))
+                continue
+
             if not os.path.exists(input_path):
                 logging.warning(
                     f"File not found: {relative_path}. Skipping transformation."
@@ -114,10 +127,13 @@ def remove_header_and_empty_column(selected_files, base_dir="statista_data"):
                 errors.append(relative_path)
                 continue
 
-            # transformed output directory
+            # Ensure the output path does not add another 'transformed' folder
             parent_dir = os.path.dirname(input_path)
-            transformed_dir = os.path.join(parent_dir, "transformed")
-            os.makedirs(transformed_dir, exist_ok=True)
+            if parent_dir.endswith("transformed"):
+                transformed_dir = parent_dir  # Use the existing 'transformed' folder
+            else:
+                transformed_dir = os.path.join(parent_dir, "transformed")
+                os.makedirs(transformed_dir, exist_ok=True)
 
             output_path = os.path.join(transformed_dir, os.path.basename(input_path))
             formatted_path = format_relative_path(base_dir, output_path)
@@ -126,9 +142,30 @@ def remove_header_and_empty_column(selected_files, base_dir="statista_data"):
             with pd.ExcelFile(input_path) as xls:
                 sheet_data = {}
                 for sheet in xls.sheet_names:
-                    df = pd.read_excel(xls, sheet_name=sheet, header=3).iloc[:, 1:]
-                    sheet_data[sheet] = df
+                    df = pd.read_excel(xls, sheet_name=sheet)
 
+                    # Step 1: Remove metadata rows (rows without numeric data)
+                    valid_data_start_index = df[
+                        df.applymap(lambda x: isinstance(x, (int, float))).any(axis=1)
+                    ].index.min()
+                    df_cleaned = df.iloc[valid_data_start_index:].reset_index(drop=True)
+
+                    # Step 2: Use the first valid row as headers
+                    df_cleaned.columns = df_cleaned.iloc[0]
+                    df_cleaned = df_cleaned[1:].reset_index(drop=True)
+
+                    # Step 3: Drop entirely empty columns
+                    df_cleaned = df_cleaned.dropna(axis=1, how="all")
+
+                    # Step 4: Replace NaN or placeholder headers
+                    df_cleaned.columns = [
+                        f"Column_{i}" if pd.isna(col) else col
+                        for i, col in enumerate(df_cleaned.columns)
+                    ]
+
+                    sheet_data[sheet] = df_cleaned
+
+            # Save the cleaned data to a new Excel file
             with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
                 for sheet_name, data in sheet_data.items():
                     data.to_excel(writer, sheet_name=sheet_name, index=False)
@@ -156,3 +193,25 @@ def remove_header_and_empty_column(selected_files, base_dir="statista_data"):
         )
         for path in errors:
             logging.error(f"    {path}")
+
+    return transformed_files
+
+
+def pipeline_transform(selected_files, base_dir="statista_data"):
+    """Run the transformation pipeline."""
+    logging.info("Starting the transformation pipeline...")
+
+    # Step 1: Remove Overview
+    logging.info("Step 1: Removing Overview sheets...")
+    transformed_step1 = tr1_remove_overview(selected_files, base_dir)
+
+    if not transformed_step1:
+        logging.warning("No files to process after Step 1. Exiting pipeline.")
+        return
+
+    # Step 2: Remove header and empty columns
+    logging.info("Step 2: Removing header rows and empty columns...")
+    transformed_step2 = tr2_remove_header_and_empty_column(transformed_step1, base_dir)
+
+    logging.info("Transformation pipeline completed.")
+    return transformed_step2
