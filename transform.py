@@ -189,6 +189,26 @@ def tr4_reduce_empty_lines(selected_files, base_dir="statista_data"):
     return process_files(selected_files, base_dir, process_function)
 
 
+def tr5_removing_total_percentages(selected_files, base_dir="statista_data"):
+    def process_function(xls):
+        sheet_data = {}
+        for sheet in xls.sheet_names:
+            df = pd.read_excel(xls, sheet_name=sheet)
+
+            # Remove columns where any cell contains "Grand Total" or "in %"
+            columns_to_keep = df.apply(
+                lambda col: ~col.astype(str)
+                .str.contains("Grand Total|in %", na=False)
+                .any()
+            )
+            df_cleaned = df.loc[:, columns_to_keep]
+
+            sheet_data[sheet] = df_cleaned
+        return sheet_data
+
+    return process_files(selected_files, base_dir, process_function)
+
+
 def pipeline_transform(selected_files, base_dir="statista_data"):
     logging.info("Starting the transformation pipeline...")
 
@@ -214,5 +234,9 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
     logging.info("Step 4: Reducing empty lines...")
     transformed_step4 = tr4_reduce_empty_lines(transformed_step3, base_dir)
 
+    # Step 5: Remove total percentages columns
+    logging.info("Step 5: Removing columns with 'Grand Total' and 'in %'...")
+    transformed_step5 = tr5_removing_total_percentages(transformed_step4, base_dir)
+
     logging.info("Transformation pipeline completed.")
-    return transformed_step4
+    return transformed_step5
