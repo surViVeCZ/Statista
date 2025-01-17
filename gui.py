@@ -33,7 +33,7 @@ from scraper import (
 )
 
 from transform import (
-    tr1_remove_overview,
+    tr1_remove_sheets,
     tr2_remove_header_and_empty_column,
     pipeline_transform,
 )

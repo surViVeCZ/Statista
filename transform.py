@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import logging
 import warnings
+import time
 
 warnings.filterwarnings("ignore", category=UserWarning, module="openpyxl")
 
@@ -26,9 +27,9 @@ def format_relative_path(base_dir, full_path):
         return full_path
 
 
-def tr1_remove_overview(selected_files, base_dir="statista_data"):
+def tr1_remove_sheets(selected_files, base_dir="statista_data"):
     """
-    Transform selected files by removing the 'Overview' sheet and save the results.
+    Transform selected files by removing the 'Overview' and 'Content' sheets and save the results.
     Outputs a summary log of all transformed files.
     """
     transformed_files = []  # Store paths of successfully transformed files
@@ -57,16 +58,16 @@ def tr1_remove_overview(selected_files, base_dir="statista_data"):
             with pd.ExcelFile(input_path) as xls:
                 sheets = xls.sheet_names
 
-                if "Overview" not in sheets:
+                if "Overview" not in sheets and "Content" not in sheets:
                     logging.info(
-                        f"'Overview' sheet not found in {relative_path}. Skipping file."
+                        f"'Overview' and 'Content' sheets not found in {relative_path}. Skipping file."
                     )
                     continue
 
                 sheet_data = {
                     sheet: pd.read_excel(xls, sheet_name=sheet)
                     for sheet in sheets
-                    if sheet != "Overview"
+                    if sheet not in ["Overview", "Content"]
                 }
 
             # Write the transformed data to a new Excel file
@@ -82,17 +83,19 @@ def tr1_remove_overview(selected_files, base_dir="statista_data"):
             )
             errors.append(relative_path)
 
+    time.sleep(3)
     # Log summary of the transformation
     logging.info(
-        "[Remove Overview] Selected files to transform: %d", len(selected_files)
+        "[Remove Overview and Content] Selected files to transform: %d",
+        len(selected_files),
     )
     if transformed_files:
-        logging.info("[Remove Overview] Successfully saved:")
+        logging.info("[Remove Overview and Content] Successfully saved:")
         for path in transformed_files:
             logging.info(f"    {path}")
     if errors:
         logging.error(
-            "[Remove Overview] Errors occurred during transformation for the following files:"
+            "[Remove Overview and Content] Errors occurred during transformation for the following files:"
         )
         for path in errors:
             logging.error(f"    {path}")
@@ -146,8 +149,12 @@ def tr2_remove_header_and_empty_column(selected_files, base_dir="statista_data")
 
                     # Step 1: Remove metadata rows (rows without numeric data)
                     valid_data_start_index = df[
-                        df.applymap(lambda x: isinstance(x, (int, float))).any(axis=1)
+                        df.apply(
+                            lambda col: col.map(lambda x: isinstance(x, (int, float))),
+                            axis=0,
+                        ).any(axis=1)
                     ].index.min()
+
                     df_cleaned = df.iloc[valid_data_start_index:].reset_index(drop=True)
 
                     # Step 2: Use the first valid row as headers
@@ -178,6 +185,7 @@ def tr2_remove_header_and_empty_column(selected_files, base_dir="statista_data")
             )
             errors.append(relative_path)
 
+    time.sleep(3)
     # Log summary of the transformation
     logging.info(
         "[Remove Header and Empty Column] Selected files to transform: %d",
@@ -203,7 +211,7 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
 
     # Step 1: Remove Overview
     logging.info("Step 1: Removing Overview sheets...")
-    transformed_step1 = tr1_remove_overview(selected_files, base_dir)
+    transformed_step1 = tr1_remove_sheets(selected_files, base_dir)
 
     if not transformed_step1:
         logging.warning("No files to process after Step 1. Exiting pipeline.")
