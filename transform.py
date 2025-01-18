@@ -2,6 +2,10 @@ import os
 import pandas as pd
 import logging
 import warnings
+import openpyxl
+from openpyxl import Workbook
+from openpyxl.worksheet.worksheet import Worksheet
+import re
 import time
 
 warnings.filterwarnings("ignore", category=UserWarning, module="openpyxl")
@@ -68,10 +72,16 @@ def process_files(selected_files, base_dir, process_function, skip_adv=False):
             with pd.ExcelFile(input_path) as xls:
                 sheet_data = process_function(xls)
 
-            # Save the processed data
-            with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
-                for sheet_name, data in sheet_data.items():
-                    data.to_excel(writer, sheet_name=sheet_name, index=False)
+            # If we are dealing with a single workbook - when merging
+            if isinstance(sheet_data, Workbook):
+                logging.info("Saving workbook.")
+                sheet_data.save(output_path)
+            else:
+                # Save the processed data
+                with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
+                    if isinstance(sheet_data, dict):
+                        for sheet_name, data in sheet_data.items():
+                            data.to_excel(writer, sheet_name=sheet_name, index=False)
 
             transformed_files.append(formatted_path)
 
@@ -99,7 +109,7 @@ def tr1_remove_sheets(selected_files, base_dir="statista_data"):
     def process_function(xls):
         sheets = xls.sheet_names
         return {
-            sheet: pd.read_excel(xls, sheet_name=sheet)
+            sheet: pd.read_excel(xls, sheet_name=sheet, header=None)
             for sheet in sheets
             if sheet not in ["Overview", "Content", "Lists"]
         }
@@ -209,6 +219,71 @@ def tr5_removing_total_percentages(selected_files, base_dir="statista_data"):
     return process_files(selected_files, base_dir, process_function)
 
 
+def tr6_append_questions(selected_files, base_dir="statista_data"):
+    def process_function(xls):
+        sheet_data = {}
+
+        for sheet in xls.sheet_names:
+            df = pd.read_excel(xls, sheet_name=sheet)
+            df.reset_index(drop=True, inplace=True)
+
+            question = None
+            rows_to_drop = []
+
+            # Process the DataFrame for the current sheet
+            for idx, row in df.iterrows():
+                first_col = str(row.iloc[0]).strip() if pd.notna(row.iloc[0]) else ""
+
+                # Identify and extract question rows
+                match = re.match(r"^(.*?\?).*", first_col)
+                if match:
+                    question = match.group(1).strip()  # Extract question until `?`
+                    rows_to_drop.append(idx)  # Collect the index of the question row
+                    continue
+
+                # Append question to the first column of option rows
+                if question and first_col:
+                    df.iloc[idx, 0] = f"{question} {first_col}"
+
+            # Drop question rows
+            df.drop(index=rows_to_drop, inplace=True)
+            df.reset_index(drop=True, inplace=True)
+
+            # Add the processed DataFrame to the output dictionary
+            sheet_data[sheet] = df
+
+        return sheet_data
+
+    return process_files(selected_files, base_dir, process_function)
+
+
+def tr7_merging_sheets(selected_files, base_dir="statista_data"):
+    def process_function(xls):
+        wb = openpyxl.load_workbook(xls)
+        new_wb = Workbook()
+        merged_sheet = new_wb.active
+        merged_sheet.title = "Merged Data"
+        current_row = 1
+
+        for sheet_name in wb.sheetnames:
+
+            sheet = wb[sheet_name]
+
+            # Copy rows from the current sheet to the merged sheet
+            for row in sheet.iter_rows(values_only=True):
+                merged_sheet.append(row)
+
+            # Add a blank row between sheets (optional for better readability)
+            current_row += sheet.max_row
+            merged_sheet.append([])
+
+        # FIXME: the first row seems useless, so it's dropped - just in case
+        merged_sheet.delete_rows(1)
+        return new_wb
+
+    return process_files(selected_files, base_dir, process_function)
+
+
 def pipeline_transform(selected_files, base_dir="statista_data"):
     logging.info("Starting the transformation pipeline...")
 
@@ -234,9 +309,17 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
     logging.info("Step 4: Reducing empty lines...")
     transformed_step4 = tr4_reduce_empty_lines(transformed_step3, base_dir)
 
-    # Step 5: Remove total percentages columns
+    # # Step 5: Remove total percentages columns
     logging.info("Step 5: Removing columns with 'Grand Total' and 'in %'...")
     transformed_step5 = tr5_removing_total_percentages(transformed_step4, base_dir)
 
+    # Step 6: Append questions to options
+    logging.info("Step 6: Appending questions to options...")
+    transformed_step6 = tr6_append_questions(transformed_step5, base_dir)
+
+    # # Step 7: Merge sheets
+    logging.info("Step 6: Merging sheets...")
+    transformed_step7 = tr7_merging_sheets(transformed_step6, base_dir)
+
     logging.info("Transformation pipeline completed.")
-    return transformed_step5
+    return transformed_step7
