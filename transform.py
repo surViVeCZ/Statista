@@ -4,9 +4,8 @@ import logging
 import warnings
 import openpyxl
 from openpyxl import Workbook
-from openpyxl.worksheet.worksheet import Worksheet
 import re
-import time
+
 
 warnings.filterwarnings("ignore", category=UserWarning, module="openpyxl")
 
@@ -82,6 +81,11 @@ def process_files(selected_files, base_dir, process_function, skip_adv=False):
                     if isinstance(sheet_data, dict):
                         for sheet_name, data in sheet_data.items():
                             data.to_excel(writer, sheet_name=sheet_name, index=False)
+                    else:
+                        logging.error(
+                            f"An error occurred while saving file {relative_path}: Bad file type."
+                        )
+                        errors.append(relative_path)
 
             transformed_files.append(formatted_path)
 
