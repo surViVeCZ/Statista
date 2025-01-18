@@ -32,11 +32,8 @@ from scraper import (
     get_failed_downloads,
 )
 
-from transform import (
-    tr1_remove_sheets,
-    tr2_remove_header_and_empty_column,
-    pipeline_transform,
-)
+from transform import pipeline_transform
+from metrics import calculate_sheet_score
 
 
 def SelectedTopicComponent():
@@ -905,6 +902,28 @@ def parse_tree(path, selected_files, level=0):
                 )
 
     return items
+
+
+@app.callback(
+    Output("transformability-score", "children"),
+    Input("selected-files-store", "data"),
+    prevent_initial_call=True,
+)
+def update_score(selected_files):
+    if selected_files is None or not selected_files:  # No files selected
+        return "0 files selected."  # Default score if no file uploaded
+
+    # Get the number of files (assuming selected_files is a list)
+    total_score = 0.0
+    num_files = len(selected_files)
+
+    for selected_file in selected_files:
+        file_score = calculate_sheet_score(selected_file)  # Example: 10 points per file
+        total_score += file_score
+
+    file_text = "file" if num_files == 1 else "files"
+
+    return f"{(total_score/num_files)*100:.1f}% ({num_files} {file_text})"
 
 
 @app.callback(

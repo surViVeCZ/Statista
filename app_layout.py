@@ -627,11 +627,44 @@ app_layout = dbc.Container(
                                             ),
                                             dbc.CardBody(
                                                 [
-                                                    dbc.Button(
-                                                        "Transform Data",
-                                                        id="transform-button",
-                                                        color="info",
-                                                        style={"margin-bottom": "10px"},
+                                                    dbc.Row(
+                                                        [
+                                                            dbc.Col(
+                                                                dbc.Button(
+                                                                    "Transform Data",
+                                                                    id="transform-button",
+                                                                    color="info",
+                                                                    style={
+                                                                        "margin-bottom": "10px"
+                                                                    },
+                                                                ),
+                                                                width=6,
+                                                            ),
+                                                            dbc.Col(
+                                                                html.Div(
+                                                                    [
+                                                                        html.Label(
+                                                                            "Transformability score:"
+                                                                        ),
+                                                                        html.Div(
+                                                                            id="transformability-score",
+                                                                            children="0 files selected.",  # default score
+                                                                            style={
+                                                                                "margin-left": "10px",
+                                                                                "font-size": "18px",
+                                                                                "font-weight": "bold",
+                                                                                "color": "blue",
+                                                                            },
+                                                                        ),
+                                                                    ],
+                                                                    style={
+                                                                        "display": "flex",
+                                                                        "align-items": "center",
+                                                                    },
+                                                                ),
+                                                                width=6,
+                                                            ),
+                                                        ]
                                                     ),
                                                     html.Div(
                                                         id="transformation-status",
