@@ -203,19 +203,40 @@ def tr4_reduce_empty_lines(selected_files, base_dir="statista_data"):
     return process_files(selected_files, base_dir, process_function)
 
 
-def tr5_removing_total_percentages(selected_files, base_dir="statista_data"):
+def tr5_removing_total_percentages_income_demography(
+    selected_files, base_dir="statista_data"
+):
     def process_function(xls):
         sheet_data = {}
         for sheet in xls.sheet_names:
             df = pd.read_excel(xls, sheet_name=sheet)
 
-            # Remove columns where any cell contains "Grand Total" or "in %"
+            # Remove columns where any cell contains specified strings
+            column_keywords = [
+                "Grand Total",
+                "in %",
+                "Up to € 26 400",
+                "€26 400 up to €50 400",
+                "€50 400 up to €117 600",
+                "€117 600 and more",
+                "Prefer not to say",
+            ]
             columns_to_keep = df.apply(
                 lambda col: ~col.astype(str)
-                .str.contains("Grand Total|in %", na=False)
+                .str.contains("|".join(map(re.escape, column_keywords)), na=False)
                 .any()
             )
             df_cleaned = df.loc[:, columns_to_keep]
+
+            # Remove rows where any cell contains specified strings
+            row_keywords = ["Gender", "Age (basic)"]
+            rows_to_keep = ~df_cleaned.astype(str).apply(
+                lambda row: row.str.contains(
+                    "|".join(map(re.escape, row_keywords)), na=False
+                ).any(),
+                axis=1,
+            )
+            df_cleaned = df_cleaned.loc[rows_to_keep]
 
             sheet_data[sheet] = df_cleaned
         return sheet_data
@@ -238,18 +259,32 @@ def tr6_append_questions(selected_files, base_dir="statista_data"):
             for idx, row in df.iterrows():
                 first_col = str(row.iloc[0]).strip() if pd.notna(row.iloc[0]) else ""
 
-                # Identify and extract question rows
-                match = re.match(r"^(.*?\?).*", first_col)
+                # Identify and extract question or statement rows
+                match = re.match(r"^(.*?\?|Agreement with the statement:.*)", first_col)
                 if match:
-                    question = match.group(1).strip()  # Extract question until `?`
-                    rows_to_drop.append(idx)  # Collect the index of the question row
+                    question = match.group(1).strip()
+                    # Remove ",", ":", "'", and "\" and replace spaces with underscores, add "_" at the end
+                    question = re.sub(r"[,:'\".]", "", question).replace(" ", "_") + "_"
+                    rows_to_drop.append(
+                        idx
+                    )  # Collect the index of the question or statement row
                     continue
 
-                # Append question to the first column of option rows
+                # Append question or statement to the first column of option rows
                 if question and first_col:
+                    first_col = re.sub(r"[,:'\".]", "", first_col).replace(
+                        " ", "_"
+                    )  # Process the answer as well
                     df.iloc[idx, 0] = f"{question} {first_col}"
 
-            # Drop question rows
+            # Identify and remove rows with leftover questions
+            for idx, row in df.iterrows():
+                if "Male" in row.values or "Female" in row.values:
+                    # Check the row above for emptiness
+                    if idx > 0 and not any(df.iloc[idx - 1, 1:].notna()):
+                        rows_to_drop.append(idx - 1)
+
+            # Drop identified rows
             df.drop(index=rows_to_drop, inplace=True)
             df.reset_index(drop=True, inplace=True)
 
@@ -315,7 +350,9 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
 
     # # Step 5: Remove total percentages columns
     logging.info("Step 5: Removing columns with 'Grand Total' and 'in %'...")
-    transformed_step5 = tr5_removing_total_percentages(transformed_step4, base_dir)
+    transformed_step5 = tr5_removing_total_percentages_income_demography(
+        transformed_step4, base_dir
+    )
 
     # Step 6: Append questions to options
     logging.info("Step 6: Appending questions to options...")

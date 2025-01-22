@@ -9,9 +9,28 @@ def calculate_sheet_score(file_path):
         "characteristics & demographics",
         "demographics",
     ]  # consider only 3 options
-    lookup_columns = ["Age", "Gender"]
+    lookup_columns = [
+        "Age",
+        "Gender",
+        "male",
+        "female",
+        "Male",
+        "Female",
+        "18 - 29 years",
+        "30 - 39 years",
+        "40 - 49 years",
+        "50 - 59 years",
+        "60 years and older",
+    ]
 
-    excel_data = pd.read_excel(file_path, sheet_name=None)  # Load all sheets
+    try:
+        excel_data = pd.read_excel(
+            file_path, sheet_name=None, engine="openpyxl"
+        )  # Load all sheets
+    except ValueError:
+        raise ValueError(
+            "The file format could not be determined. Ensure the file is a valid Excel file."
+        )
 
     sheet_score = 0
     column_score = 0
@@ -42,5 +61,5 @@ def calculate_sheet_score(file_path):
     total_score = (
         (sheet_score / (len(lookup_sheets) - 1)) + (column_score / num_data_sheets)
     ) / 2
-    print(total_score)
+    # print(total_score)
     return total_score
