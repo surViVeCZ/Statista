@@ -338,31 +338,71 @@ def tr7_merging_sheets(selected_files, base_dir="statista_data"):
             merged_sheet.append([])
 
         # Remove the first row (if deemed unnecessary)
-        merged_sheet.delete_rows(1)
+        #merged_sheet.delete_rows(1)
 
         # Convert merged sheet to a Pandas DataFrame for easier processing
-        import pandas as pd
-
-        data = [[cell.value for cell in row] for row in merged_sheet.iter_rows()]
-        df = pd.DataFrame(data)
-
-        # Identify gender rows and remove the row above if it is not empty
-        gender_rows = df[df.iloc[:, 1].isin(["Female", "Male"])].index
-        rows_to_remove = [
-            idx - 1
-            for idx in gender_rows
-            if idx - 1 >= 0 and not df.iloc[idx - 1].isnull().all()
-        ]
-        df = df.drop(index=rows_to_remove).reset_index(drop=True)
-
-        # Write the cleaned DataFrame back to the merged sheet
-        merged_sheet.delete_rows(1, merged_sheet.max_row)
-        for row in dataframe_to_rows(df, index=False, header=False):
-            merged_sheet.append(row)
+        # import pandas as pd
+        #
+        # data = [[cell.value for cell in row] for row in merged_sheet.iter_rows()]
+        # df = pd.DataFrame(data)
+        #
+        # # Identify gender rows and remove the row above if it is not empty
+        # gender_rows = df[df.iloc[:, 1].isin(["Female", "Male"])].index
+        # rows_to_remove = [
+        #     idx - 1
+        #     for idx in gender_rows
+        #     if idx - 1 >= 0 and not df.iloc[idx - 1].isnull().all()
+        # ]
+        # df = df.drop(index=rows_to_remove).reset_index(drop=True)
+        #
+        # # Write the cleaned DataFrame back to the merged sheet
+        # merged_sheet.delete_rows(1, merged_sheet.max_row)
+        # for row in dataframe_to_rows(df, index=False, header=False):
+        #     merged_sheet.append(row)
 
         return new_wb
 
     return process_files(selected_files, base_dir, process_function)
+
+def tr8_join_tables(selected_files, base_dir="statista_data"):
+    def process_function(xls):
+        df = pd.read_excel(xls, sheet_name=0, header=None)
+        df.reset_index(drop=True, inplace=True)
+
+        # Iterate over rows to find empty rows and drop them along with the next two rows
+        drop_indices = [0]
+        for idx, row in df.iterrows():
+            if row.isnull().all():  # Empty row found
+                drop_indices.extend([idx, idx + 1, idx + 2])  # Add the empty row and two following rows
+            elif row.iloc[0] == 0:                               # For the strange 0,3,5 row
+                drop_indices.extend([idx+2])
+
+        # Drop the identified rows
+        drop_indices = [i for i in drop_indices if i < len(df)]  # Ensure indices are within range
+        df.drop(index=drop_indices, inplace=True)
+        df.reset_index(drop=True, inplace=True)  # Reset index after dropping rows
+
+        return {"Merged_Sheet": df}  # Return the cleaned DataFrame with a consistent key
+
+    return process_files(selected_files, base_dir, process_function)
+
+def tr9_transpose_table(selected_files, base_dir="statista_data"):
+    def process_function(xls):
+        sheet_data = {}
+        for sheet in xls.sheet_names:
+            # Read the sheet
+            df = pd.read_excel(xls, sheet_name=sheet)
+
+            # Transpose the table
+            df = df.transpose().reset_index(drop=True)
+
+            # Add the processed sheet to the dictionary
+            sheet_data[sheet] = df
+
+        return sheet_data
+
+    return process_files(selected_files, base_dir, process_function)
+
 
 
 def pipeline_transform(selected_files, base_dir="statista_data"):
@@ -392,17 +432,23 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
 
     # # Step 5: Remove total percentages columns
     logging.info("Step 5: Removing columns with 'Grand Total' and 'in %'...")
-    transformed_step5 = tr5_removing_total_percentages_income_demography(
-        transformed_step4, base_dir
-    )
+    transformed_step5 = tr5_removing_total_percentages_income_demography(transformed_step4, base_dir)
 
     # Step 6: Append questions to options
     logging.info("Step 6: Appending questions to options...")
     transformed_step6 = tr6_append_questions(transformed_step5, base_dir)
 
-    # # Step 7: Merge sheets
-    logging.info("Step 6: Merging sheets...")
+    # Step 7: Merge sheets
+    logging.info("Step 7: Merging sheets...")
     transformed_step7 = tr7_merging_sheets(transformed_step6, base_dir)
 
+    # Step 8: Merge tables
+    logging.info("Step 8: Merging tables...")
+    transformed_step8 = tr8_join_tables(transformed_step7, base_dir)
+
+    # Step : Transpose the table
+    logging.info("Step 9: Transposing the table...")
+    transformed_step9 = tr9_transpose_table(transformed_step8, base_dir)
+
     logging.info("Transformation pipeline completed.")
-    return transformed_step7
+    return transformed_step9
