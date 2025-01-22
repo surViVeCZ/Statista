@@ -219,7 +219,21 @@ def tr5_removing_total_percentages_income_demography(
                 "€26 400 up to €50 400",
                 "€50 400 up to €117 600",
                 "€117 600 and more",
-                "Prefer not to say",
+                "Prefer not to say" "Less than 18 000 €",
+                "18 000 € up to less than 21 600 €",
+                "21 600 € up to less than 26 400 €",
+                "26 400 € up to less than 36 000 €",
+                "36 000 € up to less than 50 400 €",
+                "50 400 € up to less than 69 600 €",
+                "69 600 € up to less than 91 200 €",
+                "91 200 € up to less than 117 600 €",
+                "117 600 € to less than 148 800 €",
+                "More than 148 800 €",
+                "Would not like to answer",
+                "Up to 26 400€",
+                "26 400€ up to 50 400€",
+                "50 400€ up to 117 600€",
+                "117 600€ and more",
             ]
             columns_to_keep = df.apply(
                 lambda col: ~col.astype(str)
@@ -260,7 +274,10 @@ def tr6_append_questions(selected_files, base_dir="statista_data"):
                 first_col = str(row.iloc[0]).strip() if pd.notna(row.iloc[0]) else ""
 
                 # Identify and extract question or statement rows
-                match = re.match(r"^(.*?\?|Agreement with the statement:.*)", first_col)
+                match = re.match(
+                    r"^(.*?\?|.*\(multi-pick\)|.*\(single-pick\)|Recode based on .*|Agreement with the statement:.*)",
+                    first_col,
+                )
                 if match:
                     question = match.group(1).strip()
                     # Remove ",", ":", "'", and "\" and replace spaces with underscores, add "_" at the end
@@ -297,6 +314,10 @@ def tr6_append_questions(selected_files, base_dir="statista_data"):
 
 
 def tr7_merging_sheets(selected_files, base_dir="statista_data"):
+    import openpyxl
+    from openpyxl import Workbook
+    from openpyxl.utils.dataframe import dataframe_to_rows
+
     def process_function(xls):
         wb = openpyxl.load_workbook(xls)
         new_wb = Workbook()
@@ -316,8 +337,29 @@ def tr7_merging_sheets(selected_files, base_dir="statista_data"):
             current_row += sheet.max_row
             merged_sheet.append([])
 
-        # FIXME: the first row seems useless, so it's dropped - just in case
+        # Remove the first row (if deemed unnecessary)
         merged_sheet.delete_rows(1)
+
+        # Convert merged sheet to a Pandas DataFrame for easier processing
+        import pandas as pd
+
+        data = [[cell.value for cell in row] for row in merged_sheet.iter_rows()]
+        df = pd.DataFrame(data)
+
+        # Identify gender rows and remove the row above if it is not empty
+        gender_rows = df[df.iloc[:, 1].isin(["Female", "Male"])].index
+        rows_to_remove = [
+            idx - 1
+            for idx in gender_rows
+            if idx - 1 >= 0 and not df.iloc[idx - 1].isnull().all()
+        ]
+        df = df.drop(index=rows_to_remove).reset_index(drop=True)
+
+        # Write the cleaned DataFrame back to the merged sheet
+        merged_sheet.delete_rows(1, merged_sheet.max_row)
+        for row in dataframe_to_rows(df, index=False, header=False):
+            merged_sheet.append(row)
+
         return new_wb
 
     return process_files(selected_files, base_dir, process_function)
