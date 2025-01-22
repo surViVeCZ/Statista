@@ -5,6 +5,7 @@ import warnings
 import openpyxl
 from openpyxl import Workbook
 import re
+from datetime import datetime
 
 
 warnings.filterwarnings("ignore", category=UserWarning, module="openpyxl")
@@ -338,71 +339,199 @@ def tr7_merging_sheets(selected_files, base_dir="statista_data"):
             merged_sheet.append([])
 
         # Remove the first row (if deemed unnecessary)
-        #merged_sheet.delete_rows(1)
+        merged_sheet.delete_rows(1)
 
         # Convert merged sheet to a Pandas DataFrame for easier processing
-        # import pandas as pd
-        #
-        # data = [[cell.value for cell in row] for row in merged_sheet.iter_rows()]
-        # df = pd.DataFrame(data)
-        #
-        # # Identify gender rows and remove the row above if it is not empty
-        # gender_rows = df[df.iloc[:, 1].isin(["Female", "Male"])].index
-        # rows_to_remove = [
-        #     idx - 1
-        #     for idx in gender_rows
-        #     if idx - 1 >= 0 and not df.iloc[idx - 1].isnull().all()
-        # ]
-        # df = df.drop(index=rows_to_remove).reset_index(drop=True)
-        #
-        # # Write the cleaned DataFrame back to the merged sheet
-        # merged_sheet.delete_rows(1, merged_sheet.max_row)
-        # for row in dataframe_to_rows(df, index=False, header=False):
-        #     merged_sheet.append(row)
+        import pandas as pd
+
+        data = [[cell.value for cell in row] for row in merged_sheet.iter_rows()]
+        df = pd.DataFrame(data)
+
+        # Identify gender rows and remove the row above if it is not empty
+        gender_rows = df[df.iloc[:, 1].isin(["Female", "Male"])].index
+        rows_to_remove = [
+            idx - 1
+            for idx in gender_rows
+            if idx - 1 >= 0 and not df.iloc[idx - 1].isnull().all()
+        ]
+        df = df.drop(index=rows_to_remove).reset_index(drop=True)
+
+        # Write the cleaned DataFrame back to the merged sheet
+        merged_sheet.delete_rows(1, merged_sheet.max_row)
+        for row in dataframe_to_rows(df, index=False, header=False):
+            merged_sheet.append(row)
 
         return new_wb
 
     return process_files(selected_files, base_dir, process_function)
 
+
 def tr8_join_tables(selected_files, base_dir="statista_data"):
+    """
+    Remove all empty rows from the tables and ensure the first row with demography data is present only once.
+    Additionally, if any row contains both "Male" and "Female", ensure it appears only once and remove duplicates.
+    """
+
     def process_function(xls):
-        df = pd.read_excel(xls, sheet_name=0, header=None)
-        df.reset_index(drop=True, inplace=True)
+        sheet_data = {}
+        for sheet in xls.sheet_names:
+            df = pd.read_excel(xls, sheet_name=sheet)
 
-        # Iterate over rows to find empty rows and drop them along with the next two rows
-        drop_indices = [0]
-        for idx, row in df.iterrows():
-            if row.isnull().all():  # Empty row found
-                drop_indices.extend([idx, idx + 1, idx + 2])  # Add the empty row and two following rows
-            elif row.iloc[0] == 0:                               # For the strange 0,3,5 row
-                drop_indices.extend([idx+2])
+            # Remove completely empty rows
+            df_cleaned = df.dropna(how="all").reset_index(drop=True)
 
-        # Drop the identified rows
-        drop_indices = [i for i in drop_indices if i < len(df)]  # Ensure indices are within range
-        df.drop(index=drop_indices, inplace=True)
-        df.reset_index(drop=True, inplace=True)  # Reset index after dropping rows
+            # Ensure demography row (e.g., headers or first row) appears only once
+            if not df_cleaned.empty:
+                first_row = df_cleaned.iloc[0]
+                duplicates = df_cleaned.apply(lambda row: row.equals(first_row), axis=1)
+                df_cleaned = df_cleaned.loc[~duplicates.shift(-1, fill_value=False)]
 
-        return {"Merged_Sheet": df}  # Return the cleaned DataFrame with a consistent key
+            # Identify and ensure rows with both "Male" and "Female" appear only once
+            gender_rows = df_cleaned[
+                df_cleaned.apply(
+                    lambda row: "Male" in row.values and "Female" in row.values, axis=1
+                )
+            ]
+            if not gender_rows.empty:
+                # Keep only the first occurrence of such rows
+                unique_gender_rows = gender_rows.drop_duplicates()
+
+                # Remove all duplicates of gender rows from the main DataFrame
+                df_cleaned = df_cleaned[
+                    ~df_cleaned.apply(
+                        lambda row: "Male" in row.values and "Female" in row.values,
+                        axis=1,
+                    )
+                ]
+
+                # Add back the unique gender rows
+                df_cleaned = pd.concat(
+                    [df_cleaned, unique_gender_rows], ignore_index=True
+                )
+
+            sheet_data[sheet] = df_cleaned
+
+            # replace "Unnamed: 0" cell with "Topic"
+            if "Unnamed: 0" in df_cleaned.columns:
+                df_cleaned.rename(columns={"Unnamed: 0": "Topic"}, inplace=True)
+
+        return sheet_data
 
     return process_files(selected_files, base_dir, process_function)
+
 
 def tr9_transpose_table(selected_files, base_dir="statista_data"):
     def process_function(xls):
         sheet_data = {}
         for sheet in xls.sheet_names:
-            # Read the sheet
             df = pd.read_excel(xls, sheet_name=sheet)
 
-            # Transpose the table
-            df = df.transpose().reset_index(drop=True)
+            # Transpose the data
+            df_transposed = df.T.reset_index()
 
-            # Add the processed sheet to the dictionary
+            # Rename columns to make transposed data consistent
+            df_transposed.columns = [
+                f"Column_{i}" if i > 0 else "Index"
+                for i in range(df_transposed.shape[1])
+            ]
+
+            # Keep only columns with 4 or more non-empty values
+            if "adv" in os.path.basename(xls).lower():
+                df_filtered = df_transposed.loc[
+                    :, df_transposed.notna().sum(axis=0) >= 4
+                ]
+            else:
+                df_filtered = df_transposed
+
+            # Update the processed data with filtered columns
+            sheet_data[sheet] = df_filtered
+
+        return sheet_data
+
+    return process_files(selected_files, base_dir, process_function)
+
+
+def tr10_map_age(selected_files, base_dir="statista_data"):
+    """
+    Dynamically map generational categories to specific age ranges in the format "x - y years".
+    """
+    from datetime import datetime
+
+    current_year = datetime.now().year
+
+    def map_generation_to_age(value):
+        # Extended generation mapping including both formats
+        generation_mapping = {
+            "Gen Z (1995-2012)": (1995, 2012),
+            "Millennials (1980-1994)": (1980, 1994),
+            "Gen X (1965-1979)": (1965, 1979),
+            "Baby Boomers (1946-1964)": (1946, 1964),
+            "iGen / Gen Z (1995-2012)": (1995, 2012),
+            "Millennials / Generation Y (1980-1994)": (1980, 1994),
+            "Generation X (Baby Bust) (1965-1979)": (1965, 1979),
+            "Baby Boomer (1946-1964)": (1946, 1964),
+            "Traditionals (1922-1945)": (1922, 1945),
+        }
+
+        if value in generation_mapping:
+            start_year, end_year = generation_mapping[value]
+            start_age = current_year - end_year
+            end_age = current_year - start_year
+            return f"{start_age}-{end_age} years"
+
+        return value  # Default to the original value if no match
+
+    def process_function(xls):
+        sheet_data = {}
+        for sheet in xls.sheet_names:
+            df = pd.read_excel(xls, sheet_name=sheet)
+
+            # Apply mapping to all columns where generation categories might appear
+            df = df.applymap(map_generation_to_age)
+
             sheet_data[sheet] = df
 
         return sheet_data
 
     return process_files(selected_files, base_dir, process_function)
 
+
+def tr11_filter_advanced_files(selected_files, base_dir="statista_data"):
+    """
+    Process files containing 'adv' in the filename to only include rows where the first column contains:
+    - "Female"
+    - "Male"
+    - Values containing the substring "years".
+    Skip filtering for the first row.
+    """
+
+    def is_valid_row(value):
+        # Check if the value is "Female", "Male", or contains "years"
+        return isinstance(value, str) and (
+            value == "Female" or value == "Male" or "years" in value
+        )
+
+    def process_function(xls):
+        sheet_data = {}
+        for sheet in xls.sheet_names:
+            df = pd.read_excel(xls, sheet_name=sheet)
+
+            # Skip the first row and apply the filter to subsequent rows
+            first_row = df.iloc[0:1]
+            filtered_rows = df.iloc[1:][df.iloc[1:, 0].apply(is_valid_row)]
+
+            # Combine the first row with the filtered rows
+            df_filtered = pd.concat([first_row, filtered_rows], ignore_index=True)
+
+            sheet_data[sheet] = df_filtered
+
+        return sheet_data
+
+    # Only process files with "adv" in their filename
+    advanced_files = [
+        file for file in selected_files if "adv" in os.path.basename(file).lower()
+    ]
+    return process_files(advanced_files, base_dir, process_function)
 
 
 def pipeline_transform(selected_files, base_dir="statista_data"):
@@ -432,23 +561,33 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
 
     # # Step 5: Remove total percentages columns
     logging.info("Step 5: Removing columns with 'Grand Total' and 'in %'...")
-    transformed_step5 = tr5_removing_total_percentages_income_demography(transformed_step4, base_dir)
+    transformed_step5 = tr5_removing_total_percentages_income_demography(
+        transformed_step4, base_dir
+    )
 
     # Step 6: Append questions to options
     logging.info("Step 6: Appending questions to options...")
     transformed_step6 = tr6_append_questions(transformed_step5, base_dir)
 
-    # Step 7: Merge sheets
-    logging.info("Step 7: Merging sheets...")
+    # # Step 7: Merge sheets
+    logging.info("Step 6: Merging sheets...")
     transformed_step7 = tr7_merging_sheets(transformed_step6, base_dir)
 
-    # Step 8: Merge tables
-    logging.info("Step 8: Merging tables...")
+    # # Step 8: Join tables
+    logging.info("Step 8: Joining tables...")
     transformed_step8 = tr8_join_tables(transformed_step7, base_dir)
 
-    # Step : Transpose the table
-    logging.info("Step 9: Transposing the table...")
+    # Step 9: Transpose tables
+    logging.info("Step 9: Transposing tables...")
     transformed_step9 = tr9_transpose_table(transformed_step8, base_dir)
 
+    # # Step 10: Map age categories
+    logging.info("Step 10: Mapping age categories...")
+    transformed_step10 = tr10_map_age(transformed_step9, base_dir)
+
+    # # Step 11: Filter advanced files
+    logging.info("Step 11: Filtering advanced files...")
+    transformed_step11 = tr11_filter_advanced_files(transformed_step10, base_dir)
+
     logging.info("Transformation pipeline completed.")
-    return transformed_step9
+    return transformed_step11
