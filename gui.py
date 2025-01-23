@@ -32,7 +32,20 @@ from scraper import (
     get_failed_downloads,
 )
 
-from transform import pipeline_transform
+from transform import (
+    pipeline_transform,
+    tr1_remove_sheets,
+    tr2_remove_header_and_empty_column,
+    tr3_remove_metadata,
+    tr4_reduce_empty_lines,
+    tr5_removing_total_percentages_income_demography,
+    tr6_append_questions,
+    tr7_merging_sheets,
+    tr8_join_tables,
+    tr9_transpose_table,
+    tr10_map_age,
+    tr11_filter_advanced_files,
+)
 from metrics import calculate_sheet_score
 
 
@@ -77,7 +90,7 @@ initial_files = {
 
 
 class DashLogger(logging.Handler):
-    """Custom logging handler to store logs in the global `log_data` list."""
+    """Custom logging handler to store logs in the global log_data list."""
 
     def emit(self, record):
         global log_data
@@ -935,54 +948,85 @@ def update_region(selected_region):
     return f"Currently selected region: {selected_region}"
 
 
+def pipeline_transform(selected_files, base_dir="statista_data"):
+    global pipeline_progress
+
+    steps = [
+        ("Removing Overview sheets", tr1_remove_sheets),
+        ("Removing header rows and empty columns", tr2_remove_header_and_empty_column),
+        ("Removing metadata rows", tr3_remove_metadata),
+        ("Reducing empty lines", tr4_reduce_empty_lines),
+        (
+            "Removing columns with 'Grand Total' and 'in %'",
+            tr5_removing_total_percentages_income_demography,
+        ),
+        ("Appending questions to options", tr6_append_questions),
+        ("Merging sheets", tr7_merging_sheets),
+        ("Joining tables", tr8_join_tables),
+        ("Transposing tables", tr9_transpose_table),
+        ("Mapping age categories", tr10_map_age),
+        ("Filtering advanced files", tr11_filter_advanced_files),
+    ]
+
+    total_steps = len(steps)
+
+    for i, (step_name, transformation) in enumerate(steps):
+        try:
+            # Perform transformation step
+            selected_files = transformation(selected_files, base_dir)
+
+            # Update progress and status
+            progress = int(((i + 1) / total_steps) * 100)
+            pipeline_progress["progress"] = progress
+            pipeline_progress["status"].append(f"✅ {step_name} completed")
+
+        except Exception as e:
+            # Handle errors and stop the pipeline
+            pipeline_progress["status"].append(f"❌ {step_name} failed: {str(e)}")
+            pipeline_progress["progress"] = 100  # End progress on failure
+            break
+
+
 @app.callback(
-    Output("transformation-status", "children"),
-    Input("transform-button", "n_clicks"),
-    State("selected-files-store", "data"),
+    [
+        Output("progress-bar-transform", "value"),
+        Output("transformation-status", "children"),
+        Output("progress-interval", "disabled"),
+    ],
+    [Input("transform-button", "n_clicks"), Input("progress-interval", "n_intervals")],
+    [State("selected-files-store", "data")],
     prevent_initial_call=True,
 )
-def transform_files(n_clicks, selected_files):
-    """Handle transformation of selected files."""
-    if not selected_files:
-        return "⚠️ No files selected for transformation."
+def handle_pipeline_and_progress(n_clicks, n_intervals, selected_files):
+    global pipeline_progress
 
-    base_dir = DOWNLOAD_DIR
-    transformation_status = []
+    # Handle pipeline start
+    if ctx.triggered_id == "transform-button":
+        pipeline_progress = {"progress": 0, "status": []}  # Reset progress state
 
-    try:
-        # Log the beginning of the pipeline
-        step = "🔄 Starting the transformation pipeline... Initializing steps."
-        transformation_status.append(html.Div(step, style={"margin-bottom": "5px"}))
-        logging.info(step)
+        if not selected_files or len(selected_files) == 0:
+            logging.error("No files selected for transformation.")
+            return 0, "⚠️ No files selected for transformation.", True
 
-        # Execute the pipeline
-        try:
-            logging.info("Step 1: Running the transformation pipeline.")
-            pipeline_transform(selected_files, base_dir)
-            step = (
-                "✅ Pipeline completed successfully. All steps executed without errors."
-            )
-            transformation_status.append(html.Div(step, style={"margin-bottom": "5px"}))
-            logging.info(step)
-        except Exception as pipeline_error:
-            # Log the specific failure in the pipeline
-            step = (
-                f"❌ Pipeline failed during execution: {str(pipeline_error)}. "
-                "Check individual transformation logs for details."
-            )
-            transformation_status.append(html.Div(step, style={"margin-bottom": "5px"}))
-            logging.error(step)
+        # Start pipeline in a separate thread
+        def run_pipeline():
+            pipeline_transform(selected_files, base_dir="statista_data")
 
-    except Exception as outer_error:
-        # Handle any unexpected errors during the overall process
-        logging.error(f"Unexpected error during the pipeline: {outer_error}")
-        return html.Div(
-            f"❌ Transformation process encountered a critical error: {outer_error}",
-            style={"color": "red", "font-weight": "bold"},
-        )
+        Thread(target=run_pipeline).start()
+        return 0, "🔄 Starting transformation...", False
 
-    # Return the detailed transformation status
-    return transformation_status
+    # Handle progress updates
+    if ctx.triggered_id == "progress-interval":
+        progress = pipeline_progress["progress"]
+        status = [html.Div(step) for step in pipeline_progress["status"]]
+
+        # Stop the interval when progress reaches 100%
+        if progress >= 100:
+            return progress, status, True
+
+        return progress, status, False
+
+    return dash.no_update, dash.no_update, dash.no_update
 
 
 @app.callback(

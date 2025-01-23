@@ -618,6 +618,7 @@ app_layout = dbc.Container(
                                     width=6,
                                 ),
                                 # Transformation Output Section
+                                # Transformation Output Section
                                 dbc.Col(
                                     dbc.Card(
                                         [
@@ -679,6 +680,53 @@ app_layout = dbc.Container(
                                                             "background-color": "#f9f9f9",
                                                             "border-radius": "8px",
                                                         },
+                                                    ),
+                                                    # Progress bar with checkpoints
+                                                    html.Div(
+                                                        [
+                                                            # Checkpoints (Circles for each step)
+                                                            html.Div(
+                                                                id="progress-bar-checkpoints",
+                                                                children=[
+                                                                    html.Div(
+                                                                        className="progress-step",
+                                                                        id=f"step-{i}",
+                                                                        children=[
+                                                                            html.Div(
+                                                                                f"Step {i + 1}"
+                                                                            ),
+                                                                        ],
+                                                                    )
+                                                                    for i in range(
+                                                                        11
+                                                                    )  # Assuming 11 steps in pipeline
+                                                                ],
+                                                                style={
+                                                                    "display": "flex",
+                                                                    "justify-content": "space-between",
+                                                                    "margin-top": "20px",
+                                                                },
+                                                            ),
+                                                            # Progress bar itself
+                                                            dbc.Progress(
+                                                                id="progress-bar-transform",
+                                                                value=0,
+                                                                max=100,  # Representing progress as percentage
+                                                                striped=True,
+                                                                animated=True,
+                                                                style={
+                                                                    "margin-top": "10px",
+                                                                    "height": "20px",
+                                                                },
+                                                            ),
+                                                            # Interval component for real-time updates
+                                                            dcc.Interval(
+                                                                id="progress-interval",
+                                                                interval=1000,  # 1 second
+                                                                n_intervals=0,
+                                                                disabled=True,
+                                                            ),
+                                                        ]
                                                     ),
                                                 ]
                                             ),
