@@ -1,3 +1,6 @@
+# ===========================
+# IMPORTS
+# ===========================
 import os
 import logging
 from threading import Thread
@@ -12,8 +15,7 @@ from dash.dependencies import Input, Output, State, MATCH, ALL
 
 import plotly.express as px
 
-
-# dashboard visualization
+# Application-specific imports
 from app_layout import (
     app_layout,
     active_card_style,
@@ -21,8 +23,6 @@ from app_layout import (
     modern_card_hover_effect,
 )
 from advanced_search import extract_report_results, download_reports
-
-# Scraper script's methods
 from scraper import (
     setup_driver,
     login_with_selenium,
@@ -31,7 +31,6 @@ from scraper import (
     get_files_to_be_downloaded,
     get_failed_downloads,
 )
-
 from transform import (
     pipeline_transform,
     tr1_remove_sheets,
@@ -48,34 +47,19 @@ from transform import (
 )
 from metrics import calculate_sheet_score
 
-
-def SelectedTopicComponent():
-    return html.Div(
-        id="selected-topic-info",
-        children="Selected Topic: None | Files to Download: 0",
-        style={"margin-top": "10px", "font-weight": "bold"},
-    )
-
-
-# Initialize Dash app
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SOLAR])
-app.config.prevent_initial_callbacks = "initial_duplicate"
-app.config.suppress_callback_exceptions = (
-    True  # Allow callbacks for dynamically created components
-)
-server = app.server
-
-# Global variables
-log_data = []
-driver = None
-session_topics = []
-selected_topic_url = None
-selected_topic_name = None
+# ===========================
+# GLOBAL VARIABLES
+# ===========================
+log_data = []  # Log messages stored in memory
+driver = None  # Web driver for scraper
+session_topics = []  # Topics for the current session
+selected_topic_url = None  # URL of the selected topic
+selected_topic_name = None  # Name of the selected topic
 downloaded_files = []  # List of downloaded files
-failed_downloads = []
-files_to_be_downloaded = 0
-advanced_matches = 0
-advanced_reports = None
+failed_downloads = []  # List of failed downloads
+files_to_be_downloaded = 0  # Count of files to download
+advanced_matches = 0  # Count of advanced matches
+advanced_reports = None  # Placeholder for advanced reports
 
 # Directory for downloads
 DOWNLOAD_DIR = os.path.abspath("statista_data")
@@ -88,41 +72,32 @@ initial_files = {
     for filename in filenames
 }
 
-
-class DashLogger(logging.Handler):
-    """Custom logging handler to store logs in the global log_data list."""
-
-    def emit(self, record):
-        global log_data
-        log_data.append(self.format(record))
-        if len(log_data) > 1000:  # Limit the number of logs
-            log_data = log_data[-1000:]
+# ===========================
+# HELPER FUNCTIONS
+# ===========================
 
 
-# Configure logging
-dash_handler = DashLogger()
-dash_handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
-logging.getLogger().addHandler(dash_handler)
-logging.getLogger().setLevel(logging.INFO)
+def SelectedTopicComponent():
+    """Create the selected topic information component."""
+    return html.Div(
+        id="selected-topic-info",
+        children="Selected Topic: None | Files to Download: 0",
+        style={"margin-top": "10px", "font-weight": "bold"},
+    )
 
 
-# Helper function: Initialize driver
 def initialize_driver():
+    """Initialize the Selenium web driver."""
     global driver
     driver = setup_driver()
 
 
-# Helper function: Populate files in a directory
 def populate_initial_files():
+    """Populate the initial files from the download directory."""
     for root, _, filenames in os.walk(DOWNLOAD_DIR):
         for filename in filenames:
             relative_path = os.path.relpath(os.path.join(root, filename), DOWNLOAD_DIR)
             initial_files.add(relative_path)
-
-
-# Create directories and populate initial files
-os.makedirs(DOWNLOAD_DIR, exist_ok=True)
-populate_initial_files()
 
 
 def determine_match_type(input_topic, result_topic):
@@ -141,11 +116,52 @@ def determine_match_type(input_topic, result_topic):
         return "Somewhat match"
 
 
+# ===========================
+# CUSTOM LOGGING HANDLER
+# ===========================
+
+
+class DashLogger(logging.Handler):
+    """Custom logging handler to store logs in the global log_data list."""
+
+    def emit(self, record):
+        global log_data
+        log_data.append(self.format(record))
+        if len(log_data) > 1000:  # Limit the number of logs
+            log_data = log_data[-1000:]
+
+
+# Configure logging
+dash_handler = DashLogger()
+dash_handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
+logging.getLogger().addHandler(dash_handler)
+logging.getLogger().setLevel(logging.INFO)
+
+# ===========================
+# DASH APP CONFIGURATION
+# ===========================
+
+# Initialize Dash app
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.SOLAR])
+app.config.prevent_initial_callbacks = "initial_duplicate"
+app.config.suppress_callback_exceptions = (
+    True  # Allow callbacks for dynamically created components
+)
+server = app.server
+
 # Merge hover effect into active_card_style
 active_card_style.update(modern_card_hover_effect)
 
-# Update app layout
+# Set app layout
 app.layout = app_layout
+
+# ===========================
+# INITIALIZATION LOGIC
+# ===========================
+
+# Create directories and populate initial files
+os.makedirs(DOWNLOAD_DIR, exist_ok=True)
+populate_initial_files()
 
 
 @app.callback(
@@ -445,10 +461,10 @@ def handle_search_selection_scraping(
                 dash.no_update,
             )
         logging.info(f"Starting scraping for topic: {selected_topic_name}")
-        scrape_topic(selected_topic_url)
         if checkbox_enabled:
             logging.info("Triggering report download due to checkbox being enabled.")
             download_reports(driver, advanced_reports, selected_topic_name)
+        scrape_topic(selected_topic_url)
 
         return (
             dash.no_update,
