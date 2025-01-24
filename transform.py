@@ -34,29 +34,39 @@ def process_files(selected_files, base_dir, process_function, skip_adv=False):
     """
     Generic function to process selected files using a given transformation function.
     Optionally skips files containing "adv" in their name if skip_adv is True.
+    Provides detailed logs for every step of the process.
     """
     transformed_files = []
+    skipped_files = []
     errors = []
+
+    logging.info("Processing selected files...")
+    logging.info(f"Base directory: {base_dir}")
+    logging.info(f"Total files selected: {len(selected_files)}")
 
     for relative_path in selected_files:
         try:
             input_path = os.path.join(base_dir, relative_path)
+            logging.info(f"Starting processing for file: {relative_path}")
 
+            # Check if the file exists
             if not os.path.exists(input_path):
                 logging.warning(
-                    f"File not found: {relative_path}. Skipping transformation."
+                    f"❌ File not found: {relative_path}. Skipping transformation."
                 )
-                errors.append(relative_path)
+                errors.append((relative_path, "File not found"))
                 continue
 
+            # Skip files with 'adv' in the name if skip_adv is True
             if skip_adv and "adv" in os.path.basename(input_path).lower():
                 logging.info(
-                    f"Skipping file {relative_path} as it contains 'adv' in the name."
+                    f"⚠️ Skipping file: {relative_path} (Reason: Contains 'adv' in the name)"
                 )
+                skipped_files.append((relative_path, "Contains 'adv'"))
                 transformed_files.append(format_relative_path(base_dir, input_path))
                 continue
 
-            # Determine the transformed output directory
+            # Determine the output directory for transformed files
             parent_dir = os.path.dirname(input_path)
             transformed_dir = (
                 parent_dir
@@ -64,48 +74,59 @@ def process_files(selected_files, base_dir, process_function, skip_adv=False):
                 else os.path.join(parent_dir, "transformed")
             )
             os.makedirs(transformed_dir, exist_ok=True)
+            logging.info(f"📂 Transformed directory created: {transformed_dir}")
 
             output_path = os.path.join(transformed_dir, os.path.basename(input_path))
             formatted_path = format_relative_path(base_dir, output_path)
 
-            # Process the file using the provided function
+            # Process the file using the provided transformation function
             with pd.ExcelFile(input_path) as xls:
+                logging.info(f"📄 Reading file: {input_path}")
                 sheet_data = process_function(xls)
 
-            # If we are dealing with a single workbook - when merging
-            if isinstance(sheet_data, Workbook):
-                logging.info("Saving workbook.")
+            # Save the processed data
+            if isinstance(
+                sheet_data, Workbook
+            ):  # If a Workbook is returned (e.g., merging sheets)
+                logging.info(f"💾 Saving workbook to: {output_path}")
                 sheet_data.save(output_path)
-            else:
-                # Save the processed data
+            elif isinstance(sheet_data, dict):  # If multiple sheets are returned
+                logging.info(
+                    f"💾 Saving data to: {output_path} (Multiple sheets detected)"
+                )
                 with pd.ExcelWriter(output_path, engine="openpyxl") as writer:
-                    if isinstance(sheet_data, dict):
-                        for sheet_name, data in sheet_data.items():
-                            data.to_excel(writer, sheet_name=sheet_name, index=False)
-                    else:
-                        logging.error(
-                            f"An error occurred while saving file {relative_path}: Bad file type."
-                        )
-                        errors.append(relative_path)
+                    for sheet_name, data in sheet_data.items():
+                        logging.info(f"    Writing sheet: {sheet_name}")
+                        data.to_excel(writer, sheet_name=sheet_name, index=False)
+            else:
+                logging.error(f"❌ Unexpected file type returned for: {relative_path}")
+                errors.append((relative_path, "Bad file type"))
+                continue
 
+            logging.info(f"✅ File processed successfully: {formatted_path}")
             transformed_files.append(formatted_path)
 
         except Exception as e:
-            logging.error(
-                f"An error occurred while processing file {relative_path}: {e}"
-            )
-            errors.append(relative_path)
+            logging.error(f"❌ Error processing file: {relative_path} (Error: {e})")
+            errors.append((relative_path, str(e)))
 
-    # Log transformation summary
-    logging.info("Selected files to transform: %d", len(selected_files))
+    # Log the transformation summary
+    logging.info("\n=========== Transformation Summary ===========")
+    logging.info(f"Total files selected: {len(selected_files)}")
+    logging.info(f"Files successfully processed: {len(transformed_files)}")
     if transformed_files:
-        logging.info("Successfully saved:")
+        logging.info("Transformed files:")
         for path in transformed_files:
-            logging.info(f"    {path}")
+            logging.info(f"  - {path}")
+    if skipped_files:
+        logging.info(f"Files skipped: {len(skipped_files)}")
+        for path, reason in skipped_files:
+            logging.info(f"  - {path} (Reason: {reason})")
     if errors:
-        logging.error("Errors occurred during transformation for the following files:")
-        for path in errors:
-            logging.error(f"    {path}")
+        logging.error(f"Files with errors: {len(errors)}")
+        for path, error in errors:
+            logging.error(f"  - {path}: {error}")
+    logging.info("=============================================")
 
     return transformed_files
 

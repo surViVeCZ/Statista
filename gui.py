@@ -988,8 +988,10 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
 
 
 @app.callback(
-    [
+    [Output(f"step-{i}", "className") for i in range(11)]
+    + [
         Output("progress-bar-transform", "value"),
+        Output("progress-bar-transform", "className"),
         Output("transformation-status", "children"),
         Output("progress-interval", "disabled"),
     ],
@@ -997,36 +999,85 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
     [State("selected-files-store", "data")],
     prevent_initial_call=True,
 )
-def handle_pipeline_and_progress(n_clicks, n_intervals, selected_files):
+def handle_progress_and_steps(n_clicks, n_intervals, selected_files):
     global pipeline_progress
+
+    total_steps = 11  # Number of steps (circles)
+    step_progress = 100 / (total_steps - 1)  # Percentage per step
 
     # Handle pipeline start
     if ctx.triggered_id == "transform-button":
         pipeline_progress = {"progress": 0, "status": []}  # Reset progress state
 
         if not selected_files or len(selected_files) == 0:
-            logging.error("No files selected for transformation.")
-            return 0, "⚠️ No files selected for transformation.", True
+            return ["progress-step"] * total_steps + [
+                0,
+                "progress-bar-custom",
+                "⚠️ No files selected for transformation.",
+                True,
+            ]
 
-        # Start pipeline in a separate thread
+        # Start the pipeline in a separate thread
         def run_pipeline():
             pipeline_transform(selected_files, base_dir="statista_data")
 
         Thread(target=run_pipeline).start()
-        return 0, "🔄 Starting transformation...", False
+        return ["progress-step"] * total_steps + [
+            0,
+            "progress-bar-custom",
+            "🔄 Starting transformation...",
+            False,
+        ]
 
     # Handle progress updates
     if ctx.triggered_id == "progress-interval":
+        # Calculate the progress percentage
         progress = pipeline_progress["progress"]
+        completed_steps = int(
+            progress / step_progress
+        )  # Number of fully completed steps
+        step_classes = []
+
+        # Update step classes based on completion
+        for i in range(total_steps):
+            if i < completed_steps:
+                step_classes.append("progress-step completed")
+            elif i == completed_steps:
+                if progress == 100:  # Ensure the last step is marked completed at 100%
+                    step_classes.append("progress-step completed")
+                else:
+                    step_classes.append("progress-step active")
+            else:
+                step_classes.append("progress-step")
+
         status = [html.Div(step) for step in pipeline_progress["status"]]
 
-        # Stop the interval when progress reaches 100%
+        # Progress bar value aligns with step positions
+        progress_value = completed_steps * step_progress
+
+        # Stop interval when transformation is complete
         if progress >= 100:
-            return progress, status, True
+            return step_classes + [
+                100,  # Full progress bar
+                "progress-bar-custom progress-bar-completed",  # Completed bar styling
+                status,
+                True,  # Stop interval
+            ]
 
-        return progress, status, False
+        return step_classes + [
+            progress_value,  # Progress bar aligned to circles
+            "progress-bar-custom",  # Ongoing bar styling
+            status,
+            False,  # Continue interval
+        ]
 
-    return dash.no_update, dash.no_update, dash.no_update
+    return (
+        dash.no_update,
+        dash.no_update,
+        dash.no_update,
+        dash.no_update,
+        dash.no_update,
+    )
 
 
 @app.callback(

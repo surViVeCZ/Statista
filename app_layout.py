@@ -618,7 +618,6 @@ app_layout = dbc.Container(
                                     width=6,
                                 ),
                                 # Transformation Output Section
-                                # Transformation Output Section
                                 dbc.Col(
                                     dbc.Card(
                                         [
@@ -682,49 +681,87 @@ app_layout = dbc.Container(
                                                         },
                                                     ),
                                                     # Progress bar with checkpoints
+                                                    # Progress bar with dcc.Interval (add this to the layout)
                                                     html.Div(
                                                         [
-                                                            # Checkpoints (Circles for each step)
                                                             html.Div(
-                                                                id="progress-bar-checkpoints",
+                                                                style={
+                                                                    "position": "relative",
+                                                                    "width": "100%",
+                                                                    "margin-top": "50px",
+                                                                    "margin-bottom": "20px",
+                                                                },
                                                                 children=[
+                                                                    # Step Labels Above the Circles
                                                                     html.Div(
-                                                                        className="progress-step",
-                                                                        id=f"step-{i}",
+                                                                        id="progress-step-labels",
+                                                                        style={
+                                                                            "position": "absolute",
+                                                                            "top": "-35px",  # Move labels further above the bar
+                                                                            "left": "0",
+                                                                            "width": "100%",
+                                                                            "display": "flex",
+                                                                            "justify-content": "space-between",
+                                                                            "align-items": "center",
+                                                                            "font-weight": "bold",
+                                                                            "font-size": "12px",
+                                                                        },
                                                                         children=[
                                                                             html.Div(
-                                                                                f"Step {i + 1}"
-                                                                            ),
+                                                                                f"Step {i + 1}",
+                                                                                style={
+                                                                                    "text-align": "center"
+                                                                                },
+                                                                            )
+                                                                            for i in range(
+                                                                                11
+                                                                            )  # 11 step labels
                                                                         ],
-                                                                    )
-                                                                    for i in range(
-                                                                        11
-                                                                    )  # Assuming 11 steps in pipeline
+                                                                    ),
+                                                                    # Progress Bar
+                                                                    dbc.Progress(
+                                                                        id="progress-bar-transform",
+                                                                        value=0,
+                                                                        max=100,
+                                                                        striped=True,
+                                                                        animated=True,
+                                                                        className="progress-bar-custom",  # Apply the custom styling for green animation
+                                                                        style={
+                                                                            "height": "30px",
+                                                                            "position": "relative",
+                                                                        },
+                                                                    ),
+                                                                    # Circles as Checkpoints
+                                                                    html.Div(
+                                                                        id="progress-bar-checkpoints",
+                                                                        style={
+                                                                            "position": "absolute",
+                                                                            "top": "0",
+                                                                            "left": "0",
+                                                                            "width": "100%",
+                                                                            "height": "100%",
+                                                                            "display": "flex",
+                                                                            "justify-content": "space-between",  # Evenly distribute circles
+                                                                            "align-items": "center",
+                                                                        },
+                                                                        children=[
+                                                                            html.Div(
+                                                                                id=f"step-{i}",
+                                                                                className="progress-step",
+                                                                            )
+                                                                            for i in range(
+                                                                                11
+                                                                            )  # 11 circles
+                                                                        ],
+                                                                    ),
                                                                 ],
-                                                                style={
-                                                                    "display": "flex",
-                                                                    "justify-content": "space-between",
-                                                                    "margin-top": "20px",
-                                                                },
                                                             ),
-                                                            # Progress bar itself
-                                                            dbc.Progress(
-                                                                id="progress-bar-transform",
-                                                                value=0,
-                                                                max=100,  # Representing progress as percentage
-                                                                striped=True,
-                                                                animated=True,
-                                                                style={
-                                                                    "margin-top": "10px",
-                                                                    "height": "20px",
-                                                                },
-                                                            ),
-                                                            # Interval component for real-time updates
+                                                            # Add dcc.Interval here
                                                             dcc.Interval(
                                                                 id="progress-interval",
                                                                 interval=1000,  # 1 second
                                                                 n_intervals=0,
-                                                                disabled=True,
+                                                                disabled=True,  # Initially disabled
                                                             ),
                                                         ]
                                                     ),

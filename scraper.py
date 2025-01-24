@@ -253,17 +253,17 @@ def scrape_topic(topic_url):
     if not os.path.exists(cleaned_file):
         log.info(f"🛠 Cleaned file not found. Creating a new one: {cleaned_file}")
 
-        # Report section
-        log.info("\n===== REPORT SECTION =====")
-        explore_report_button = soup.find("a", class_="dossierTeaser__link")
-        if explore_report_button:
-            report_url = urljoin(
-                "https://www.statista.com", explore_report_button["href"]
-            )
-            log.info(f"🔗 'Explore this report' URL found: {report_url}")
-            download_report_with_selenium(report_url, topic_name)
-        else:
-            log.warning("⚠️ 'Explore this report' button not found on the topic page.")
+        # Report section WHY THIS SHIT BROKE, TELL ME FUCKING WHYYYYYYYYYYY
+        # log.info("\n===== REPORT SECTION =====")
+        # explore_report_button = soup.find("a", class_="dossierTeaser__link")
+        # if explore_report_button:
+        #     report_url = urljoin(
+        #         "https://www.statista.com", explore_report_button["href"]
+        #     )
+        #     log.info(f"🔗 'Explore this report' URL found: {report_url}")
+        #     download_report_with_selenium(report_url, topic_name)
+        # else:
+        #     log.warning("⚠️ 'Explore this report' button not found on the topic page.")
 
         # Chapter & data scraping
         log.info("\n===== DATA SCRAPING SECTION =====")

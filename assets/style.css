@@ -1,21 +1,134 @@
-/* Progress Bar Styling */
+/* === PROGRESS BAR STYLES === */
+
+/* Main progress bar styling */
 .progress-bar-custom .progress-bar {
   background-color: #28a745 !important; /* Green fill */
-  transition: width 0.5s ease; /* Smooth fill animation */
+  transition: width 0.5s ease; /* Smooth animation for bar growth */
 }
 
+/* Striped green animation for the progress bar */
+.progress-bar-custom .progress-bar-animated {
+  background: linear-gradient(
+    45deg,
+    rgba(40, 167, 69, 0.5) 25%,
+    rgba(40, 167, 69, 0.25) 50%,
+    rgba(40, 167, 69, 0.5) 75%
+  ) !important;
+  background-size: 1rem 1rem;
+}
+
+/* Green progress bar glow effect upon completion */
+.progress-bar-completed {
+  box-shadow: 0 0 15px 5px rgba(40, 167, 69, 0.5); /* Green glow */
+  animation: glow 2s ease-in-out infinite; /* Repeating subtle glow */
+}
+
+/* Glowing keyframes */
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(40, 167, 69, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+  }
+}
+
+/* === STEP CIRCLES AND LABELS === */
+
+/* Step labels above the progress bar */
+#progress-step-labels div {
+  color: #333;
+  font-size: 14px; /* Slightly larger labels */
+  text-align: center;
+  margin-bottom: 10px; /* Add space between labels and circles */
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+/* Base styling for step circles */
+.progress-step {
+  width: 50px; /* Bigger circle size */
+  height: 50px; /* Bigger circle size */
+  background-color: #d3d3d3; /* Default color */
+  border-radius: 50%; /* Ensure circles are perfectly round */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  transition: background-color 0.3s, transform 0.3s;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+}
+
+/* Active step circle */
+.progress-step.active {
+  background-color: #007bff; /* Blue for active */
+  transform: scale(1.2); /* Slight enlargement */
+  animation: pulse 1s infinite;
+}
+
+/* Completed circle with a checkmark inside */
+.progress-step.completed {
+  background-color: #28a745; /* Green for completed */
+  color: white; /* White checkmark color */
+  font-size: 20px; /* Size of the checkmark */
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; /* Ensure the checkmark is inside */
+}
+
+/* Add checkmark inside completed circle */
+.progress-step.completed::after {
+  content: "✔"; /* Checkmark */
+  position: absolute;
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Align perfectly at the center */
+}
+
+/* Align circles to the edges of the progress bar */
+#progress-bar-checkpoints {
+  padding: 0; /* Remove padding to align with progress bar edges */
+}
+
+/* Keyframes for pulsing active circle */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 10px 10px rgba(0, 123, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+  }
+}
+
+/* === ANIMATIONS === */
+
+/* Bounce effect for elements */
 @keyframes bounce {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0); }
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 .bounce {
   animation: bounce 1s ease-out;
 }
 
+/* === FILE TREE STYLING === */
 
-/* Base file tree styling */
 /* Base file tree styling */
 .file-tree-item {
   transition: all 0.2s ease-in-out;
@@ -34,14 +147,13 @@
   transition: background-color 0.3s;
 }
 
-/* Selected files */
+/* Selected file styling */
 .file-tree-item.selected {
   background-color: #d1e7ff; /* Light blue background for selected files */
   color: #004085; /* Dark blue text for contrast */
   border-radius: 5px;
   transition: background-color 0.3s ease;
 }
-
 
 /* Transformed files (unclickable) */
 .file-tree-item.transformed {
@@ -60,14 +172,16 @@
   color: #155724; /* Green text on hover */
 }
 
+/* === REGION SELECTOR === */
 
 #region-selector:hover {
   background-color: #eaeaea;
   border-color: #007bff;
 }
 
+/* === TOPIC CARDS === */
 
-
+/* Topic card hover effects */
 .topic-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
