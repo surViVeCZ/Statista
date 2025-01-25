@@ -962,7 +962,7 @@ app_layout = dbc.Container(
         ),
         # Refresh Intervals
         dcc.Interval(id="log-interval", interval=1000, n_intervals=0),
-        dcc.Interval(id="file-interval", interval=1000, n_intervals=0),
+        dcc.Interval(id="file-interval", interval=3000, n_intervals=0),
     ],
     fluid=True,
     style={"display": "flex", "flex-direction": "column", "min-height": "100vh"},

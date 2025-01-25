@@ -461,10 +461,10 @@ def handle_search_selection_scraping(
                 dash.no_update,
             )
         logging.info(f"Starting scraping for topic: {selected_topic_name}")
+        scrape_topic(selected_topic_url)
         if checkbox_enabled:
             logging.info("Triggering report download due to checkbox being enabled.")
             download_reports(driver, advanced_reports, selected_topic_name)
-        scrape_topic(selected_topic_url)
 
         return (
             dash.no_update,
