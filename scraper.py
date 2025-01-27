@@ -358,7 +358,7 @@ def download_xlsx(
 
         # Locate and click the XLS button
         try:
-            xls_button = WebDriverWait(driver, 10).until(
+            xls_button = WebDriverWait(driver, 20).until(
                 EC.element_to_be_clickable(
                     (
                         By.XPATH,

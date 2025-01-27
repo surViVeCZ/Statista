@@ -318,7 +318,12 @@ def tr6_append_questions(selected_files, base_dir="statista_data"):
 
             # Identify and remove rows with leftover questions
             for idx, row in df.iterrows():
-                if "Male" in row.values or "Female" in row.values:
+                if (
+                    "Male" in row.values
+                    or "Female" in row.values
+                    or "male" in row.values
+                    or "female" in row.values
+                ):
                     # Check the row above for emptiness
                     if idx > 0 and not any(df.iloc[idx - 1, 1:].notna()):
                         rows_to_drop.append(idx - 1)
@@ -369,7 +374,7 @@ def tr7_merging_sheets(selected_files, base_dir="statista_data"):
         df = pd.DataFrame(data)
 
         # Identify gender rows and remove the row above if it is not empty
-        gender_rows = df[df.iloc[:, 1].isin(["Female", "Male"])].index
+        gender_rows = df[df.iloc[:, 1].isin(["Female", "Male", "male", "female"])].index
         rows_to_remove = [
             idx - 1
             for idx in gender_rows
@@ -410,7 +415,11 @@ def tr8_join_tables(selected_files, base_dir="statista_data"):
             # Identify and ensure rows with both "Male" and "Female" appear only once
             gender_rows = df_cleaned[
                 df_cleaned.apply(
-                    lambda row: "Male" in row.values and "Female" in row.values, axis=1
+                    lambda row: any(
+                        gender in row.values
+                        for gender in ["Male", "Female", "male", "female"]
+                    ),
+                    axis=1,
                 )
             ]
             if not gender_rows.empty:
@@ -420,7 +429,10 @@ def tr8_join_tables(selected_files, base_dir="statista_data"):
                 # Remove all duplicates of gender rows from the main DataFrame
                 df_cleaned = df_cleaned[
                     ~df_cleaned.apply(
-                        lambda row: "Male" in row.values and "Female" in row.values,
+                        lambda row: any(
+                            gender in row.values
+                            for gender in ["Male", "Female", "male", "female"]
+                        ),
                         axis=1,
                     )
                 ]
@@ -529,7 +541,7 @@ def tr11_filter_advanced_files(selected_files, base_dir="statista_data"):
     def is_valid_row(value):
         # Check if the value is "Female", "Male", or contains "years"
         return isinstance(value, str) and (
-            value == "Female" or value == "Male" or "years" in value
+            value.lower() in ["female", "male"] or "years" in value
         )
 
     def process_function(xls):
@@ -580,7 +592,7 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
     logging.info("Step 4: Reducing empty lines...")
     transformed_step4 = tr4_reduce_empty_lines(transformed_step3, base_dir)
 
-    # # Step 5: Remove total percentages columns
+    # Step 5: Remove total percentages columns
     logging.info("Step 5: Removing columns with 'Grand Total' and 'in %'...")
     transformed_step5 = tr5_removing_total_percentages_income_demography(
         transformed_step4, base_dir
@@ -590,11 +602,11 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
     logging.info("Step 6: Appending questions to options...")
     transformed_step6 = tr6_append_questions(transformed_step5, base_dir)
 
-    # # Step 7: Merge sheets
+    # Step 7: Merge sheets
     logging.info("Step 6: Merging sheets...")
     transformed_step7 = tr7_merging_sheets(transformed_step6, base_dir)
 
-    # # Step 8: Join tables
+    # Step 8: Join tables
     logging.info("Step 8: Joining tables...")
     transformed_step8 = tr8_join_tables(transformed_step7, base_dir)
 
@@ -602,11 +614,11 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
     logging.info("Step 9: Transposing tables...")
     transformed_step9 = tr9_transpose_table(transformed_step8, base_dir)
 
-    # # Step 10: Map age categories
+    # Step 10: Map age categories
     logging.info("Step 10: Mapping age categories...")
     transformed_step10 = tr10_map_age(transformed_step9, base_dir)
 
-    # # Step 11: Filter advanced files
+    # Step 11: Filter advanced files
     logging.info("Step 11: Filtering advanced files...")
     transformed_step11 = tr11_filter_advanced_files(transformed_step10, base_dir)
 
