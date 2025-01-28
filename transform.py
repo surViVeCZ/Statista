@@ -134,11 +134,31 @@ def process_files(selected_files, base_dir, process_function, skip_adv=False):
 def tr1_remove_sheets(selected_files, base_dir="statista_data"):
     def process_function(xls):
         sheets = xls.sheet_names
-        return {
-            sheet: pd.read_excel(xls, sheet_name=sheet, header=None)
-            for sheet in sheets
-            if sheet not in ["Overview", "Content", "Lists"]
-        }
+        processed_sheets = {}
+
+        for sheet in sheets:
+            if sheet not in ["Overview", "Content", "Lists"]:
+                data = pd.read_excel(xls, sheet_name=sheet, header=None)
+
+                # Clean all sheets by removing superscripts and converting to numbers if possible
+                data = data.applymap(
+                    lambda x: (
+                        re.sub(r"[\u00B9\u00B2\u00B3\u2070\u2074-\u2079]", "", str(x))
+                        if isinstance(x, str)
+                        else x
+                    )
+                )
+                data = data.applymap(
+                    lambda x: (
+                        pd.to_numeric(x, errors="ignore")
+                        if isinstance(x, str) and x.isdigit()
+                        else x
+                    )
+                )
+
+                processed_sheets[sheet] = data
+
+        return processed_sheets
 
     return process_files(selected_files, base_dir, process_function)
 
@@ -500,6 +520,7 @@ def tr10_map_age(selected_files, base_dir="statista_data"):
             "Gen X (1965-1979)": (1965, 1979),
             "Baby Boomers (1946-1964)": (1946, 1964),
             "iGen / Gen Z (1995-2012)": (1995, 2012),
+            "iGen / Generation Z (1995-2012)": (1995, 2012),
             "Millennials / Generation Y (1980-1994)": (1980, 1994),
             "Generation X (Baby Bust) (1965-1979)": (1965, 1979),
             "Baby Boomer (1946-1964)": (1946, 1964),
@@ -536,6 +557,7 @@ def tr11_filter_advanced_files(selected_files, base_dir="statista_data"):
     - "Male"
     - Values containing the substring "years".
     Skip filtering for the first row.
+    Also, removes unwanted superscript or exponent characters from numeric values (e.g., '15¹' -> '15').
     """
 
     def is_valid_row(value):
@@ -544,10 +566,22 @@ def tr11_filter_advanced_files(selected_files, base_dir="statista_data"):
             value.lower() in ["female", "male"] or "years" in value
         )
 
+    def clean_exponent(value):
+        """
+        Remove superscripts or unwanted characters like exponents (e.g., '15¹' -> '15').
+        """
+        if isinstance(value, str):
+            # Remove any superscript numbers or other unwanted characters
+            return re.sub(r"[¹²³⁴⁵⁶⁷⁸⁹⁰]", "", value)
+        return value
+
     def process_function(xls):
         sheet_data = {}
         for sheet in xls.sheet_names:
             df = pd.read_excel(xls, sheet_name=sheet)
+
+            # Remove superscripts or exponents from all cells
+            df = df.applymap(clean_exponent)
 
             # Skip the first row and apply the filter to subsequent rows
             first_row = df.iloc[0:1]
@@ -564,6 +598,118 @@ def tr11_filter_advanced_files(selected_files, base_dir="statista_data"):
     advanced_files = [
         file for file in selected_files if "adv" in os.path.basename(file).lower()
     ]
+    return process_files(advanced_files, base_dir, process_function)
+
+
+def tr12_transform_to_probability(selected_files, base_dir="statista_data"):
+    """
+    Convert occurrences in columns to probabilities relative to their corresponding "_ Base" column,
+    while preserving the first column and dropping all base columns after processing.
+    Outputs the result as a CSV file or a pandas DataFrame.
+    """
+
+    def process_function(xls, file_path):
+        sheet_data = {}
+
+        for sheet in xls.sheet_names:
+            try:
+                df = pd.read_excel(xls, sheet_name=sheet, header=1)
+
+                # Identify "_ Base" columns
+                base_columns_corrected = [col for col in df.columns if "_ Base" in col]
+
+                # Separate the first column (preserve as-is)
+                first_column = df.iloc[:, 0]  # Keep the first column intact
+                remaining_data = df.iloc[:, 1:]  # Remaining columns for processing
+
+                # Convert all relevant columns to numeric where possible (ignoring non-numeric data)
+                data_numeric = remaining_data.apply(pd.to_numeric, errors="coerce")
+                logging.debug(
+                    f"Data converted to numeric for sheet '{sheet}':\n{data_numeric.head()}"
+                )
+
+                # Process each "_ Base" column group
+                for i, base_col in enumerate(base_columns_corrected):
+                    base_values_corrected = data_numeric[base_col]
+
+                    # Determine the group of columns to process
+                    if i < len(base_columns_corrected) - 1:
+                        group_columns_corrected = data_numeric.columns[
+                            data_numeric.columns.get_loc(base_col)
+                            + 1 : data_numeric.columns.get_loc(
+                                base_columns_corrected[i + 1]
+                            )
+                        ]
+                    else:
+                        group_columns_corrected = data_numeric.columns[
+                            data_numeric.columns.get_loc(base_col) + 1 :
+                        ]
+
+                    # Convert occurrences to probabilities
+                    for col in group_columns_corrected:
+                        try:
+                            data_numeric[col] = (
+                                data_numeric[col] / base_values_corrected
+                            )
+                        except ZeroDivisionError:
+                            logging.warning(
+                                f"ZeroDivisionError in column '{col}' for base column '{base_col}'. Setting NaN."
+                            )
+                            data_numeric[col] = None
+
+                # Drop all "_ Base" columns after processing
+                data_numeric = data_numeric.drop(columns=base_columns_corrected)
+
+                # Concatenate the preserved first column back with the transformed data
+                final_df = pd.concat([first_column, data_numeric], axis=1)
+
+                # Store the transformed DataFrame for this sheet
+                sheet_data[sheet] = final_df
+                logging.info(f"Finished processing sheet '{sheet}'")
+
+            except Exception as e:
+                logging.error(f"Error processing sheet '{sheet}': {e}")
+                raise e
+
+        # Combine all sheets into one DataFrame (optional if you want multi-sheet handling)
+        combined_df = pd.concat(sheet_data.values(), ignore_index=True)
+
+        # Save to CSV
+        csv_output_path = file_path.replace(".xlsx", ".csv")
+        combined_df.to_csv(csv_output_path, index=False)
+        logging.info(f"Transformed data saved as CSV: {csv_output_path}")
+
+        # Remove the original `.xlsx` file
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            logging.info(f"Original file removed: {file_path}")
+
+        return combined_df  # Return as pandas DataFrame for further use
+
+    def process_files(files, base_dir, process_function):
+        processed_dataframes = {}
+
+        for file in files:
+            file_path = os.path.join(base_dir, file)
+            logging.info(f"Processing file: {file_path}")
+
+            if os.path.exists(file_path):
+                try:
+                    with pd.ExcelFile(file_path) as xls:
+                        processed_dataframes[file] = process_function(xls, file_path)
+
+                except Exception as e:
+                    logging.error(f"Error processing file '{file_path}': {e}")
+            else:
+                logging.warning(f"File not found: {file_path}")
+
+        return processed_dataframes
+
+    # Process only files with "adv" in their filenames
+    advanced_files = [
+        file for file in selected_files if "adv" in os.path.basename(file).lower()
+    ]
+    logging.info(f"Advanced files to process: {advanced_files}")
     return process_files(advanced_files, base_dir, process_function)
 
 
@@ -622,5 +768,9 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
     logging.info("Step 11: Filtering advanced files...")
     transformed_step11 = tr11_filter_advanced_files(transformed_step10, base_dir)
 
+    # Step 12: Transform to probability
+    logging.info("Step 12: Transforming to probability...")
+    transformed_step12 = tr12_transform_to_probability(transformed_step11, base_dir)
+
     logging.info("Transformation pipeline completed.")
-    return transformed_step11
+    return transformed_step1

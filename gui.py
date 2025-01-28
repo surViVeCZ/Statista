@@ -44,6 +44,7 @@ from transform import (
     tr9_transpose_table,
     tr10_map_age,
     tr11_filter_advanced_files,
+    tr12_transform_to_probability,
 )
 from metrics import calculate_sheet_score
 
@@ -982,6 +983,7 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
         ("Transposing tables", tr9_transpose_table),
         ("Mapping age categories", tr10_map_age),
         ("Filtering advanced files", tr11_filter_advanced_files),
+        ("Transforming to probability", tr12_transform_to_probability),
     ]
 
     total_steps = len(steps)
@@ -1001,10 +1003,13 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
             pipeline_progress["status"].append(f"❌ {step_name} failed: {str(e)}")
             pipeline_progress["progress"] = 100  # End progress on failure
             break
+    # Ensure progress is set to 100 on successful completion
+    pipeline_progress["progress"] = 100
+    pipeline_progress["status"].append("✅ Transformation pipeline completed")
 
 
 @app.callback(
-    [Output(f"step-{i}", "className") for i in range(11)]
+    [Output(f"step-{i}", "className") for i in range(12)]
     + [
         Output("progress-bar-transform", "value"),
         Output("progress-bar-transform", "className"),
@@ -1018,7 +1023,7 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
 def handle_progress_and_steps(n_clicks, n_intervals, selected_files):
     global pipeline_progress
 
-    total_steps = 11  # Number of steps (circles)
+    total_steps = 12  # Number of steps (circles)
     step_progress = 100 / (total_steps - 1)  # Percentage per step
 
     # Handle pipeline start
@@ -1056,13 +1061,12 @@ def handle_progress_and_steps(n_clicks, n_intervals, selected_files):
 
         # Update step classes based on completion
         for i in range(total_steps):
-            if i < completed_steps:
+            if progress >= 100:
+                step_classes.append("progress-step completed")
+            elif i < completed_steps:
                 step_classes.append("progress-step completed")
             elif i == completed_steps:
-                if progress == 100:  # Ensure the last step is marked completed at 100%
-                    step_classes.append("progress-step completed")
-                else:
-                    step_classes.append("progress-step active")
+                step_classes.append("progress-step active")
             else:
                 step_classes.append("progress-step")
 
@@ -1073,6 +1077,7 @@ def handle_progress_and_steps(n_clicks, n_intervals, selected_files):
 
         # Stop interval when transformation is complete
         if progress >= 100:
+            logging.info("✅ Transformation pipeline completed!")
             return step_classes + [
                 100,  # Full progress bar
                 "progress-bar-custom progress-bar-completed",  # Completed bar styling

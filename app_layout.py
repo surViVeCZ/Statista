@@ -714,7 +714,7 @@ app_layout = dbc.Container(
                                                                                 },
                                                                             )
                                                                             for i in range(
-                                                                                11
+                                                                                12
                                                                             )  # 11 step labels
                                                                         ],
                                                                     ),
@@ -750,7 +750,7 @@ app_layout = dbc.Container(
                                                                                 className="progress-step",
                                                                             )
                                                                             for i in range(
-                                                                                11
+                                                                                12
                                                                             )  # 11 circles
                                                                         ],
                                                                     ),
