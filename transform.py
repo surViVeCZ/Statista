@@ -615,6 +615,12 @@ def tr12_transform_to_probability(selected_files, base_dir="statista_data"):
         for sheet in xls.sheet_names:
             try:
                 df = pd.read_excel(xls, sheet_name=sheet)
+                df = df.loc[
+                    :,
+                    ~df.columns.astype(str)
+                    .str.replace(".", "", regex=False)
+                    .str.isnumeric(),
+                ]
 
                 # Identify "_ Base" columns
                 base_columns_corrected = [col for col in df.columns if "_ Base" in col]
@@ -671,13 +677,13 @@ def tr12_transform_to_probability(selected_files, base_dir="statista_data"):
                 gender_proportions.index = ["female", "male"]
 
                 age_probabilities = final_df.iloc[2:].reset_index(drop=True)
-                age_probabilities.rename(columns={"Topic": "age_group"}, inplace=True)
+                age_probabilities.rename(columns={"Topic": "age"}, inplace=True)
 
                 transformed_data = []
                 for _, row in age_probabilities.iterrows():
-                    age_group = row["age_group"]
-                    new_row_male = {"gender": "male", "age_group": age_group}
-                    new_row_female = {"gender": "female", "age_group": age_group}
+                    age_group = row["age"]
+                    new_row_male = {"gender": "male", "age": age_group}
+                    new_row_female = {"gender": "female", "age": age_group}
 
                     for column in gender_proportions.columns:
                         prob = row[column]  # Original probability for age group
@@ -710,11 +716,8 @@ def tr12_transform_to_probability(selected_files, base_dir="statista_data"):
 
         # Combine all sheets into one DataFrame (optional if you want multi-sheet handling)
         combined_df = pd.concat(sheet_data.values(), ignore_index=True)
-
-        # #rename age groups to "age"
-        # combined_df.rename(columns={"age_group": "age"}, inplace=True)
-        # #remove "years" from age column values
-        # combined_df["age"] = combined_df["age"].str.replace(" years", "")
+        # remove "years" from cells in age column
+        combined_df["age"] = combined_df["age"].str.replace(" years", "")
 
         # Save to CSV
         csv_output_path = file_path.replace(".xlsx", "_transformed.csv")
