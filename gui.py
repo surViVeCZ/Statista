@@ -22,7 +22,11 @@ from app_layout import (
     inactive_card_style,
     modern_card_hover_effect,
 )
-from advanced_search import extract_report_results, download_reports
+from advanced_search import (
+    extract_report_results,
+    download_reports,
+    get_failed_reports_downloads,
+)
 from scraper import (
     setup_driver,
     login_with_selenium,
@@ -554,7 +558,8 @@ def refresh_files_and_update_progress(n_intervals, files_to_be_downloaded):
 
         # Update progress and styled links
         downloaded_count = len(renamed_files)
-        failed_count = get_failed_downloads()
+        failed_count = get_failed_downloads() + get_failed_reports_downloads()
+
         total_processed = downloaded_count + failed_count
 
         if files_to_be_downloaded > 0:

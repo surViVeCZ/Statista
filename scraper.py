@@ -339,16 +339,14 @@ def download_xlsx(
         # Transfer cookies from the session to Selenium
         driver.get("https://www.statista.com/")  # Set domain for cookies
         for cookie in session.cookies:
-            driver.add_cookie(
-                {
-                    "name": cookie.name,
-                    "value": cookie.value,
-                    "domain": cookie.domain,
-                    "path": cookie.path,
-                    "secure": cookie.secure or False,
-                    "httpOnly": cookie.has_nonstandard_attr("httponly"),
-                }
-            )
+            cookie_dict = {
+                "name": cookie.name,
+                "value": cookie.value,
+                # Force the domain to match exactly the site you have open
+                "domain": "www.statista.com",
+                "path": "/",
+            }
+            driver.add_cookie(cookie_dict)
         time.sleep(3)
         driver.refresh()  # Refresh to ensure cookies are applied
 
@@ -426,16 +424,14 @@ def download_report_with_selenium(report_url, topic_name):
             "https://www.statista.com/"
         )  # Open a page to set the domain for cookies
         for cookie in session.cookies:
-            driver.add_cookie(
-                {
-                    "name": cookie.name,
-                    "value": cookie.value,
-                    "domain": cookie.domain,
-                    "path": cookie.path,
-                    "secure": cookie.secure or False,
-                    "httpOnly": cookie.has_nonstandard_attr("httponly"),
-                }
-            )
+            cookie_dict = {
+                "name": cookie.name,
+                "value": cookie.value,
+                # Force the domain to match exactly the site you have open
+                "domain": "www.statista.com",
+                "path": "/",
+            }
+            driver.add_cookie(cookie_dict)
         time.sleep(3)
         driver.refresh()  # Refresh to ensure cookies are applied
         log.info("✅ Cookies transferred successfully.")

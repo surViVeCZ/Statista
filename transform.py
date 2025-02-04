@@ -578,7 +578,7 @@ def tr11_filter_advanced_files(selected_files, base_dir="statista_data"):
     def process_function(xls):
         sheet_data = {}
         for sheet in xls.sheet_names:
-            df = pd.read_excel(xls, sheet_name=sheet)
+            df = pd.read_excel(xls, header=1, sheet_name=sheet)
 
             # Remove superscripts or exponents from all cells
             df = df.applymap(clean_exponent)
@@ -605,6 +605,7 @@ def tr12_transform_to_probability(selected_files, base_dir="statista_data"):
     """
     Convert occurrences in columns to probabilities relative to their corresponding "_ Base" column,
     while preserving the first column and dropping all base columns after processing.
+    Additionally, transform data to include gender-age combinations while maintaining probability integrity.
     Outputs the result as a CSV file or a pandas DataFrame.
     """
 
@@ -613,7 +614,7 @@ def tr12_transform_to_probability(selected_files, base_dir="statista_data"):
 
         for sheet in xls.sheet_names:
             try:
-                df = pd.read_excel(xls, sheet_name=sheet, header=1)
+                df = pd.read_excel(xls, sheet_name=sheet)
 
                 # Identify "_ Base" columns
                 base_columns_corrected = [col for col in df.columns if "_ Base" in col]
@@ -663,8 +664,44 @@ def tr12_transform_to_probability(selected_files, base_dir="statista_data"):
                 # Concatenate the preserved first column back with the transformed data
                 final_df = pd.concat([first_column, data_numeric], axis=1)
 
+                # Perform gender-age transformation
+                gender_proportions = (
+                    final_df.iloc[:2, 1:].astype(float).reset_index(drop=True)
+                )
+                gender_proportions.index = ["female", "male"]
+
+                age_probabilities = final_df.iloc[2:].reset_index(drop=True)
+                age_probabilities.rename(columns={"Topic": "age_group"}, inplace=True)
+
+                transformed_data = []
+                for _, row in age_probabilities.iterrows():
+                    age_group = row["age_group"]
+                    new_row_male = {"gender": "male", "age_group": age_group}
+                    new_row_female = {"gender": "female", "age_group": age_group}
+
+                    for column in gender_proportions.columns:
+                        prob = row[column]  # Original probability for age group
+                        female_ratio = gender_proportions.loc["female", column]
+                        male_ratio = gender_proportions.loc["male", column]
+
+                        female_value = prob * female_ratio
+                        male_value = prob * male_ratio
+
+                        total = female_value + male_value
+                        if total > 0:
+                            female_value = (female_value / total) * prob
+                            male_value = (male_value / total) * prob
+
+                        new_row_female[column] = female_value
+                        new_row_male[column] = male_value
+
+                    transformed_data.append(new_row_female)
+                    transformed_data.append(new_row_male)
+
+                final_transformed_df = pd.DataFrame(transformed_data)
+
                 # Store the transformed DataFrame for this sheet
-                sheet_data[sheet] = final_df
+                sheet_data[sheet] = final_transformed_df
                 logging.info(f"Finished processing sheet '{sheet}'")
 
             except Exception as e:
@@ -674,8 +711,13 @@ def tr12_transform_to_probability(selected_files, base_dir="statista_data"):
         # Combine all sheets into one DataFrame (optional if you want multi-sheet handling)
         combined_df = pd.concat(sheet_data.values(), ignore_index=True)
 
+        # #rename age groups to "age"
+        # combined_df.rename(columns={"age_group": "age"}, inplace=True)
+        # #remove "years" from age column values
+        # combined_df["age"] = combined_df["age"].str.replace(" years", "")
+
         # Save to CSV
-        csv_output_path = file_path.replace(".xlsx", ".csv")
+        csv_output_path = file_path.replace(".xlsx", "_transformed.csv")
         combined_df.to_csv(csv_output_path, index=False)
         logging.info(f"Transformed data saved as CSV: {csv_output_path}")
 
@@ -684,7 +726,7 @@ def tr12_transform_to_probability(selected_files, base_dir="statista_data"):
             os.remove(file_path)
             logging.info(f"Original file removed: {file_path}")
 
-        return combined_df  # Return as pandas DataFrame for further use
+        return combined_df
 
     def process_files(files, base_dir, process_function):
         processed_dataframes = {}
@@ -697,7 +739,6 @@ def tr12_transform_to_probability(selected_files, base_dir="statista_data"):
                 try:
                     with pd.ExcelFile(file_path) as xls:
                         processed_dataframes[file] = process_function(xls, file_path)
-
                 except Exception as e:
                     logging.error(f"Error processing file '{file_path}': {e}")
             else:
@@ -773,4 +814,4 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
     transformed_step12 = tr12_transform_to_probability(transformed_step11, base_dir)
 
     logging.info("Transformation pipeline completed.")
-    return transformed_step1
+    return transformed_step12

@@ -15,6 +15,7 @@ SOURCE_FOLDER = os.path.abspath("statista_data")
 
 # Define the base URL for Statista because, apparently, hardcoding is still cool sometimes
 BASE_URL = "https://www.statista.com/studies-and-reports/all-reports"
+failed_reports = 0
 
 
 def construct_url(topic=None, page=1):
@@ -105,6 +106,8 @@ def download_reports(driver, reports, topic):
     :param driver: Selenium WebDriver instance.
     :param reports: List of report dictionaries containing 'url' and 'title'.
     """
+    global failed_reports
+
     if not os.path.exists(SOURCE_FOLDER):
         os.makedirs(SOURCE_FOLDER)
 
@@ -132,7 +135,13 @@ def download_reports(driver, reports, topic):
             # Move and rename the file proactively
             move_latest_file_to_destination(report["title"], topic)
         except Exception as e:
+            failed_reports += 1
             log.error(f"An error occurred while downloading from {url}: {e}")
+
+
+def get_failed_reports_downloads():
+    """Return the list of failed download URLs."""
+    return failed_reports
 
 
 def move_latest_file_to_destination(title, topic):
