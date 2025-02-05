@@ -300,6 +300,10 @@ def tr5_removing_total_percentages_income_demography(
     return process_files(selected_files, base_dir, process_function)
 
 
+import pandas as pd
+import re
+
+
 def tr6_append_questions(selected_files, base_dir="statista_data"):
     def process_function(xls):
         sheet_data = {}
@@ -317,16 +321,23 @@ def tr6_append_questions(selected_files, base_dir="statista_data"):
 
                 # Identify and extract question or statement rows
                 match = re.match(
-                    r"^(.*?\?|.*\(multi-pick\)|.*\(single-pick\)|Recode based on .*|Agreement with the statement:.*)",
+                    r"^(.*?\?|.*\(multi-pick\)|.*\(single-pick\)|Recode based on .*|Agreement with the statement:.*|Thinking about .*|Usage frequency .*|Usage intensity .*)",
                     first_col,
                 )
                 if match:
                     question = match.group(1).strip()
-                    # Remove ",", ":", "'", and "\" and replace spaces with underscores, add "_" at the end
+
+                    # Extract the part after "/" if present
+                    if "/" in first_col:
+                        parts = [p.strip() for p in first_col.split("/", 1)]
+                        question = "_".join(parts)  # Join both parts with underscores
+
+                    # Remove special characters and replace spaces with underscores
                     question = re.sub(r"[,:'\".]", "", question).replace(" ", "_") + "_"
                     rows_to_drop.append(
                         idx
                     )  # Collect the index of the question or statement row
+                    print(f"Question: {question}")
                     continue
 
                 # Append question or statement to the first column of option rows
@@ -334,15 +345,14 @@ def tr6_append_questions(selected_files, base_dir="statista_data"):
                     first_col = re.sub(r"[,:'\".]", "", first_col).replace(
                         " ", "_"
                     )  # Process the answer as well
-                    df.iloc[idx, 0] = f"{question} {first_col}"
+                    df.iloc[idx, 0] = (
+                        f"{question}{first_col}"  # Ensure no space before answer
+                    )
 
             # Identify and remove rows with leftover questions
             for idx, row in df.iterrows():
-                if (
-                    "Male" in row.values
-                    or "Female" in row.values
-                    or "male" in row.values
-                    or "female" in row.values
+                if any(
+                    val in row.values for val in ["Male", "Female", "male", "female"]
                 ):
                     # Check the row above for emptiness
                     if idx > 0 and not any(df.iloc[idx - 1, 1:].notna()):

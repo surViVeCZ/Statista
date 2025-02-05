@@ -603,7 +603,7 @@ app_layout = dbc.Container(
                                                         id="file-tree",
                                                         className="file-tree-item",
                                                         style={
-                                                            "height": "300px",
+                                                            "height": "320px",
                                                             "overflow-y": "auto",
                                                             "padding": "10px",
                                                             "background-color": "#f9f9f9",
@@ -816,6 +816,7 @@ app_layout = dbc.Container(
                     ],
                 ),
                 # Tab 3: Data Overview
+                # Tab 3: Data Overview
                 dbc.Tab(
                     label="Data Overview",
                     tab_id="overview",
@@ -836,8 +837,10 @@ app_layout = dbc.Container(
                         "box-shadow": "0 4px 8px rgba(0, 0, 0, 0.3)",
                     },
                     children=[
+                        # Top Row: Downloaded Topics & Selected Topic
                         dbc.Row(
                             [
+                                # Left panel: Downloaded Topics
                                 dbc.Col(
                                     dbc.Card(
                                         [
@@ -860,8 +863,9 @@ app_layout = dbc.Container(
                                         ],
                                         style=active_card_style,
                                     ),
-                                    width=4,  # Adjust width as needed
+                                    width=4,  # Adjusted width
                                 ),
+                                # Middle panel: Selected Topic
                                 dbc.Col(
                                     dbc.Card(
                                         [
@@ -882,7 +886,7 @@ app_layout = dbc.Container(
                                                         id="topic-visualization-container",
                                                         children="Select a topic to view its details.",
                                                         style={
-                                                            "height": "500px",
+                                                            "height": "512px",
                                                             "overflow-y": "auto",
                                                         },
                                                     ),
@@ -891,9 +895,40 @@ app_layout = dbc.Container(
                                         ],
                                         style=active_card_style,
                                     ),
-                                    width=8,
+                                    width=8,  # Adjusted width to ensure balanced layout
                                 ),
                             ]
+                        ),
+                        # Full-width Topic Details section below
+                        dbc.Row(
+                            dbc.Col(
+                                dbc.Card(
+                                    [
+                                        dbc.CardHeader(
+                                            "Topic Details",
+                                            style=darker_header_style,
+                                        ),
+                                        dbc.CardBody(
+                                            html.Div(
+                                                id="topic-details-container",
+                                                children="Select a topic to view its details.",
+                                                style={
+                                                    "height": "400px",
+                                                    "overflow-y": "auto",
+                                                    "padding": "15px",
+                                                    "background-color": "#ffffff",
+                                                    "border-radius": "8px",
+                                                },
+                                            ),
+                                        ),
+                                    ],
+                                    style=active_card_style,
+                                ),
+                                width=12,  # Full-width
+                            ),
+                            style={
+                                "margin-top": "20px"
+                            },  # Adds spacing between sections
                         ),
                     ],
                 ),
