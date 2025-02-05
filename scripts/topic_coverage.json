@@ -1,6 +1,6 @@
 [
     {
-        "question": "Thinking_about_how_you_engage_with_the_digital_world_generally_which_of_the_following_statements_do_you_agree_with?_Base",
+        "question": "Thinking_about_how_you_engage_with_the_digital_world_generally_which_of_the_following_statements_do_you_agree_with",
         "answers": [
             "Thinking_about_how_you_engage_with_the_digital_world_generally_which_of_the_following_statements_do_you_agree_with?_Base",
             "Thinking_about_how_you_engage_with_the_digital_world_generally_which_of_the_following_statements_do_you_agree_with?_I_actively_seek_to_improve_my_digital/computing_skills",
@@ -25,7 +25,7 @@
         ]
     },
     {
-        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Searching_for_information_online_Base",
+        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_or_Searching_for_information_online",
         "answers": [
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Searching_for_information_online_Base",
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Searching_for_information_online_Very_good",
@@ -48,7 +48,7 @@
         ]
     },
     {
-        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Using_office_packages_Base",
+        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_or_Using_office_packages",
         "answers": [
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Using_office_packages_Base",
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Using_office_packages_Very_good",
@@ -71,7 +71,7 @@
         ]
     },
     {
-        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Using_e-mail_Base",
+        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_or_Using_email",
         "answers": [
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Using_e-mail_Base",
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Using_e-mail_Very_good",
@@ -94,7 +94,7 @@
         ]
     },
     {
-        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Using_social_media_Base",
+        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_or_Using_social_media",
         "answers": [
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Using_social_media_Base",
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Using_social_media_Very_good",
@@ -117,7 +117,7 @@
         ]
     },
     {
-        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Using_messenger_services_Base",
+        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_or_Using_messenger_services",
         "answers": [
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Using_messenger_services_Base",
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Using_messenger_services_Very_good",
@@ -140,7 +140,7 @@
         ]
     },
     {
-        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Video_calling_apps_Base",
+        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_or_Video_calling_apps",
         "answers": [
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Video_calling_apps_Base",
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Video_calling_apps_Very_good",
@@ -163,7 +163,7 @@
         ]
     },
     {
-        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Setting_up_accounts on_websites/services_Base",
+        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_or_Setting_up_accounts_on_websitesorservices",
         "answers": [
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Setting_up_accounts on_websites/services_Base",
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Setting_up_accounts on_websites/services_Very_good",
@@ -186,7 +186,7 @@
         ]
     },
     {
-        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Online_shopping_Base",
+        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_or_Online_shopping",
         "answers": [
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Online_shopping_Base",
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Online_shopping_Very_good",
@@ -209,7 +209,7 @@
         ]
     },
     {
-        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Problem_solving_ie_using_FAQs/tutorials/chats_Base",
+        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_or_Problem_solving_ie_using_FAQsortutorialsorchats",
         "answers": [
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Problem_solving_ie_using_FAQs/tutorials/chats_Base",
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Problem_solving_ie_using_FAQs/tutorials/chats_Very_good",
@@ -232,7 +232,7 @@
         ]
     },
     {
-        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Digital_privacy_Base",
+        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_or_Digital_privacy",
         "answers": [
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Digital_privacy_Base",
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Digital_privacy_Very_good",
@@ -255,7 +255,7 @@
         ]
     },
     {
-        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Online_payment_Base",
+        "question": "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_or_Online_payment",
         "answers": [
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Online_payment_Base",
             "Thinking_about_your_current_level_of_digital_expertise_please_rate_your_level_of_competence_understanding_about_the_following_digital_topics_/_Online_payment_Very_good",
@@ -278,7 +278,7 @@
         ]
     },
     {
-        "question": "Have_you_taken_or_are_you_planning_to_take_any_training_courses_related_to_digital_skills?_Please_exclude_all_courses_offered_by_your_school_university_and_or_workplace_Base",
+        "question": "Have_you_taken_or_are_you_planning_to_take_any_training_courses_related_to_digital_skills_Please_exclude_all_courses_offered_by_your_school_university_and_or_workplace",
         "answers": [
             "Have_you_taken_or_are_you_planning_to_take_any_training_courses_related_to_digital_skills?_Please_exclude_all_courses_offered_by_your_school_university_and_or_workplace_Base",
             "Have_you_taken_or_are_you_planning_to_take_any_training_courses_related_to_digital_skills?_Please_exclude_all_courses_offered_by_your_school_university_and_or_workplace_Yes_I_have_taken_a_course_in_the_last_12_months",
@@ -315,7 +315,7 @@
         ]
     },
     {
-        "question": "And_which_of_these_courses_did_you_have_to_pay_for?_Base",
+        "question": "And_which_of_these_courses_did_you_have_to_pay_for",
         "answers": [
             "And_which_of_these_courses_did_you_have_to_pay_for?_Base",
             "And_which_of_these_courses_did_you_have_to_pay_for?_Applying_for_jobs",
@@ -344,7 +344,7 @@
         ]
     },
     {
-        "question": "Which_of_the_following_topics_do_you_plan_to_take_a_course_in_over_the_next_12_months?_Base",
+        "question": "Which_of_the_following_topics_do_you_plan_to_take_a_course_in_over_the_next_12_months",
         "answers": [
             "Which_of_the_following_topics_do_you_plan_to_take_a_course_in_over_the_next_12_months?_Base",
             "Which_of_the_following_topics_do_you_plan_to_take_a_course_in_over_the_next_12_months?_Applying_for_jobs",
@@ -371,7 +371,7 @@
         ]
     },
     {
-        "question": "Which_of_the_following_statements_do_you_agree_with?_Base",
+        "question": "Which_of_the_following_statements_do_you_agree_with",
         "answers": [
             "Which_of_the_following_statements_do_you_agree_with?_Base",
             "Which_of_the_following_statements_do_you_agree_with?_I_don’t_like_to_provide_financial_information_or_payment_details_online",
@@ -446,7 +446,7 @@
         ]
     },
     {
-        "question": "When_you_think_about_your_digital_privacy_which_of_the_following_apply_to_you?_Base",
+        "question": "When_you_think_about_your_digital_privacy_which_of_the_following_apply_to_you",
         "answers": [
             "When_you_think_about_your_digital_privacy_which_of_the_following_apply_to_you?_Base",
             "When_you_think_about_your_digital_privacy_which_of_the_following_apply_to_you?_I_worry_about_my_personal_data_when_using_digital_services",
@@ -477,7 +477,7 @@
         ]
     },
     {
-        "question": "Thinking_about_the_way_you_interact_socially_online_which_of_the_following_statements_do_you_agree_with?_Base",
+        "question": "Thinking_about_the_way_you_interact_socially_online_which_of_the_following_statements_do_you_agree_with",
         "answers": [
             "Thinking_about_the_way_you_interact_socially_online_which_of_the_following_statements_do_you_agree_with?_Base",
             "Thinking_about_the_way_you_interact_socially_online_which_of_the_following_statements_do_you_agree_with?_Increased_digitalization_has_made_me_lonely",
@@ -504,7 +504,7 @@
         ]
     },
     {
-        "question": "Which_of_these_digital_methods_did_you_use_to_communicate_with_friends_and_family_in_the_past_12_months?_Base",
+        "question": "Which_of_these_digital_methods_did_you_use_to_communicate_with_friends_and_family_in_the_past_12_months",
         "answers": [
             "Which_of_these_digital_methods_did_you_use_to_communicate_with_friends_and_family_in_the_past_12_months?_Base",
             "Which_of_these_digital_methods_did_you_use_to_communicate_with_friends_and_family_in_the_past_12_months?_Telephone_via_internet_(without_video)",
@@ -539,7 +539,7 @@
         ]
     },
     {
-        "question": "In_general_what_are_your_reasons_for_using_social_media?_Base",
+        "question": "In_general_what_are_your_reasons_for_using_social_media",
         "answers": [
             "In_general_what_are_your_reasons_for_using_social_media?_Base",
             "In_general_what_are_your_reasons_for_using_social_media?_To_stay_connected_with_colleagues_&_business_partners",
@@ -572,7 +572,7 @@
         ]
     },
     {
-        "question": "In_general_when_do_you_use_social_media?_Base",
+        "question": "In_general_when_do_you_use_social_media",
         "answers": [
             "In_general_when_do_you_use_social_media?_Base",
             "In_general_when_do_you_use_social_media?_During_breaks_at_work/school/university",
@@ -605,7 +605,7 @@
         ]
     },
     {
-        "question": "Which_of_the_following_have_you_done_on_social_media_in_the_past_4_weeks?_Base",
+        "question": "Which_of_the_following_have_you_done_on_social_media_in_the_past_4_weeks",
         "answers": [
             "Which_of_the_following_have_you_done_on_social_media_in_the_past_4_weeks?_Base",
             "Which_of_the_following_have_you_done_on_social_media_in_the_past_4_weeks?_Commented_on_posts",
@@ -672,7 +672,7 @@
         ]
     },
     {
-        "question": "Have_you_expressed_your_opinion_about_any_of_the_following_topics_on_social_media_in_the_past_4_weeks_?_Base",
+        "question": "Have_you_expressed_your_opinion_about_any_of_the_following_topics_on_social_media_in_the_past_4_weeks_",
         "answers": [
             "Have_you_expressed_your_opinion_about_any_of_the_following_topics_on_social_media_in_the_past_4_weeks_?_Base",
             "Have_you_expressed_your_opinion_about_any_of_the_following_topics_on_social_media_in_the_past_4_weeks_?_Arts_and_culture",
@@ -723,7 +723,7 @@
         ]
     },
     {
-        "question": "Which_of_the_following_social_media_platforms_do_you_know_(even_if_just_by_name)?_Base",
+        "question": "Which_of_the_following_social_media_platforms_do_you_know_even_if_just_by_name",
         "answers": [
             "Which_of_the_following_social_media_platforms_do_you_know_(even_if_just_by_name)?_Base",
             "Which_of_the_following_social_media_platforms_do_you_know_(even_if_just_by_name)?_Facebook",
@@ -764,7 +764,7 @@
         ]
     },
     {
-        "question": "And_which_of_these_social_media_platforms_do_you_use_regularly?_Base",
+        "question": "And_which_of_these_social_media_platforms_do_you_use_regularly",
         "answers": [
             "And_which_of_these_social_media_platforms_do_you_use_regularly?_Base",
             "And_which_of_these_social_media_platforms_do_you_use_regularly?_Facebook",
@@ -805,7 +805,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Overall_usage_frequency_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Overall_usage_frequency",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Overall_usage_frequency_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Overall_usage_frequency_Frequent",
@@ -820,7 +820,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Facebook_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Facebook",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Facebook_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Facebook_Several_times_a_day",
@@ -839,7 +839,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Flickr_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Flickr",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Flickr_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Flickr_Several_times_a_day",
@@ -858,7 +858,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Instagram_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Instagram",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Instagram_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Instagram_Several_times_a_day",
@@ -879,7 +879,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_LinkedIn_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_LinkedIn",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_LinkedIn_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_LinkedIn_Several_times_a_day",
@@ -898,7 +898,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Pinterest_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Pinterest",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Pinterest_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Pinterest_Several_times_a_day",
@@ -917,7 +917,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Reddit_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Reddit",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Reddit_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Reddit_Several_times_a_day",
@@ -936,7 +936,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Snapchat_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Snapchat",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Snapchat_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Snapchat_Several_times_a_day",
@@ -955,7 +955,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_TikTok_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_TikTok",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_TikTok_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_TikTok_Several_times_a_day",
@@ -974,7 +974,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Tumblr_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Tumblr",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Tumblr_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Tumblr_Several_times_a_day",
@@ -993,7 +993,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Twitter_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Twitter",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Twitter_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Twitter_Several_times_a_day",
@@ -1012,7 +1012,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_WeChat_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_WeChat",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_WeChat_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_WeChat_Several_times_a_day",
@@ -1027,7 +1027,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_YouTube_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_YouTube",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_YouTube_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_YouTube_Several_times_a_day",
@@ -1048,7 +1048,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Quora_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Quora",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Quora_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Quora_Several_times_a_day",
@@ -1067,7 +1067,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Xing_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Xing",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Xing_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Xing_Several_times_a_day",
@@ -1086,7 +1086,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Jodel_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Jodel",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Jodel_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Jodel_Several_times_a_day",
@@ -1101,7 +1101,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Facebook_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Usage_frequency_Facebook",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Facebook_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Facebook_Frequent_(daily)",
@@ -1114,7 +1114,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Flickr_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Usage_frequency_Flickr",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Flickr_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Flickr_Frequent_(daily)",
@@ -1127,7 +1127,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Instagram_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Usage_frequency_Instagram",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Instagram_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Instagram_Frequent_(daily)",
@@ -1142,7 +1142,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_LinkedIn_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Usage_frequency_LinkedIn",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_LinkedIn_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_LinkedIn_Frequent_(daily)",
@@ -1155,7 +1155,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Pinterest_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Usage_frequency_Pinterest",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Pinterest_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Pinterest_Frequent_(daily)",
@@ -1168,7 +1168,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Reddit_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Usage_frequency_Reddit",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Reddit_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Reddit_Frequent_(daily)",
@@ -1181,7 +1181,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Snapchat_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Usage_frequency_Snapchat",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Snapchat_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Snapchat_Frequent_(daily)",
@@ -1194,7 +1194,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_TikTok_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Usage_frequency_TikTok",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_TikTok_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_TikTok_Frequent_(daily)",
@@ -1207,7 +1207,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Tumblr_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Usage_frequency_Tumblr",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Tumblr_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Tumblr_Frequent_(daily)",
@@ -1220,7 +1220,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Twitter_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Usage_frequency_Twitter",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Twitter_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Twitter_Frequent_(daily)",
@@ -1233,7 +1233,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_WeChat_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Usage_frequency_WeChat",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_WeChat_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_WeChat_Frequent_(daily)",
@@ -1246,7 +1246,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_YouTube_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Usage_frequency_YouTube",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_YouTube_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_YouTube_Frequent_(daily)",
@@ -1261,7 +1261,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Quora_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Usage_frequency_Quora",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Quora_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Quora_Frequent_(daily)",
@@ -1274,7 +1274,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Xing_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Usage_frequency_Xing",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Xing_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Xing_Frequent_(daily)",
@@ -1287,7 +1287,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Jodel_Base",
+        "question": "How_often_do_you_normally_use_the_following_social_media_platforms_Usage_frequency_Jodel",
         "answers": [
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Jodel_Base",
             "How_often_do_you_normally_use_the_following_social_media_platforms?_Usage_frequency_Jodel_Frequent_(daily)",
@@ -1300,7 +1300,7 @@
         ]
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week",
         "answers": [
             "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Base",
             "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Light",
@@ -1671,157 +1671,157 @@
         ]
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Facebook_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Facebook",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Flickr_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Flickr",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Instagram_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Instagram",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_LinkedIn_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_LinkedIn",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Pinterest_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Pinterest",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Reddit_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Reddit",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Snapchat_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Snapchat",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_TikTok_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_TikTok",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Tumblr_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Tumblr",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Twitter_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Twitter",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_WeChat_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_WeChat",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_YouTube_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_YouTube",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Quora_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Quora",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Xing_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Xing",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Jodel_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Jodel",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Usage_intensity_Facebook_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Usage_intensity_Facebook",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Usage_intensity_Flickr_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Usage_intensity_Flickr",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Usage_intensity_Instagram_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Usage_intensity_Instagram",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Usage_intensity_LinkedIn_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Usage_intensity_LinkedIn",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Usage_intensity_Pinterest_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Usage_intensity_Pinterest",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Usage_intensity_Reddit_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Usage_intensity_Reddit",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Usage_intensity_Snapchat_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Usage_intensity_Snapchat",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Usage_intensity_TikTok_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Usage_intensity_TikTok",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Usage_intensity_Tumblr_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Usage_intensity_Tumblr",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Usage_intensity_Twitter_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Usage_intensity_Twitter",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Usage_intensity_WeChat_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Usage_intensity_WeChat",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Usage_intensity_YouTube_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Usage_intensity_YouTube",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Usage_intensity_Quora_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Usage_intensity_Quora",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Usage_intensity_Xing_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Usage_intensity_Xing",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week?_Usage_intensity_Jodel_Base",
+        "question": "Approximately_how_long_do_you_spend_on_the_following_social_media_platforms_in_an_average_week_Usage_intensity_Jodel",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Which_of_the_following_digital_platforms_did_you_use_for_personal_purposes_in_the_last_4_weeks?_Digital_platform_usage_Base",
+        "question": "Which_of_the_following_digital_platforms_did_you_use_for_personal_purposes_in_the_last_4_weeks_Digital_platform_usage",
         "answers": [
             "Which_of_the_following_digital_platforms_did_you_use_for_personal_purposes_in_the_last_4_weeks?_Digital_platform_usage_Base",
             "Which_of_the_following_digital_platforms_did_you_use_for_personal_purposes_in_the_last_4_weeks?_Digital_platform_usage_Digital_platform_user",
@@ -1834,7 +1834,7 @@
         ]
     },
     {
-        "question": "Which_of_the_following_digital_platforms_do_you_know_even_if_only_by_name?_Base",
+        "question": "Which_of_the_following_digital_platforms_do_you_know_even_if_only_by_name",
         "answers": [
             "Which_of_the_following_digital_platforms_do_you_know_even_if_only_by_name?_Base",
             "Which_of_the_following_digital_platforms_do_you_know_even_if_only_by_name?_Discord",
@@ -1879,7 +1879,7 @@
         ]
     },
     {
-        "question": "Which_of_the_following_digital_platforms_did_you_use_for_personal_purposes_in_the_last_4_weeks?_Base",
+        "question": "Which_of_the_following_digital_platforms_did_you_use_for_personal_purposes_in_the_last_4_weeks",
         "answers": [
             "Which_of_the_following_digital_platforms_did_you_use_for_personal_purposes_in_the_last_4_weeks?_Base",
             "Which_of_the_following_digital_platforms_did_you_use_for_personal_purposes_in_the_last_4_weeks?_Discord",
@@ -1938,7 +1938,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_video_calls_for_personal_purposes?_Base",
+        "question": "How_often_do_you_normally_use_video_calls_for_personal_purposes",
         "answers": [
             "How_often_do_you_normally_use_video_calls_for_personal_purposes?_Base",
             "How_often_do_you_normally_use_video_calls_for_personal_purposes?_Several_times_a_day",
@@ -1965,7 +1965,7 @@
         ]
     },
     {
-        "question": "The_following_questions_are_about_digital_media_services__Which_of_the_following_statements_do_you_agree_with?_Base",
+        "question": "The_following_questions_are_about_digital_media_services_Which_of_the_following_statements_do_you_agree_with",
         "answers": [
             "The_following_questions_are_about_digital_media_services__Which_of_the_following_statements_do_you_agree_with?_Base",
             "The_following_questions_are_about_digital_media_services__Which_of_the_following_statements_do_you_agree_with?_Digital_services_allow_me_to_discover_new_and_exciting_content",
@@ -1990,7 +1990,7 @@
         ]
     },
     {
-        "question": "Which_of_the_following_digital_media_services_have_you_used_in_the_past_12_months?_Base",
+        "question": "Which_of_the_following_digital_media_services_have_you_used_in_the_past_12_months",
         "answers": [
             "Which_of_the_following_digital_media_services_have_you_used_in_the_past_12_months?_Base",
             "Which_of_the_following_digital_media_services_have_you_used_in_the_past_12_months?_Audiobooks_(download/streaming)",
@@ -2017,7 +2017,7 @@
         ]
     },
     {
-        "question": "When_or_where_do_you_use_your_digital_media_services?_Base",
+        "question": "When_or_where_do_you_use_your_digital_media_services",
         "answers": [
             "When_or_where_do_you_use_your_digital_media_services?_Base",
             "When_or_where_do_you_use_your_digital_media_services?_In_the_bathroom/on_the_toilet",
@@ -2054,7 +2054,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_these_services?_Audiobooks_(download/streaming)_Base",
+        "question": "How_often_do_you_normally_use_these_services_Audiobooks_downloadorstreaming",
         "answers": [
             "How_often_do_you_normally_use_these_services?_Audiobooks_(download/streaming)_Base",
             "How_often_do_you_normally_use_these_services?_Audiobooks_(download/streaming)_Several_times_a_day",
@@ -2075,7 +2075,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_these_services?_eBooks_Base",
+        "question": "How_often_do_you_normally_use_these_services_eBooks",
         "answers": [
             "How_often_do_you_normally_use_these_services?_eBooks_Base",
             "How_often_do_you_normally_use_these_services?_eBooks_Several_times_a_day",
@@ -2096,7 +2096,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_these_services?_Digital_music_content_(download/streaming)_Base",
+        "question": "How_often_do_you_normally_use_these_services_Digital_music_content_downloadorstreaming",
         "answers": [
             "How_often_do_you_normally_use_these_services?_Digital_music_content_(download/streaming)_Base",
             "How_often_do_you_normally_use_these_services?_Digital_music_content_(download/streaming)_Several_times_a_day",
@@ -2117,7 +2117,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_these_services?_Digital_video_content_(download/streaming)_Base",
+        "question": "How_often_do_you_normally_use_these_services_Digital_video_content_downloadorstreaming",
         "answers": [
             "How_often_do_you_normally_use_these_services?_Digital_video_content_(download/streaming)_Base",
             "How_often_do_you_normally_use_these_services?_Digital_video_content_(download/streaming)_Several_times_a_day",
@@ -2138,7 +2138,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_these_services?_eNewspapers_&_eMagazines_Base",
+        "question": "How_often_do_you_normally_use_these_services_eNewspapers_and_eMagazines",
         "answers": [
             "How_often_do_you_normally_use_these_services?_eNewspapers_&_eMagazines_Base",
             "How_often_do_you_normally_use_these_services?_eNewspapers_&_eMagazines_Several_times_a_day",
@@ -2157,7 +2157,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_these_services?_Online_radio_Base",
+        "question": "How_often_do_you_normally_use_these_services_Online_radio",
         "answers": [
             "How_often_do_you_normally_use_these_services?_Online_radio_Base",
             "How_often_do_you_normally_use_these_services?_Online_radio_Several_times_a_day",
@@ -2178,7 +2178,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_these_services?_Podcasts_Base",
+        "question": "How_often_do_you_normally_use_these_services_Podcasts",
         "answers": [
             "How_often_do_you_normally_use_these_services?_Podcasts_Base",
             "How_often_do_you_normally_use_these_services?_Podcasts_Several_times_a_day",
@@ -2199,7 +2199,7 @@
         ]
     },
     {
-        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Audiobooks_(download/streaming)_Base",
+        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services_Audiobooks_downloadorstreaming",
         "answers": [
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Audiobooks_(download/streaming)_Base",
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Audiobooks_(download/streaming)_Less_than_1_hour",
@@ -2222,7 +2222,7 @@
         ]
     },
     {
-        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_eBooks_Base",
+        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services_eBooks",
         "answers": [
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_eBooks_Base",
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_eBooks_Less_than_1_hour",
@@ -2245,7 +2245,7 @@
         ]
     },
     {
-        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Digital_music_content_(download/streaming)_Base",
+        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services_Digital_music_content_downloadorstreaming",
         "answers": [
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Digital_music_content_(download/streaming)_Base",
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Digital_music_content_(download/streaming)_Less_than_1_hour",
@@ -2268,7 +2268,7 @@
         ]
     },
     {
-        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Digital_video_content_(download/streaming)_Base",
+        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services_Digital_video_content_downloadorstreaming",
         "answers": [
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Digital_video_content_(download/streaming)_Base",
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Digital_video_content_(download/streaming)_Less_than_1_hour",
@@ -2293,7 +2293,7 @@
         ]
     },
     {
-        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_eNewspapers_&_eMagazines_Base",
+        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services_eNewspapers_and_eMagazines",
         "answers": [
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_eNewspapers_&_eMagazines_Base",
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_eNewspapers_&_eMagazines_Less_than_1_hour",
@@ -2316,7 +2316,7 @@
         ]
     },
     {
-        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Online_radio_Base",
+        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services_Online_radio",
         "answers": [
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Online_radio_Base",
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Online_radio_Less_than_1_hour",
@@ -2339,7 +2339,7 @@
         ]
     },
     {
-        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Podcasts_Base",
+        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services_Podcasts",
         "answers": [
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Podcasts_Base",
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Podcasts_Less_than_1_hour",
@@ -2362,7 +2362,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_these_services?_Media_frequency_Audiobooks_Base",
+        "question": "How_often_do_you_normally_use_these_services_Media_frequency_Audiobooks",
         "answers": [
             "How_often_do_you_normally_use_these_services?_Media_frequency_Audiobooks_Base",
             "How_often_do_you_normally_use_these_services?_Media_frequency_Audiobooks_Frequent",
@@ -2377,7 +2377,7 @@
         ]
     },
     {
-        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_Audiobooks_Base",
+        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services_Media_intensity_Audiobooks",
         "answers": [
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_Audiobooks_Base",
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_Audiobooks_Light",
@@ -2392,7 +2392,7 @@
         ]
     },
     {
-        "question": "Which_platform(s)_have_you_used_to_listen_to_audiobooks_(streamed_downloaded)_in_the_past_12_months_as_a_paying_customer?_Base",
+        "question": "Which_platforms_have_you_used_to_listen_to_audiobooks_streamed_downloaded_in_the_past_12_months_as_a_paying_customer",
         "answers": [
             "Which_platform(s)_have_you_used_to_listen_to_audiobooks_(streamed_downloaded)_in_the_past_12_months_as_a_paying_customer?_Base",
             "Which_platform(s)_have_you_used_to_listen_to_audiobooks_(streamed_downloaded)_in_the_past_12_months_as_a_paying_customer?_Apple_Books",
@@ -2421,7 +2421,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_these_services?_Media_frequency_eBooks_Base",
+        "question": "How_often_do_you_normally_use_these_services_Media_frequency_eBooks",
         "answers": [
             "How_often_do_you_normally_use_these_services?_Media_frequency_eBooks_Base",
             "How_often_do_you_normally_use_these_services?_Media_frequency_eBooks_Frequent",
@@ -2436,7 +2436,7 @@
         ]
     },
     {
-        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_eBooks_Base",
+        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services_Media_intensity_eBooks",
         "answers": [
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_eBooks_Base",
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_eBooks_Light",
@@ -2453,7 +2453,7 @@
         ]
     },
     {
-        "question": "Which_platform(s)_have_you_used_to_get_eBooks_in_the_past_12_months_as_a_paying_customer?_Base",
+        "question": "Which_platforms_have_you_used_to_get_eBooks_in_the_past_12_months_as_a_paying_customer",
         "answers": [
             "Which_platform(s)_have_you_used_to_get_eBooks_in_the_past_12_months_as_a_paying_customer?_Base",
             "Which_platform(s)_have_you_used_to_get_eBooks_in_the_past_12_months_as_a_paying_customer?_Amazon",
@@ -2490,7 +2490,7 @@
         ]
     },
     {
-        "question": "Which_device(s)_do_you_normally_use_to_read_eBooks?_Base",
+        "question": "Which_devices_do_you_normally_use_to_read_eBooks",
         "answers": [
             "Which_device(s)_do_you_normally_use_to_read_eBooks?_Base",
             "Which_device(s)_do_you_normally_use_to_read_eBooks?_Laptop/PC",
@@ -2507,7 +2507,7 @@
         ]
     },
     {
-        "question": "You_said_you_have_an_eReader_What_brand_of_eReader_is_it?_Base",
+        "question": "You_said_you_have_an_eReader_What_brand_of_eReader_is_it",
         "answers": [
             "You_said_you_have_an_eReader_What_brand_of_eReader_is_it?_Base",
             "You_said_you_have_an_eReader_What_brand_of_eReader_is_it?_Amazon_Kindle",
@@ -2528,7 +2528,7 @@
         ]
     },
     {
-        "question": "Concerning_eBooks_and_or_audiobooks_what_type_of_content_do_you_consume?_Base",
+        "question": "Concerning_eBooks_and_or_audiobooks_what_type_of_content_do_you_consume",
         "answers": [
             "Concerning_eBooks_and_or_audiobooks_what_type_of_content_do_you_consume?_Base",
             "Concerning_eBooks_and_or_audiobooks_what_type_of_content_do_you_consume?_Fantasy/science_fiction/dystopian",
@@ -2567,7 +2567,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_these_services?_Media_frequency_Digital_music_Base",
+        "question": "How_often_do_you_normally_use_these_services_Media_frequency_Digital_music",
         "answers": [
             "How_often_do_you_normally_use_these_services?_Media_frequency_Digital_music_Base",
             "How_often_do_you_normally_use_these_services?_Media_frequency_Digital_music_Frequent",
@@ -2582,7 +2582,7 @@
         ]
     },
     {
-        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_Digital_music_Base",
+        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services_Media_intensity_Digital_music",
         "answers": [
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_Digital_music_Base",
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_Digital_music_Light",
@@ -2599,7 +2599,7 @@
         ]
     },
     {
-        "question": "Which_of_these_music_streaming_platform(s)_have_you_used_in_the_past_12_months_as_a_paying_customer?_Base",
+        "question": "Which_of_these_music_streaming_platforms_have_you_used_in_the_past_12_months_as_a_paying_customer",
         "answers": [
             "Which_of_these_music_streaming_platform(s)_have_you_used_in_the_past_12_months_as_a_paying_customer?_Base",
             "Which_of_these_music_streaming_platform(s)_have_you_used_in_the_past_12_months_as_a_paying_customer?_Amazon_Music",
@@ -2636,7 +2636,7 @@
         ]
     },
     {
-        "question": "Concerning_digital_music_(streaming_downloading)_which_genres_do_you_consume?_Base",
+        "question": "Concerning_digital_music_streaming_downloading_which_genres_do_you_consume",
         "answers": [
             "Concerning_digital_music_(streaming_downloading)_which_genres_do_you_consume?_Base",
             "Concerning_digital_music_(streaming_downloading)_which_genres_do_you_consume?_Classical_music",
@@ -2673,7 +2673,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_these_services?_Media_frequency_Digital_video_Base",
+        "question": "How_often_do_you_normally_use_these_services_Media_frequency_Digital_video",
         "answers": [
             "How_often_do_you_normally_use_these_services?_Media_frequency_Digital_video_Base",
             "How_often_do_you_normally_use_these_services?_Media_frequency_Digital_video_Frequent",
@@ -2688,7 +2688,7 @@
         ]
     },
     {
-        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_Digital_video_Base",
+        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services_Media_intensity_Digital_video",
         "answers": [
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_Digital_video_Base",
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_Digital_video_Light",
@@ -2705,7 +2705,7 @@
         ]
     },
     {
-        "question": "Which_platform(s)_have_you_used_to_watch_video_content_(streaming_downloading)_in_the_past_12_months_as_a_paying_customer?_Base",
+        "question": "Which_platforms_have_you_used_to_watch_video_content_streaming_downloading_in_the_past_12_months_as_a_paying_customer",
         "answers": [
             "Which_platform(s)_have_you_used_to_watch_video_content_(streaming_downloading)_in_the_past_12_months_as_a_paying_customer?_Base",
             "Which_platform(s)_have_you_used_to_watch_video_content_(streaming_downloading)_in_the_past_12_months_as_a_paying_customer?_Amazon_Prime_Video",
@@ -2754,7 +2754,7 @@
         ]
     },
     {
-        "question": "Concerning_digital_video_(streaming_downloading)_which_genres_are_you_interested_in?_Base",
+        "question": "Concerning_digital_video_streaming_downloading_which_genres_are_you_interested_in",
         "answers": [
             "Concerning_digital_video_(streaming_downloading)_which_genres_are_you_interested_in?_Base",
             "Concerning_digital_video_(streaming_downloading)_which_genres_are_you_interested_in?_Animation_(cartoons_anime_etc)",
@@ -2799,7 +2799,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_these_services?_Media_frequency_eNewspapers_Base",
+        "question": "How_often_do_you_normally_use_these_services_Media_frequency_eNewspapers",
         "answers": [
             "How_often_do_you_normally_use_these_services?_Media_frequency_eNewspapers_Base",
             "How_often_do_you_normally_use_these_services?_Media_frequency_eNewspapers_Frequent",
@@ -2812,7 +2812,7 @@
         ]
     },
     {
-        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_eNewspapers_Base",
+        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services_Media_intensity_eNewspapers",
         "answers": [
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_eNewspapers_Base",
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_eNewspapers_Light",
@@ -2829,7 +2829,7 @@
         ]
     },
     {
-        "question": "Concerning_eMagazines_and_eNewspapers_what_type_of_content_do_you_consume?_Base",
+        "question": "Concerning_eMagazines_and_eNewspapers_what_type_of_content_do_you_consume",
         "answers": [
             "Concerning_eMagazines_and_eNewspapers_what_type_of_content_do_you_consume?_Base",
             "Concerning_eMagazines_and_eNewspapers_what_type_of_content_do_you_consume?_Arts_&_crafts_magazines",
@@ -2884,7 +2884,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_these_services?_Media_frequency_Podcasts_Base",
+        "question": "How_often_do_you_normally_use_these_services_Media_frequency_Podcasts",
         "answers": [
             "How_often_do_you_normally_use_these_services?_Media_frequency_Podcasts_Base",
             "How_often_do_you_normally_use_these_services?_Media_frequency_Podcasts_Frequent",
@@ -2899,7 +2899,7 @@
         ]
     },
     {
-        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_Podcasts_Base",
+        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services_Media_intensity_Podcasts",
         "answers": [
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_Podcasts_Base",
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_Podcasts_Light",
@@ -2914,7 +2914,7 @@
         ]
     },
     {
-        "question": "Which_platform(s)_did_you_use_to_stream_download_podcasts_in_the_past_12_months_as_a_paying_customer?_Base",
+        "question": "Which_platforms_did_you_use_to_stream_download_podcasts_in_the_past_12_months_as_a_paying_customer",
         "answers": [
             "Which_platform(s)_did_you_use_to_stream_download_podcasts_in_the_past_12_months_as_a_paying_customer?_Base",
             "Which_platform(s)_did_you_use_to_stream_download_podcasts_in_the_past_12_months_as_a_paying_customer?_Apple_Podcasts",
@@ -2957,7 +2957,7 @@
         ]
     },
     {
-        "question": "Concerning_podcasts_what_type_of_content_do_you_consume?_Base",
+        "question": "Concerning_podcasts_what_type_of_content_do_you_consume",
         "answers": [
             "Concerning_podcasts_what_type_of_content_do_you_consume?_Base",
             "Concerning_podcasts_what_type_of_content_do_you_consume?_Arts_crafts_&_design",
@@ -3008,7 +3008,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_use_these_services?_Media_frequency_Online_radio_Base",
+        "question": "How_often_do_you_normally_use_these_services_Media_frequency_Online_radio",
         "answers": [
             "How_often_do_you_normally_use_these_services?_Media_frequency_Online_radio_Base",
             "How_often_do_you_normally_use_these_services?_Media_frequency_Online_radio_Frequent",
@@ -3023,7 +3023,7 @@
         ]
     },
     {
-        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_Online_radio_Base",
+        "question": "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services_Media_intensity_Online_radio",
         "answers": [
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_Online_radio_Base",
             "Approximately_how_many_hours_in_an_average_week_do_you_use_these_services?_Media_intensity_Online_radio_Light",
@@ -3040,7 +3040,7 @@
         ]
     },
     {
-        "question": "Do_you_use_a_second_device_or_screen_while_watching_TV_or_video_content?_Base",
+        "question": "Do_you_use_a_second_device_or_screen_while_watching_TV_or_video_content",
         "answers": [
             "Do_you_use_a_second_device_or_screen_while_watching_TV_or_video_content?_Base",
             "Do_you_use_a_second_device_or_screen_while_watching_TV_or_video_content?_Yes",
@@ -3055,7 +3055,7 @@
         ]
     },
     {
-        "question": "If_yes_which_devices_do_you_normally_use_in_parallel?_Base",
+        "question": "If_yes_which_devices_do_you_normally_use_in_parallel",
         "answers": [
             "If_yes_which_devices_do_you_normally_use_in_parallel?_Base",
             "If_yes_which_devices_do_you_normally_use_in_parallel?_Desktop_PC",
@@ -3078,7 +3078,7 @@
         ]
     },
     {
-        "question": "And_what_do_you_do_on_the_second_device?_Base",
+        "question": "And_what_do_you_do_on_the_second_device",
         "answers": [
             "And_what_do_you_do_on_the_second_device?_Base",
             "And_what_do_you_do_on_the_second_device?_Chat_to_/_message_friends",
@@ -3109,7 +3109,7 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_purchase_products_online?_Base",
+        "question": "How_often_do_you_normally_purchase_products_online",
         "answers": [
             "How_often_do_you_normally_purchase_products_online?_Base",
             "How_often_do_you_normally_purchase_products_online?_Once_per_week_or_more_often",
@@ -3146,12 +3146,12 @@
         ]
     },
     {
-        "question": "How_often_do_you_normally_purchase_products_online?_Online_shopping_frequency_Base",
+        "question": "How_often_do_you_normally_purchase_products_online_Online_shopping_frequency",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Which_type_of_products_have_you_bought_online_in_the_past_12_months?_Base",
+        "question": "Which_type_of_products_have_you_bought_online_in_the_past_12_months",
         "answers": [
             "Which_type_of_products_have_you_bought_online_in_the_past_12_months?_Base",
             "Which_type_of_products_have_you_bought_online_in_the_past_12_months?_FMCG_(eg_food_and_cosmetics)",
@@ -3174,7 +3174,7 @@
         ]
     },
     {
-        "question": "Before_purchasing_products_online_how_did_you_first_become_aware_of_the_product(s)?_Base",
+        "question": "Before_purchasing_products_online_how_did_you_first_become_aware_of_the_products",
         "answers": [
             "Before_purchasing_products_online_how_did_you_first_become_aware_of_the_product(s)?_Base",
             "Before_purchasing_products_online_how_did_you_first_become_aware_of_the_product(s)?_Blog_post",
@@ -3223,12 +3223,12 @@
         ]
     },
     {
-        "question": "Before_purchasing_products_online_how_did_you_first_become_aware_of_the_product(s)?_Please_think_about_the_past_12_months_Product_awareness_Base",
+        "question": "Before_purchasing_products_online_how_did_you_first_become_aware_of_the_products_Please_think_about_the_past_12_months_Product_awareness",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Before_purchasing_a_product_online_in_the_past_12_months_did_you_do_any_research_into_the_product?_Base",
+        "question": "Before_purchasing_a_product_online_in_the_past_12_months_did_you_do_any_research_into_the_product",
         "answers": [
             "Before_purchasing_a_product_online_in_the_past_12_months_did_you_do_any_research_into_the_product?_Base",
             "Before_purchasing_a_product_online_in_the_past_12_months_did_you_do_any_research_into_the_product?_Discussed_with_friends_or_family",
@@ -3259,7 +3259,7 @@
         ]
     },
     {
-        "question": "What_were_the_most_important_reasons_for_deciding_where_to_purchase_products_online?_Base",
+        "question": "What_were_the_most_important_reasons_for_deciding_where_to_purchase_products_online",
         "answers": [
             "What_were_the_most_important_reasons_for_deciding_where_to_purchase_products_online?_Base",
             "What_were_the_most_important_reasons_for_deciding_where_to_purchase_products_online?_Advertising",
@@ -3288,7 +3288,7 @@
         ]
     },
     {
-        "question": "How_did_you_pay_for_the_products_purchased_online_in_the_past_12_months?_Base",
+        "question": "How_did_you_pay_for_the_products_purchased_online_in_the_past_12_months",
         "answers": [
             "How_did_you_pay_for_the_products_purchased_online_in_the_past_12_months?_Base",
             "How_did_you_pay_for_the_products_purchased_online_in_the_past_12_months?_By_invoice",
@@ -3317,7 +3317,7 @@
         ]
     },
     {
-        "question": "Which_online_shopping_or_marketplace_websites_have_you_purchased_any_products_from_in_the_past_12_months?_Base",
+        "question": "Which_online_shopping_or_marketplace_websites_have_you_purchased_any_products_from_in_the_past_12_months",
         "answers": [
             "Which_online_shopping_or_marketplace_websites_have_you_purchased_any_products_from_in_the_past_12_months?_Base",
             "Which_online_shopping_or_marketplace_websites_have_you_purchased_any_products_from_in_the_past_12_months?_Amazon",
@@ -3358,7 +3358,7 @@
         ]
     },
     {
-        "question": "Which_of_the_following_online_payment_systems_have_you_used_in_the_past_12_months_to_purchase_these_products_online?_Base",
+        "question": "Which_of_the_following_online_payment_systems_have_you_used_in_the_past_12_months_to_purchase_these_products_online",
         "answers": [
             "Which_of_the_following_online_payment_systems_have_you_used_in_the_past_12_months_to_purchase_these_products_online?_Base",
             "Which_of_the_following_online_payment_systems_have_you_used_in_the_past_12_months_to_purchase_these_products_online?_2Checkout",
@@ -3401,7 +3401,7 @@
         ]
     },
     {
-        "question": "After_purchasing_a_product_online_in_the_past_12_months_did_you_provide_any_feedback_reviews?_If_so_where?_Base",
+        "question": "After_purchasing_a_product_online_in_the_past_12_months_did_you_provide_any_feedback_reviews_If_so_where",
         "answers": [
             "After_purchasing_a_product_online_in_the_past_12_months_did_you_provide_any_feedback_reviews?_If_so_where?_Base",
             "After_purchasing_a_product_online_in_the_past_12_months_did_you_provide_any_feedback_reviews?_If_so_where?_Contacted_the_product_company_or_brand_directly_via_website_or_e-mail",
@@ -3442,12 +3442,12 @@
         ]
     },
     {
-        "question": "After_purchasing_a_product_online_in_the_past_12_months_did_you_provide_any_feedback_reviews?_If_so_where?_/_Feedback_type_Base",
+        "question": "After_purchasing_a_product_online_in_the_past_12_months_did_you_provide_any_feedback_reviews_If_so_where_or_Feedback_type",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Which_topics_did_you_cover_in_your_feedback_reviews?_Base",
+        "question": "Which_topics_did_you_cover_in_your_feedback_reviews",
         "answers": [
             "Which_topics_did_you_cover_in_your_feedback_reviews?_Base",
             "Which_topics_did_you_cover_in_your_feedback_reviews?_Negative_feedback_about_customer_service",
@@ -3476,7 +3476,7 @@
         ]
     },
     {
-        "question": "When_you_are_at_a_physical_store_do_you_use_the_internet_on_a_device_for_any_of_the_following?_Base",
+        "question": "When_you_are_at_a_physical_store_do_you_use_the_internet_on_a_device_for_any_of_the_following",
         "answers": [
             "When_you_are_at_a_physical_store_do_you_use_the_internet_on_a_device_for_any_of_the_following?_Base",
             "When_you_are_at_a_physical_store_do_you_use_the_internet_on_a_device_for_any_of_the_following?_Comparing_prices_online",
@@ -3499,7 +3499,7 @@
         ]
     },
     {
-        "question": "When_you_shopped_at_a_physical_store_which_payment_method(s)_did_you_use_in_the_past_12_months?_Base",
+        "question": "When_you_shopped_at_a_physical_store_which_payment_methods_did_you_use_in_the_past_12_months",
         "answers": [
             "When_you_shopped_at_a_physical_store_which_payment_method(s)_did_you_use_in_the_past_12_months?_Base",
             "When_you_shopped_at_a_physical_store_which_payment_method(s)_did_you_use_in_the_past_12_months?_Cash",
@@ -3524,7 +3524,7 @@
         ]
     },
     {
-        "question": "The_following_questions_are_about_your_interests_and_hobbies__Which_of_the_following_statements_do_you_agree_with?_Base",
+        "question": "The_following_questions_are_about_your_interests_and_hobbies_Which_of_the_following_statements_do_you_agree_with",
         "answers": [
             "The_following_questions_are_about_your_interests_and_hobbies__Which_of_the_following_statements_do_you_agree_with?_Base",
             "The_following_questions_are_about_your_interests_and_hobbies__Which_of_the_following_statements_do_you_agree_with?_I_discuss_my_hobby_with_others_in_online_communities",
@@ -3547,7 +3547,7 @@
         ]
     },
     {
-        "question": "Which_of_the_following_occupies_your_leisure_time?_Base",
+        "question": "Which_of_the_following_occupies_your_leisure_time",
         "answers": [
             "Which_of_the_following_occupies_your_leisure_time?_Base",
             "Which_of_the_following_occupies_your_leisure_time?_Arts_and_crafts",
@@ -3604,7 +3604,7 @@
         ]
     },
     {
-        "question": "Which_of_your_hobbies_or_interests_do_you_engage_digitally_with_(eg_use_an_app_watch_online_tutorials_discuss_on_forums_etc)?_Base",
+        "question": "Which_of_your_hobbies_or_interests_do_you_engage_digitally_with_eg_use_an_app_watch_online_tutorials_discuss_on_forums_etc",
         "answers": [
             "Which_of_your_hobbies_or_interests_do_you_engage_digitally_with_(eg_use_an_app_watch_online_tutorials_discuss_on_forums_etc)?_Base",
             "Which_of_your_hobbies_or_interests_do_you_engage_digitally_with_(eg_use_an_app_watch_online_tutorials_discuss_on_forums_etc)?_Arts_and_crafts",
@@ -3653,7 +3653,7 @@
         ]
     },
     {
-        "question": "The_following_questions_are_about_how_digital_technology_interacts_with_health_and_fitness_Which_of_the_following_applies_to_you?_Base",
+        "question": "The_following_questions_are_about_how_digital_technology_interacts_with_health_and_fitness_Which_of_the_following_applies_to_you",
         "answers": [
             "The_following_questions_are_about_how_digital_technology_interacts_with_health_and_fitness_Which_of_the_following_applies_to_you?_Base",
             "The_following_questions_are_about_how_digital_technology_interacts_with_health_and_fitness_Which_of_the_following_applies_to_you?_I_use_tracking_devices_(eg_smartwatch)",
@@ -3686,7 +3686,7 @@
         ]
     },
     {
-        "question": "Why_do_you_use_fitness_apps_and_tracking_devices?_Base",
+        "question": "Why_do_you_use_fitness_apps_and_tracking_devices",
         "answers": [
             "Why_do_you_use_fitness_apps_and_tracking_devices?_Base",
             "Why_do_you_use_fitness_apps_and_tracking_devices?_They_allow_me_to_better_understand_my_body_and_to_advance_my_physical_health_specifically",
@@ -3709,7 +3709,7 @@
         ]
     },
     {
-        "question": "Which_of_the_following_tracking_devices_smartwatches_with_fitness_functions_do_you_own?_Base",
+        "question": "Which_of_the_following_tracking_devices_smartwatches_with_fitness_functions_do_you_own",
         "answers": [
             "Which_of_the_following_tracking_devices_smartwatches_with_fitness_functions_do_you_own?_Base",
             "Which_of_the_following_tracking_devices_smartwatches_with_fitness_functions_do_you_own?_Adidas",
@@ -3754,7 +3754,7 @@
         ]
     },
     {
-        "question": "Have_you_used_online_dating_in_the_past_12_months?_Base",
+        "question": "Have_you_used_online_dating_in_the_past_12_months",
         "answers": [
             "Have_you_used_online_dating_in_the_past_12_months?_Base",
             "Have_you_used_online_dating_in_the_past_12_months?_Yes",
@@ -3769,7 +3769,7 @@
         ]
     },
     {
-        "question": "You_said_you_use_online_dating;_what_were_the_reasons_you_decided_to_start_online_dating?_Base",
+        "question": "You_said_you_use_online_dating;_what_were_the_reasons_you_decided_to_start_online_dating",
         "answers": [
             "You_said_you_use_online_dating;_what_were_the_reasons_you_decided_to_start_online_dating?_Base",
             "You_said_you_use_online_dating;_what_were_the_reasons_you_decided_to_start_online_dating?_Just_to_have_a_good_time/fun/distraction",
@@ -3800,7 +3800,7 @@
         ]
     },
     {
-        "question": "Which_of_the_following_platforms_have_you_used_in_the_past_12_months?_Base",
+        "question": "Which_of_the_following_platforms_have_you_used_in_the_past_12_months",
         "answers": [
             "Which_of_the_following_platforms_have_you_used_in_the_past_12_months?_Base",
             "Which_of_the_following_platforms_have_you_used_in_the_past_12_months?_Badoo",
@@ -3849,7 +3849,7 @@
         ]
     },
     {
-        "question": "And_for_which_of_these_services_did_you_pay?_Base",
+        "question": "And_for_which_of_these_services_did_you_pay",
         "answers": [
             "And_for_which_of_these_services_did_you_pay?_Base",
             "And_for_which_of_these_services_did_you_pay?_Badoo",
@@ -3896,7 +3896,7 @@
         ]
     },
     {
-        "question": "Have_you_taken_online_training_courses_(eg_master_classes)_in_any_of_these_fields_in_the_past_12_months?_Base",
+        "question": "Have_you_taken_online_training_courses_eg_master_classes_in_any_of_these_fields_in_the_past_12_months",
         "answers": [
             "Have_you_taken_online_training_courses_(eg_master_classes)_in_any_of_these_fields_in_the_past_12_months?_Base",
             "Have_you_taken_online_training_courses_(eg_master_classes)_in_any_of_these_fields_in_the_past_12_months?_Lifestyle_(eg_makeup_interior_design)",
@@ -3935,7 +3935,7 @@
         ]
     },
     {
-        "question": "And_for_which_of_these_courses_did_you_pay_for?_Base",
+        "question": "And_for_which_of_these_courses_did_you_pay_for",
         "answers": [
             "And_for_which_of_these_courses_did_you_pay_for?_Base",
             "And_for_which_of_these_courses_did_you_pay_for?_Lifestyle_(eg_makeup_interior_design)",
@@ -3968,7 +3968,7 @@
         ]
     },
     {
-        "question": "The_following_questions_are_about_working_from_home__Have_you_worked_from_home_in_the_past_12_months?_Base",
+        "question": "The_following_questions_are_about_working_from_home_Have_you_worked_from_home_in_the_past_12_months",
         "answers": [
             "The_following_questions_are_about_working_from_home__Have_you_worked_from_home_in_the_past_12_months?_Base",
             "The_following_questions_are_about_working_from_home__Have_you_worked_from_home_in_the_past_12_months?_Yes",
@@ -3983,7 +3983,7 @@
         ]
     },
     {
-        "question": "Thinking_about_working_from_home_which_of_the_following_statements_do_you_agree_with?_Base",
+        "question": "Thinking_about_working_from_home_which_of_the_following_statements_do_you_agree_with",
         "answers": [
             "Thinking_about_working_from_home_which_of_the_following_statements_do_you_agree_with?_Base",
             "Thinking_about_working_from_home_which_of_the_following_statements_do_you_agree_with?_My_productivity_is_better_when_I_work_from_home",
@@ -4008,7 +4008,7 @@
         ]
     },
     {
-        "question": "What_were_the_reasons_you_worked_from_home_in_the_past_12_months?_Base",
+        "question": "What_were_the_reasons_you_worked_from_home_in_the_past_12_months",
         "answers": [
             "What_were_the_reasons_you_worked_from_home_in_the_past_12_months?_Base",
             "What_were_the_reasons_you_worked_from_home_in_the_past_12_months?_COVID-19/coronavirus",
@@ -4043,7 +4043,7 @@
         ]
     },
     {
-        "question": "Which_of_these_statements_do_you_agree_with?_Base",
+        "question": "Which_of_these_statements_do_you_agree_with",
         "answers": [
             "Which_of_these_statements_do_you_agree_with?_Base",
             "Which_of_these_statements_do_you_agree_with?_I_consciously_decide_to_“digitally_detox”_(eg_reduce_my_internet_usage)_to_improve_my_mental_well-being",
@@ -4068,7 +4068,7 @@
         ]
     },
     {
-        "question": "How_has_the_growing_influence_of_online_and_digital_technology_impacted_your_mental_well-being?_Wellbeing_Impact_Base",
+        "question": "How_has_the_growing_influence_of_online_and_digital_technology_impacted_your_mental_wellbeing_Wellbeing_Impact",
         "answers": [
             "How_has_the_growing_influence_of_online_and_digital_technology_impacted_your_mental_well-being?_Wellbeing_Impact_Base",
             "How_has_the_growing_influence_of_online_and_digital_technology_impacted_your_mental_well-being?_Wellbeing_Impact_Postive_impact",
@@ -4085,7 +4085,7 @@
         ]
     },
     {
-        "question": "How_has_the_growing_influence_of_online_and_digital_technology_impacted_your_mental_well-being?_Base",
+        "question": "How_has_the_growing_influence_of_online_and_digital_technology_impacted_your_mental_wellbeing",
         "answers": [
             "How_has_the_growing_influence_of_online_and_digital_technology_impacted_your_mental_well-being?_Base",
             "How_has_the_growing_influence_of_online_and_digital_technology_impacted_your_mental_well-being?_Improved_it",
@@ -4106,7 +4106,7 @@
         ]
     },
     {
-        "question": "How_do_you_prefer_to_contact_brands_or_companies_online?_Base",
+        "question": "How_do_you_prefer_to_contact_brands_or_companies_online",
         "answers": [
             "How_do_you_prefer_to_contact_brands_or_companies_online?_Base",
             "How_do_you_prefer_to_contact_brands_or_companies_online?_Via_e-mail",
@@ -4131,7 +4131,7 @@
         ]
     },
     {
-        "question": "When_you_think_about_brands_and_companies_on_social_media_which_types_of_content_are_you_interested_in_seeing_from_them?_Base",
+        "question": "When_you_think_about_brands_and_companies_on_social_media_which_types_of_content_are_you_interested_in_seeing_from_them",
         "answers": [
             "When_you_think_about_brands_and_companies_on_social_media_which_types_of_content_are_you_interested_in_seeing_from_them?_Base",
             "When_you_think_about_brands_and_companies_on_social_media_which_types_of_content_are_you_interested_in_seeing_from_them?_Their_employees",
@@ -4172,7 +4172,7 @@
         ]
     },
     {
-        "question": "And_in_what_way_do_you_like_to_receive_this_content_from_brands_and_companies_on_social_media?_Base",
+        "question": "And_in_what_way_do_you_like_to_receive_this_content_from_brands_and_companies_on_social_media",
         "answers": [
             "And_in_what_way_do_you_like_to_receive_this_content_from_brands_and_companies_on_social_media?_Base",
             "And_in_what_way_do_you_like_to_receive_this_content_from_brands_and_companies_on_social_media?_Videos",
@@ -4205,7 +4205,7 @@
         ]
     },
     {
-        "question": "Where_have_you_seen_or_heard_ads_online_in_the_past_4_weeks?_Base",
+        "question": "Where_have_you_seen_or_heard_ads_online_in_the_past_4_weeks",
         "answers": [
             "Where_have_you_seen_or_heard_ads_online_in_the_past_4_weeks?_Base",
             "Where_have_you_seen_or_heard_ads_online_in_the_past_4_weeks?_Advertising_videos_on_websites",
@@ -4256,7 +4256,7 @@
         ]
     },
     {
-        "question": "Which_of_these_advertisements_caused_you_to_actively_click_on_them_or_look_up_additional_information?_Base",
+        "question": "Which_of_these_advertisements_caused_you_to_actively_click_on_them_or_look_up_additional_information",
         "answers": [
             "Which_of_these_advertisements_caused_you_to_actively_click_on_them_or_look_up_additional_information?_Base",
             "Which_of_these_advertisements_caused_you_to_actively_click_on_them_or_look_up_additional_information?_Advertising_videos_on_websites",
@@ -4301,7 +4301,7 @@
         ]
     },
     {
-        "question": "Which_devices_do_you_use_regularly_at_home?_Base",
+        "question": "Which_devices_do_you_use_regularly_at_home",
         "answers": [
             "Which_devices_do_you_use_regularly_at_home?_Base",
             "Which_devices_do_you_use_regularly_at_home?_Desktop_PC",
@@ -4340,12 +4340,12 @@
         ]
     },
     {
-        "question": "Which_devices_do_you_use_regularly_at_home?_Mobile_and_stationary_user_Base",
+        "question": "Which_devices_do_you_use_regularly_at_home_Mobile_and_stationary_user",
         "answers": [],
         "suggested_shortcut": []
     },
     {
-        "question": "Which_operating_systems_do_you_use_on_your_computer_(egdesktop_or_laptop)?_Base",
+        "question": "Which_operating_systems_do_you_use_on_your_computer_egdesktop_or_laptop",
         "answers": [
             "Which_operating_systems_do_you_use_on_your_computer_(egdesktop_or_laptop)?_Base",
             "Which_operating_systems_do_you_use_on_your_computer_(egdesktop_or_laptop)?_Microsoft_Windows",
@@ -4368,7 +4368,7 @@
         ]
     },
     {
-        "question": "Which_operating_systems_do_you_use_on_your_mobile_devices_(eg_tablet_or_smartphone)?_Base",
+        "question": "Which_operating_systems_do_you_use_on_your_mobile_devices_eg_tablet_or_smartphone",
         "answers": [
             "Which_operating_systems_do_you_use_on_your_mobile_devices_(eg_tablet_or_smartphone)?_Base",
             "Which_operating_systems_do_you_use_on_your_mobile_devices_(eg_tablet_or_smartphone)?_Android_OS",
@@ -4393,7 +4393,7 @@
         ]
     },
     {
-        "question": "Which_virtual_assistants_do_you_use_with_your_smart_speakers?_Base",
+        "question": "Which_virtual_assistants_do_you_use_with_your_smart_speakers",
         "answers": [
             "Which_virtual_assistants_do_you_use_with_your_smart_speakers?_Base",
             "Which_virtual_assistants_do_you_use_with_your_smart_speakers?_Google_Assistant",
@@ -4420,7 +4420,7 @@
         ]
     },
     {
-        "question": "The_following_questions_are_about_which_digital_services_you_use__How_do_you_prefer_to_register_when_using_a_new_digital_service_platform_or_product?_Base",
+        "question": "The_following_questions_are_about_which_digital_services_you_use_How_do_you_prefer_to_register_when_using_a_new_digital_service_platform_or_product",
         "answers": [
             "The_following_questions_are_about_which_digital_services_you_use__How_do_you_prefer_to_register_when_using_a_new_digital_service_platform_or_product?_Base",
             "The_following_questions_are_about_which_digital_services_you_use__How_do_you_prefer_to_register_when_using_a_new_digital_service_platform_or_product?_I_create_a_new_account_with_a_new_e-mail_address",
@@ -4439,7 +4439,7 @@
         ]
     },
     {
-        "question": "Which_account_do_you_mainly_use_when_logging_into_a_new_digital_service_platform_or_product?_Base",
+        "question": "Which_account_do_you_mainly_use_when_logging_into_a_new_digital_service_platform_or_product",
         "answers": [
             "Which_account_do_you_mainly_use_when_logging_into_a_new_digital_service_platform_or_product?_Base",
             "Which_account_do_you_mainly_use_when_logging_into_a_new_digital_service_platform_or_product?_Facebook_account",
@@ -4462,7 +4462,7 @@
         ]
     },
     {
-        "question": "Do_you_use_any_of_these_cloud_storage_solutions_for_personal_use?_Base",
+        "question": "Do_you_use_any_of_these_cloud_storage_solutions_for_personal_use",
         "answers": [
             "Do_you_use_any_of_these_cloud_storage_solutions_for_personal_use?_Base",
             "Do_you_use_any_of_these_cloud_storage_solutions_for_personal_use?_Google_One/Google_Drive",
@@ -4511,7 +4511,7 @@
         ]
     },
     {
-        "question": "What_do_you_use_your_cloud_storage_services_for?_Base",
+        "question": "What_do_you_use_your_cloud_storage_services_for",
         "answers": [
             "What_do_you_use_your_cloud_storage_services_for?_Base",
             "What_do_you_use_your_cloud_storage_services_for?_Photos",
@@ -4536,7 +4536,7 @@
         ]
     },
     {
-        "question": "Do_you_use_any_of_these_services_and_or_software_to_create_and/or_edit_word_spreadsheet_and/or_presentation_files_for_personal_tasks?_Base",
+        "question": "Do_you_use_any_of_these_services_and_or_software_to_create_andoror_edit_word_spreadsheet_andoror_presentation_files_for_personal_tasks",
         "answers": [
             "Do_you_use_any_of_these_services_and_or_software_to_create_and/or_edit_word_spreadsheet_and/or_presentation_files_for_personal_tasks?_Base",
             "Do_you_use_any_of_these_services_and_or_software_to_create_and/or_edit_word_spreadsheet_and/or_presentation_files_for_personal_tasks?_Microsoft_Office",
