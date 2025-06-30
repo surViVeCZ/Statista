@@ -270,23 +270,31 @@ app_layout = dbc.Container(
                                                 style=darker_header_style,
                                             ),
                                             dbc.CardBody(
-                                                [
-                                                    html.Div(
-                                                        "Manage your login process here.",
-                                                        className="mb-2",
-                                                    ),
-                                                    dbc.Button(
-                                                        "Login",
-                                                        id="login-button",
-                                                        color="primary",
-                                                        className="mb-3",
-                                                    ),
-                                                    html.Div(
-                                                        id="login-status",
-                                                        children="Not logged in.",
-                                                        className="text-danger",
-                                                    ),
-                                                ]
+                                                dcc.Loading(
+                                                    id="loading-indicator",
+                                                    type="circle",
+                                                    children=[
+                                                        html.Div(
+                                                            "Manage your login process here.",
+                                                            className="mb-2",
+                                                        ),
+                                                        dbc.Button(
+                                                            "Login",
+                                                            id="login-button",
+                                                            color="primary",
+                                                            className="mb-3",
+                                                            style={
+                                                                "text-align": "center",
+                                                                "width": "50%",
+                                                            },
+                                                        ),
+                                                        html.Div(
+                                                            id="login-status",
+                                                            children="Not logged in.",
+                                                            className="text-danger",
+                                                        ),
+                                                    ],
+                                                )
                                             ),
                                         ],
                                         id="login-card",
