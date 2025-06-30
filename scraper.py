@@ -57,6 +57,7 @@ PASSWORD = os.getenv("STATISTA_PASSWORD")
 # URLs and Configuration
 LOGIN_URL = "https://www.statista.com/login/campus/"
 TOPICS_URL = "https://www.statista.com/topics/"
+SEARCH_URL = "https://www.statista.com/search/"
 DEST_FOLDER = os.path.abspath("statista_data")
 
 # Ensure destination folder exists
@@ -166,44 +167,64 @@ def login_with_selenium(driver):
         return False
 
 
-def search_topic(topic):
+def search_topic(driver, topic, strict_match=True, max_results=100):
     """Search and return a list of URLs for topics that match
     the user's query (country name or its demonym)."""
     log.info(f'🔍 1/2 Searching for topics related to: "{topic}"...')
 
-    # Get the demonym for the input topic
+    # # Get the demonym for the input topic
     demonym = get_demonym(topic)
-    # Pre-lowercase them for easy matching
+    # # Pre-lowercase them for easy matching
     topic_lower = topic.lower()
     demonym_lower = demonym.lower() if demonym else None
 
     page_number = 1
     matches = []
-
+    query_topic = topic.replace(" ","+")
     while True:
-        url = f"{TOPICS_URL}p/{page_number}/" if page_number > 1 else TOPICS_URL
-        log.info(f"   Checking page: {url}")
-        response = session.get(url)
 
-        soup = BeautifulSoup(response.text, "html.parser")
-        topic_boxes = soup.find_all("a", class_="panel-box")
+        url = f"{SEARCH_URL}?q={query_topic}&Search=&p={page_number}"
+        log.info(f"   Checking page: {url}")
+        # response = session.get(url)
+        driver.get(url)
+
+        # Wait for the results to load if needed
+        driver.implicitly_wait(1)
+
+        html = driver.page_source
+        soup = BeautifulSoup(html, "html.parser")
+
+        # soup = BeautifulSoup(response.text, "html.parser")
+        topic_boxes = soup.find_all("a", class_="resultList__itemBox")
 
         # Stop if no topics are found on this page
         if not topic_boxes:
-            log.info("   ⚠️ Reached the end of pagination.")
+            log.info(f" {len(topic_boxes)}  ⚠️ Reached the end of pagination.")
             break
 
         for box in topic_boxes:
             href = box.get("href", "").strip()
-            title_element = box.find("h2", class_="panel-box--title")
+            title_element = box.find("div", class_="itemContent__text")
             topic_name = title_element.get_text(strip=True) if title_element else ""
             topic_name_lower = topic_name.lower()
 
             # Check if the user input OR its demonym is in the topic name
-            if (topic_lower in topic_name_lower) or (
-                demonym_lower and demonym_lower in topic_name_lower
-            ):
+            if strict_match:
+                topic_words = topic_lower.split()
+                word_match = any(word in topic_name_lower for word in topic_words)
+            else:
+                word_match = True
+
+            # Check if href starts with /statistics/
+            useful_results = ("/statistics/", "/topics/", "/reports/", "/study/")
+            is_useful = href.startswith(useful_results)
+
+            if word_match and is_useful:
                 matches.append((topic_name, urljoin(TOPICS_URL, href)))
+
+            # Exit function
+            if len(matches) > max_results:
+                return matches
 
         page_number += 1
 

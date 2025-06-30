@@ -271,7 +271,7 @@ app_layout = dbc.Container(
                                             ),
                                             dbc.CardBody(
                                                 dcc.Loading(
-                                                    id="loading-indicator",
+                                                    id="loading-indicator-login",
                                                     type="circle",
                                                     children=[
                                                         html.Div(
@@ -317,14 +317,58 @@ app_layout = dbc.Container(
                                                         type="text",
                                                         className="mb-2 form-control",
                                                     ),
-                                                    dbc.Button(
-                                                        "Search",
-                                                        id="search-button",
-                                                        color="success",
-                                                        className="mb-3",
-                                                        style={
-                                                            "display": "inline-block"
-                                                        },
+                                                    dbc.Row(
+                                                        [
+                                                            dbc.Col(
+                                                                dbc.Button(
+                                                                    "Search",
+                                                                    id="search-button",
+                                                                    color="success",
+                                                                    className="mb-2",
+                                                                    style={"width": "80%", "margin-right": "500px"},
+                                                                ),
+                                                                width="auto",
+                                                            ),
+                                                            dbc.Col(
+                                                                html.Div(
+                                                                    [
+                                                                        dbc.Checkbox(
+                                                                            id="strict-match-checkbox",
+                                                                            value=True,
+                                                                            className="me-1",
+                                                                        ),
+                                                                        dbc.Label(
+                                                                            "Strict match",
+                                                                            html_for="strict-match-checkbox",
+                                                                            className="mb-0",
+                                                                            style={"cursor": "pointer"},
+                                                                        ),
+                                                                    ],
+                                                                    className="d-flex align-items-center mb-2",
+                                                                ),
+                                                                width="2",
+                                                            ),
+                                                            dbc.Col(
+                                                                html.Div(
+                                                                    "Max results",
+                                                                    className="d-flex align-items-center mb-2",
+                                                                ),
+                                                                width="auto",
+                                                            ),
+                                                            dbc.Col(
+                                                                dbc.Input(
+                                                                    id="max-results-input",
+                                                                    type="number",
+                                                                    value=100,
+                                                                    min=1,
+                                                                    className="mb-2",
+                                                                    style={"width": "80px"},
+                                                                ),
+                                                                width="auto",
+                                                            ),
+                                                        ],
+                                                        className="mb-3 g-2",  # gap between columns
+                                                        align="center",
                                                     ),
                                                     dcc.Loading(
                                                         id="loading-indicator",
@@ -342,7 +386,8 @@ app_layout = dbc.Container(
                                                         ),
                                                     ),
                                                 ]
-                                            ),
+                                            )
+
                                         ],
                                         id="search-card",
                                         style=inactive_card_style,
