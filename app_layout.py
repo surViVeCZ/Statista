@@ -270,28 +270,35 @@ app_layout = dbc.Container(
                                                 style=darker_header_style,
                                             ),
                                             dbc.CardBody(
+
                                                 dcc.Loading(
                                                     id="loading-indicator-login",
                                                     type="circle",
                                                     children=[
                                                         html.Div(
                                                             "Manage your login process here.",
-                                                            className="mb-2",
+                                                            className="mb-2 text-center",
+
                                                         ),
                                                         dbc.Button(
                                                             "Login",
                                                             id="login-button",
                                                             color="primary",
-                                                            className="mb-3",
+                                                            className="mb-3 center",
                                                             style={
                                                                 "text-align": "center",
                                                                 "width": "50%",
+                                                                "display": "block",
+                                                                "marginLeft": "auto",
+                                                                "marginRight": "auto",
+                                                                "width": "50%",
                                                             },
+                                                            disabled=False,
                                                         ),
                                                         html.Div(
                                                             id="login-status",
                                                             children="Not logged in.",
-                                                            className="text-danger",
+                                                            className="text-danger text-center",
                                                         ),
                                                     ],
                                                 )
@@ -301,6 +308,10 @@ app_layout = dbc.Container(
                                         style=active_card_style,
                                     ),
                                     width=4,
+                                    style={
+                                            "justify-content": "center",  # center horizontally inside the col
+                                            "align-items": "center",      # center vertically if desired
+                                        },
                                 ),
                                 dbc.Col(
                                     dbc.Card(

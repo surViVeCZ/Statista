@@ -227,6 +227,7 @@ def update_region_flag(selected_region):
         Output("login-status", "children"),
         Output("login-status", "className"),
         Output("login-state", "data"),
+        Output("login-button", "disabled"),
     ],
     [Input("login-button", "n_clicks")],
     prevent_initial_call=True,
@@ -249,8 +250,8 @@ def login_action(n_clicks):
     thread.join()
 
     if driver is not None:
-        return "Logged in successfully.", "text-success", True
-    return "Login failed.", "text-danger", False
+        return "Logged in successfully.", "text-success text-center", True, True
+    return "Login failed.", "text-danger text-center", False, False
 
 
 # Activate Search card after login
@@ -466,7 +467,13 @@ def handle_search_selection_scraping(
                 dash.no_update,
             )
         logging.info(f"Starting scraping for topic: {selected_topic_name}")
-        scrape_topic(selected_topic_url)
+
+        # Put scraping in thread TODO: terminate thread by flag
+
+        thread = Thread(target=scrape_topic(selected_topic_url))
+        thread.start()
+        thread.join()
+
         if checkbox_enabled:
             logging.info("Triggering report download due to checkbox being enabled.")
             download_reports(driver, advanced_reports, selected_topic_name)
