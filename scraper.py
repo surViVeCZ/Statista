@@ -180,7 +180,7 @@ def search_topic(driver, topic, strict_match=True, max_results=100):
 
     page_number = 1
     matches = []
-    query_topic = topic.replace(" ","+")
+    query_topic = topic.replace(" ", "+")
     while True:
 
         url = f"{SEARCH_URL}?q={query_topic}&Search=&p={page_number}&tabGroup=topic"

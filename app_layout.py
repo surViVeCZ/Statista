@@ -270,7 +270,6 @@ app_layout = dbc.Container(
                                                 style=darker_header_style,
                                             ),
                                             dbc.CardBody(
-
                                                 dcc.Loading(
                                                     id="loading-indicator-login",
                                                     type="circle",
@@ -278,7 +277,6 @@ app_layout = dbc.Container(
                                                         html.Div(
                                                             "Manage your login process here.",
                                                             className="mb-2 text-center",
-
                                                         ),
                                                         dbc.Button(
                                                             "Login",
@@ -309,9 +307,9 @@ app_layout = dbc.Container(
                                     ),
                                     width=4,
                                     style={
-                                            "justify-content": "center",  # center horizontally inside the col
-                                            "align-items": "center",      # center vertically if desired
-                                        },
+                                        "justify-content": "center",  # center horizontally inside the col
+                                        "align-items": "center",  # center vertically if desired
+                                    },
                                 ),
                                 dbc.Col(
                                     dbc.Card(
@@ -336,7 +334,10 @@ app_layout = dbc.Container(
                                                                     id="search-button",
                                                                     color="success",
                                                                     className="mb-2",
-                                                                    style={"width": "80%", "margin-right": "500px"},
+                                                                    style={
+                                                                        "width": "80%",
+                                                                        "margin-right": "500px",
+                                                                    },
                                                                 ),
                                                                 width="auto",
                                                             ),
@@ -352,14 +353,18 @@ app_layout = dbc.Container(
                                                                             "Strict match",
                                                                             html_for="strict-match-checkbox",
                                                                             className="mb-0",
-                                                                            style={"cursor": "pointer"},
-                                                                            id="strict-match-label"
+                                                                            style={
+                                                                                "cursor": "pointer"
+                                                                            },
+                                                                            id="strict-match-label",
                                                                         ),
                                                                         dbc.Tooltip(
                                                                             "Whether at least on word from search bar must be present in the topic name - additional filtering after searching.",
                                                                             target="strict-match-label",
                                                                             placement="bottom",
-                                                                            style={"font-size": "0.9rem"},
+                                                                            style={
+                                                                                "font-size": "0.9rem"
+                                                                            },
                                                                         ),
                                                                     ],
                                                                     className="d-flex align-items-center mb-2",
@@ -380,7 +385,9 @@ app_layout = dbc.Container(
                                                                     value=100,
                                                                     min=1,
                                                                     className="mb-2",
-                                                                    style={"width": "80px"},
+                                                                    style={
+                                                                        "width": "80px"
+                                                                    },
                                                                 ),
                                                                 width="auto",
                                                             ),
@@ -404,8 +411,7 @@ app_layout = dbc.Container(
                                                         ),
                                                     ),
                                                 ]
-                                            )
-
+                                            ),
                                         ],
                                         id="search-card",
                                         style=inactive_card_style,

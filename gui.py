@@ -337,14 +337,16 @@ def handle_search_selection_scraping(
     files_to_be_downloaded,
     checkbox_value,
     strict_match_checkbox,
-    max_results_input
+    max_results_input,
 ):
     global session_topics, selected_topic_url, selected_topic_name, driver, advanced_reports
     checkbox_enabled = "enabled" in checkbox_value if checkbox_value else False
 
     # Handle search
     if ctx.triggered_id == "search-button":
-        topics = search_topic(driver, topic_input, strict_match_checkbox, max_results_input)
+        topics = search_topic(
+            driver, topic_input, strict_match_checkbox, max_results_input
+        )
         advanced_reports, advanced_matches = extract_report_results(driver, topic_input)
         session_topics = topics or []
 
