@@ -448,7 +448,7 @@ def handle_search_selection_scraping(
             active_card_style,
             False,
             f"Selected Topic: {selected_topic_name}",
-            True,
+            False,
             dash.no_update,  # Keep advanced_matches unchanged
             files_to_be_downloaded,  # Update files-to-download-store
         )

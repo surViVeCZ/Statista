@@ -353,6 +353,13 @@ app_layout = dbc.Container(
                                                                             html_for="strict-match-checkbox",
                                                                             className="mb-0",
                                                                             style={"cursor": "pointer"},
+                                                                            id="strict-match-label"
+                                                                        ),
+                                                                        dbc.Tooltip(
+                                                                            "Whether at least on word from search bar must be present in the topic name - additional filtering after searching.",
+                                                                            target="strict-match-label",
+                                                                            placement="bottom",
+                                                                            style={"font-size": "0.9rem"},
                                                                         ),
                                                                     ],
                                                                     className="d-flex align-items-center mb-2",

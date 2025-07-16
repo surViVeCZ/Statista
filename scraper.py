@@ -183,7 +183,7 @@ def search_topic(driver, topic, strict_match=True, max_results=100):
     query_topic = topic.replace(" ","+")
     while True:
 
-        url = f"{SEARCH_URL}?q={query_topic}&Search=&p={page_number}"
+        url = f"{SEARCH_URL}?q={query_topic}&Search=&p={page_number}&tabGroup=topic"
         log.info(f"   Checking page: {url}")
         # response = session.get(url)
         driver.get(url)
@@ -215,11 +215,7 @@ def search_topic(driver, topic, strict_match=True, max_results=100):
             else:
                 word_match = True
 
-            # Check if href starts with /statistics/
-            useful_results = ("/statistics/", "/topics/", "/reports/", "/study/")
-            is_useful = href.startswith(useful_results)
-
-            if word_match and is_useful:
+            if word_match:
                 matches.append((topic_name, urljoin(TOPICS_URL, href)))
 
             # Exit function
