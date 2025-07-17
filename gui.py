@@ -389,7 +389,7 @@ def handle_search_selection_scraping(
                                 html.Div(
                                     [
                                         html.Div(
-                                            name,
+                                            name.split(" -")[0],
                                             className="card-title",
                                             style={
                                                 "font-weight": "bold",
