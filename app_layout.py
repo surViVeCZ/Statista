@@ -270,29 +270,46 @@ app_layout = dbc.Container(
                                                 style=darker_header_style,
                                             ),
                                             dbc.CardBody(
-                                                [
-                                                    html.Div(
-                                                        "Manage your login process here.",
-                                                        className="mb-2",
-                                                    ),
-                                                    dbc.Button(
-                                                        "Login",
-                                                        id="login-button",
-                                                        color="primary",
-                                                        className="mb-3",
-                                                    ),
-                                                    html.Div(
-                                                        id="login-status",
-                                                        children="Not logged in.",
-                                                        className="text-danger",
-                                                    ),
-                                                ]
+                                                dcc.Loading(
+                                                    id="loading-indicator-login",
+                                                    type="circle",
+                                                    children=[
+                                                        html.Div(
+                                                            "Manage your login process here.",
+                                                            className="mb-2 text-center",
+                                                        ),
+                                                        dbc.Button(
+                                                            "Login",
+                                                            id="login-button",
+                                                            color="primary",
+                                                            className="mb-3 center",
+                                                            style={
+                                                                "text-align": "center",
+                                                                "width": "50%",
+                                                                "display": "block",
+                                                                "marginLeft": "auto",
+                                                                "marginRight": "auto",
+                                                                "width": "50%",
+                                                            },
+                                                            disabled=False,
+                                                        ),
+                                                        html.Div(
+                                                            id="login-status",
+                                                            children="Not logged in.",
+                                                            className="text-danger text-center",
+                                                        ),
+                                                    ],
+                                                )
                                             ),
                                         ],
                                         id="login-card",
                                         style=active_card_style,
                                     ),
                                     width=4,
+                                    style={
+                                        "justify-content": "center",  # center horizontally inside the col
+                                        "align-items": "center",  # center vertically if desired
+                                    },
                                 ),
                                 dbc.Col(
                                     dbc.Card(
@@ -309,14 +326,74 @@ app_layout = dbc.Container(
                                                         type="text",
                                                         className="mb-2 form-control",
                                                     ),
-                                                    dbc.Button(
-                                                        "Search",
-                                                        id="search-button",
-                                                        color="success",
-                                                        className="mb-3",
-                                                        style={
-                                                            "display": "inline-block"
-                                                        },
+                                                    dbc.Row(
+                                                        [
+                                                            dbc.Col(
+                                                                dbc.Button(
+                                                                    "Search",
+                                                                    id="search-button",
+                                                                    color="success",
+                                                                    className="mb-2",
+                                                                    style={
+                                                                        "width": "80%",
+                                                                        "margin-right": "500px",
+                                                                    },
+                                                                ),
+                                                                width="auto",
+                                                            ),
+                                                            dbc.Col(
+                                                                html.Div(
+                                                                    [
+                                                                        dbc.Checkbox(
+                                                                            id="strict-match-checkbox",
+                                                                            value=True,
+                                                                            className="me-1",
+                                                                        ),
+                                                                        dbc.Label(
+                                                                            "Strict match",
+                                                                            html_for="strict-match-checkbox",
+                                                                            className="mb-0",
+                                                                            style={
+                                                                                "cursor": "pointer"
+                                                                            },
+                                                                            id="strict-match-label",
+                                                                        ),
+                                                                        dbc.Tooltip(
+                                                                            "Whether at least on word from search bar must be present in the topic name - additional filtering after searching.",
+                                                                            target="strict-match-label",
+                                                                            placement="bottom",
+                                                                            style={
+                                                                                "font-size": "0.9rem"
+                                                                            },
+                                                                        ),
+                                                                    ],
+                                                                    className="d-flex align-items-center mb-2",
+                                                                ),
+                                                                width="2",
+                                                            ),
+                                                            dbc.Col(
+                                                                html.Div(
+                                                                    "Max results",
+                                                                    className="d-flex align-items-center mb-2",
+                                                                ),
+                                                                width="auto",
+                                                            ),
+                                                            dbc.Col(
+                                                                dbc.Input(
+                                                                    id="max-results-input",
+                                                                    type="number",
+                                                                    value=100,
+                                                                    min=1,
+                                                                    className="mb-2",
+                                                                    style={
+                                                                        "width": "80px"
+                                                                    },
+                                                                ),
+                                                                width="auto",
+                                                            ),
+                                                        ],
+                                                        className="mb-3 g-2",  # gap between columns
+                                                        align="center",
                                                     ),
                                                     dcc.Loading(
                                                         id="loading-indicator",

@@ -22,11 +22,7 @@ from app_layout import (
     inactive_card_style,
     modern_card_hover_effect,
 )
-from advanced_search import (
-    extract_report_results,
-    download_reports,
-    get_failed_reports_downloads,
-)
+from advanced_search import extract_report_results, download_reports
 from scraper import (
     setup_driver,
     login_with_selenium,
@@ -231,6 +227,7 @@ def update_region_flag(selected_region):
         Output("login-status", "children"),
         Output("login-status", "className"),
         Output("login-state", "data"),
+        Output("login-button", "disabled"),
     ],
     [Input("login-button", "n_clicks")],
     prevent_initial_call=True,
@@ -253,8 +250,8 @@ def login_action(n_clicks):
     thread.join()
 
     if driver is not None:
-        return "Logged in successfully.", "text-success", True
-    return "Login failed.", "text-danger", False
+        return "Logged in successfully.", "text-success text-center", True, True
+    return "Login failed.", "text-danger text-center", False, False
 
 
 # Activate Search card after login
@@ -326,6 +323,8 @@ def update_files_to_download_display(files_to_be_downloaded):
         State("search-results-container", "children"),
         State("files-to-download-store", "data"),
         State("advanced-scraping-checkbox", "value"),
+        State("strict-match-checkbox", "value"),
+        State("max-results-input", "value"),
     ],
     prevent_initial_call=True,
 )
@@ -337,13 +336,17 @@ def handle_search_selection_scraping(
     current_results,
     files_to_be_downloaded,
     checkbox_value,
+    strict_match_checkbox,
+    max_results_input,
 ):
     global session_topics, selected_topic_url, selected_topic_name, driver, advanced_reports
     checkbox_enabled = "enabled" in checkbox_value if checkbox_value else False
 
     # Handle search
     if ctx.triggered_id == "search-button":
-        topics = search_topic(topic_input)
+        topics = search_topic(
+            driver, topic_input, strict_match_checkbox, max_results_input
+        )
         advanced_reports, advanced_matches = extract_report_results(driver, topic_input)
         session_topics = topics or []
 
@@ -386,7 +389,7 @@ def handle_search_selection_scraping(
                                 html.Div(
                                     [
                                         html.Div(
-                                            name,
+                                            name.split(" -")[0],
                                             className="card-title",
                                             style={
                                                 "font-weight": "bold",
@@ -447,7 +450,7 @@ def handle_search_selection_scraping(
             active_card_style,
             False,
             f"Selected Topic: {selected_topic_name}",
-            True,
+            False,
             dash.no_update,  # Keep advanced_matches unchanged
             files_to_be_downloaded,  # Update files-to-download-store
         )
@@ -466,7 +469,13 @@ def handle_search_selection_scraping(
                 dash.no_update,
             )
         logging.info(f"Starting scraping for topic: {selected_topic_name}")
-        scrape_topic(selected_topic_url)
+
+        # Put scraping in thread TODO: terminate thread by flag
+
+        thread = Thread(target=scrape_topic(selected_topic_url))
+        thread.start()
+        thread.join()
+
         if checkbox_enabled:
             logging.info("Triggering report download due to checkbox being enabled.")
             download_reports(driver, advanced_reports, selected_topic_name)
@@ -558,8 +567,7 @@ def refresh_files_and_update_progress(n_intervals, files_to_be_downloaded):
 
         # Update progress and styled links
         downloaded_count = len(renamed_files)
-        failed_count = get_failed_downloads() + get_failed_reports_downloads()
-
+        failed_count = get_failed_downloads()
         total_processed = downloaded_count + failed_count
 
         if files_to_be_downloaded > 0:
@@ -1126,6 +1134,7 @@ def update_downloaded_topics(n_clicks):
     if not topics:
         return html.Div("No topics downloaded yet.", style={"color": "gray"})
 
+    # Save the topics in a global variable for selection callback
     global session_topics
     session_topics = topics
 
@@ -1136,7 +1145,7 @@ def update_downloaded_topics(n_clicks):
         total_files += len(files)
         total_size += sum(os.path.getsize(os.path.join(root, file)) for file in files)
 
-    total_size_mb = total_size / (1024 * 1024)
+    total_size_mb = total_size / (1024 * 1024)  # Convert to MB
 
     # Header with metrics
     header = html.Div(
@@ -1145,7 +1154,8 @@ def update_downloaded_topics(n_clicks):
                 [
                     "Number of Topics: ",
                     html.Span(
-                        len(topics), style={"color": "#007bff", "font-weight": "bold"}
+                        len(topics),
+                        style={"color": "#007bff", "font-weight": "bold"},  # Blue color
                     ),
                 ],
                 style={"margin-bottom": "10px", "font-weight": "bold"},
@@ -1154,7 +1164,8 @@ def update_downloaded_topics(n_clicks):
                 [
                     "Total Files: ",
                     html.Span(
-                        total_files, style={"color": "#007bff", "font-weight": "bold"}
+                        total_files,
+                        style={"color": "#007bff", "font-weight": "bold"},  # Blue color
                     ),
                 ],
                 style={"margin-bottom": "10px", "font-weight": "bold"},
@@ -1164,7 +1175,7 @@ def update_downloaded_topics(n_clicks):
                     "Total Size: ",
                     html.Span(
                         f"{total_size_mb:.2f} MB",
-                        style={"color": "#007bff", "font-weight": "bold"},
+                        style={"color": "#007bff", "font-weight": "bold"},  # Blue color
                     ),
                 ],
                 style={"margin-bottom": "10px", "font-weight": "bold"},
@@ -1179,7 +1190,7 @@ def update_downloaded_topics(n_clicks):
         },
     )
 
-    # Topic selection buttons
+    # Modern topic buttons with hover effect
     topic_buttons = [
         dbc.Card(
             dbc.CardBody(
@@ -1194,9 +1205,9 @@ def update_downloaded_topics(n_clicks):
                                 "margin-right": "10px",
                             },
                         ),
-                        dbc.Button(
+                        dbc.Badge(
                             "View Details",
-                            id={"type": "topic-item", "index": idx},
+                            id={"type": "topic-item", "index": idx},  # Add unique id
                             color="info",
                             className="ms-1",
                             style={"cursor": "pointer"},
@@ -1220,98 +1231,6 @@ def update_downloaded_topics(n_clicks):
     ]
 
     return html.Div([header] + topic_buttons)
-
-
-@app.callback(
-    Output("topic-details-container", "children"),
-    Input({"type": "topic-item", "index": dash.dependencies.ALL}, "n_clicks"),
-    prevent_initial_call=True,
-)
-def display_topic_details(n_clicks):
-    ctx = dash.callback_context
-    if not ctx.triggered:
-        return dash.no_update
-
-    button_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    topic_index = int(eval(button_id)["index"])
-
-    if topic_index >= len(session_topics):
-        return html.Div("Invalid topic selected.", style={"color": "red"})
-
-    selected_topic = session_topics[topic_index]
-    topic_path = os.path.join(DOWNLOAD_DIR, selected_topic)
-
-    # Define paths
-    topic_sections_path = os.path.join(topic_path, "topic sections")
-    topic_sections_transformed_path = os.path.join(topic_sections_path, "transformed")
-    advanced_reports_path = os.path.join(topic_path, "advanced_reports")
-    advanced_reports_transformed_path = os.path.join(
-        advanced_reports_path, "transformed"
-    )
-
-    all_paths = [
-        (topic_sections_path, "Topic Sections"),
-        (topic_sections_transformed_path, "Topic Sections (Transformed)"),
-        (advanced_reports_path, "Advanced Reports"),
-        (advanced_reports_transformed_path, "Advanced Reports (Transformed)"),
-    ]
-
-    file_list = []
-
-    for path, label in all_paths:
-        if os.path.exists(path):
-            for file in sorted(os.listdir(path)):
-                if os.path.isfile(os.path.join(path, file)):
-                    # Apply effects based on folder type
-                    if "advanced_reports" in path and "transformed" not in path:
-                        demography_tag = html.Span(
-                            " (Demography Included)",
-                            style={"color": "green", "font-weight": "bold"},
-                        )
-                    else:
-                        demography_tag = None
-
-                    # Special effects for transformed files
-                    if "transformed" in path:
-                        file_item = html.Li(
-                            [
-                                html.Span(
-                                    file,
-                                    style={
-                                        "font-weight": "bold",
-                                        "color": "#007bff",
-                                        "text-shadow": "0px 0px 6px rgba(0, 123, 255, 0.7)",
-                                    },
-                                ),
-                                demography_tag,
-                            ]
-                            if demography_tag
-                            else html.Span(
-                                file,
-                                style={
-                                    "font-weight": "bold",
-                                    "color": "#007bff",
-                                    "text-shadow": "0px 0px 6px rgba(0, 123, 255, 0.7)",
-                                },
-                            )
-                        )
-                    else:
-                        file_item = html.Li(
-                            [file, demography_tag] if demography_tag else file
-                        )
-
-                    file_list.append(file_item)
-
-    if not file_list:
-        return html.Div("No files found in this topic.", style={"color": "gray"})
-
-    return html.Div(
-        [
-            html.H5(f"Files in {selected_topic}", style={"font-weight": "bold"}),
-            html.Ul(file_list),
-        ],
-        style={"padding": "10px"},
-    )
 
 
 @app.callback(
@@ -1434,11 +1353,8 @@ def handle_topic_selection(n_clicks):
         fig.update_layout(
             title_x=0.5,
             title_font_size=18,
-            title_pad=dict(b=20),  # Adds space below the title
             legend_title="File Types",
-            margin=dict(
-                t=60, b=20, l=20, r=20
-            ),  # Increase top margin to prevent overlap
+            margin=dict(t=40, b=20, l=20, r=20),
         )
 
         # Return header and visualization
