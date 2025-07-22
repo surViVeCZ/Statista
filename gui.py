@@ -34,7 +34,6 @@ from scraper import (
     scrape_topic,
     get_files_to_be_downloaded,
     get_failed_downloads,
-    stop_scraping,
 )
 from transform import (
     pipeline_transform,
@@ -330,6 +329,7 @@ def update_files_to_download_display(files_to_be_downloaded):
         State("advanced-scraping-checkbox", "value"),
         State("strict-match-checkbox", "value"),
         State("max-results-input", "value"),
+        State("include-reports-checkbox", "value"),
     ],
     prevent_initial_call=True,
 )
@@ -343,16 +343,21 @@ def handle_search_selection_scraping(
     checkbox_value,
     strict_match_checkbox,
     max_results_input,
+    include_reports_checkbox,
 ):
     global session_topics, selected_topic_url, selected_topic_name, driver, advanced_reports
     checkbox_enabled = "enabled" in checkbox_value if checkbox_value else False
+
+    advanced_reports = []
+    advanced_matches = 0
 
     # Handle search
     if ctx.triggered_id == "search-button":
         topics = search_topic(
             driver, topic_input, strict_match_checkbox, max_results_input
         )
-        advanced_reports, advanced_matches = extract_report_results(driver, topic_input)
+        if include_reports_checkbox:
+            advanced_reports, advanced_matches = extract_report_results(driver, topic_input)
         session_topics = topics or []
 
         if not topics:

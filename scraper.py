@@ -211,7 +211,7 @@ def search_topic(driver, topic, strict_match=True, max_results=100):
             # Check if the user input OR its demonym is in the topic name
             if strict_match:
                 topic_words = topic_lower.split()
-                word_match = any(word in topic_name_lower for word in topic_words)
+                word_match = any(word.lower() in topic_name_lower for word in topic_words)
             else:
                 word_match = True
 
@@ -226,7 +226,8 @@ def search_topic(driver, topic, strict_match=True, max_results=100):
         page_number += 1
 
     if not matches:
-        log.warning("⚠️ No topics found.")
+        log.warning("⚠️ No topics found. Try unchecking the \"Strict Match\""
+                    " checkbox or changing the query (e.g. demography -> demographics).")
         return []
 
     # Log and return matches

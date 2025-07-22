@@ -366,10 +366,33 @@ app_layout = dbc.Container(
                                                                                 "font-size": "0.9rem"
                                                                             },
                                                                         ),
+                                                                        dbc.Checkbox(
+                                                                            id="include-reports-checkbox",
+                                                                            value=True,
+                                                                            className="me-1",
+                                                                            style={"margin-left": "2rem"},
+                                                                        ),
+                                                                        dbc.Label(
+                                                                            "Include reports",
+                                                                            html_for="include-reports-label",
+                                                                            className="mb-0",
+                                                                            style={
+                                                                                "cursor": "pointer"
+                                                                            },
+                                                                            id="strict-match-label",
+                                                                        ),
+                                                                        dbc.Tooltip(
+                                                                            "Whether to search for advanced reports - use if intending to download them, otherwise leave unchecked for performance.",
+                                                                            target="include-reports-label",
+                                                                            placement="bottom",
+                                                                            style={
+                                                                                "font-size": "0.9rem"
+                                                                            },
+                                                                        ),
                                                                     ],
                                                                     className="d-flex align-items-center mb-2",
                                                                 ),
-                                                                width="2",
+                                                                width="3",
                                                             ),
                                                             dbc.Col(
                                                                 html.Div(
@@ -382,7 +405,7 @@ app_layout = dbc.Container(
                                                                 dbc.Input(
                                                                     id="max-results-input",
                                                                     type="number",
-                                                                    value=100,
+                                                                    value=10,
                                                                     min=1,
                                                                     className="mb-2",
                                                                     style={
