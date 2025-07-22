@@ -216,7 +216,8 @@ def search_topic(driver, topic, strict_match=True, max_results=100):
                 word_match = True
 
             if word_match:
-                matches.append((topic_name, urljoin(TOPICS_URL, href)))
+                if topic_name not in [t[0] for t in matches]:
+                    matches.append((topic_name, urljoin(TOPICS_URL, href)))
 
             # Exit function
             if len(matches) > max_results:

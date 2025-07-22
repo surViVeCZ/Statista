@@ -22,7 +22,11 @@ from app_layout import (
     inactive_card_style,
     modern_card_hover_effect,
 )
-from advanced_search import extract_report_results, download_reports
+from advanced_search import (
+    extract_report_results,
+    download_reports,
+    get_failed_reports_downloads,
+)
 from scraper import (
     setup_driver,
     login_with_selenium,
@@ -30,6 +34,7 @@ from scraper import (
     scrape_topic,
     get_files_to_be_downloaded,
     get_failed_downloads,
+    stop_scraping,
 )
 from transform import (
     pipeline_transform,
@@ -367,7 +372,8 @@ def handle_search_selection_scraping(
         # Sort topics by match priority
         match_priority_map = {"Exact match": 1, "Close match": 2, "Somewhat match": 3}
         temp_topics = [
-            (name, url, determine_match_type(topic_input, name)) for name, url in topics
+            (name, url, determine_match_type(topic_input, name.split(" -")[0]))
+            for name, url in topics
         ]
         sorted_topics = sorted(temp_topics, key=lambda x: match_priority_map[x[2]])
         session_topics = [(name, url) for (name, url, mtype) in sorted_topics]
@@ -470,11 +476,7 @@ def handle_search_selection_scraping(
             )
         logging.info(f"Starting scraping for topic: {selected_topic_name}")
 
-        # Put scraping in thread TODO: terminate thread by flag
-
-        thread = Thread(target=scrape_topic(selected_topic_url))
-        thread.start()
-        thread.join()
+        scrape_topic(selected_topic_url)
 
         if checkbox_enabled:
             logging.info("Triggering report download due to checkbox being enabled.")
@@ -567,7 +569,7 @@ def refresh_files_and_update_progress(n_intervals, files_to_be_downloaded):
 
         # Update progress and styled links
         downloaded_count = len(renamed_files)
-        failed_count = get_failed_downloads()
+        failed_count = get_failed_downloads() + get_failed_reports_downloads()
         total_processed = downloaded_count + failed_count
 
         if files_to_be_downloaded > 0:
@@ -1234,6 +1236,115 @@ def update_downloaded_topics(n_clicks):
 
 
 @app.callback(
+    Output("topic-details-container", "children"),
+    Input({"type": "topic-item", "index": dash.dependencies.ALL}, "n_clicks"),
+    prevent_initial_call=True,
+)
+def display_topic_details(n_clicks):
+
+    ctx = dash.callback_context
+
+    if not ctx.triggered:
+
+        return dash.no_update
+
+    button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+
+    topic_index = int(eval(button_id)["index"])
+
+    if topic_index >= len(session_topics):
+
+        return html.Div("Invalid topic selected.", style={"color": "red"})
+
+    selected_topic = session_topics[topic_index]
+
+    topic_path = os.path.join(DOWNLOAD_DIR, selected_topic)
+
+    # Define paths
+
+    topic_sections_path = os.path.join(topic_path, "topic sections")
+
+    topic_sections_transformed_path = os.path.join(topic_sections_path, "transformed")
+
+    advanced_reports_path = os.path.join(topic_path, "advanced_reports")
+
+    advanced_reports_transformed_path = os.path.join(
+        advanced_reports_path, "transformed"
+    )
+
+    all_paths = [
+        (topic_sections_path, "Topic Sections"),
+        (topic_sections_transformed_path, "Topic Sections (Transformed)"),
+        (advanced_reports_path, "Advanced Reports"),
+        (advanced_reports_transformed_path, "Advanced Reports (Transformed)"),
+    ]
+
+    file_list = []
+
+    for path, label in all_paths:
+
+        if os.path.exists(path):
+
+            for file in sorted(os.listdir(path)):
+
+                if os.path.isfile(os.path.join(path, file)):
+
+                    # Apply effects based on folder type
+
+                    if "advanced_reports" in path and "transformed" not in path:
+
+                        demography_tag = html.Span(
+                            " (Demography Included)",
+                            style={"color": "green", "font-weight": "bold"},
+                        )
+
+                    else:
+
+                        demography_tag = None
+
+                    # Special effects for transformed files
+
+                    if "transformed" in path:
+
+                        file_item = html.Li(
+                            [
+                                html.Span(
+                                    file,
+                                    style={
+                                        "font-weight": "bold",
+                                        "color": "#007bff",
+                                        "text-shadow": "0px 0px 6px rgba(0, 123, 255, 0.7)",
+                                    },
+                                ),
+                                demography_tag,
+                            ]
+                            if demography_tag
+                            else html.Span(
+                                file,
+                                style={
+                                    "font-weight": "bold",
+                                    "color": "#007bff",
+                                    "text-shadow": "0px 0px 6px rgba(0, 123, 255, 0.7)",
+                                },
+                            )
+                        )
+                    else:
+                        file_item = html.Li(
+                            [file, demography_tag] if demography_tag else file
+                        )
+                    file_list.append(file_item)
+    if not file_list:
+        return html.Div("No files found in this topic.", style={"color": "gray"})
+    return html.Div(
+        [
+            html.H5(f"Files in {selected_topic}", style={"font-weight": "bold"}),
+            html.Ul(file_list),
+        ],
+        style={"padding": "10px"},
+    )
+
+
+@app.callback(
     [
         Output("selected-topic", "children"),  # Display the selected topic name
         Output("topic-visualization-container", "children"),  # Update visualizations
@@ -1353,6 +1464,7 @@ def handle_topic_selection(n_clicks):
         fig.update_layout(
             title_x=0.5,
             title_font_size=18,
+            title_pad=dict(b=20),
             legend_title="File Types",
             margin=dict(t=40, b=20, l=20, r=20),
         )
