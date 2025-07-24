@@ -379,7 +379,7 @@ app_layout = dbc.Container(
                                                                             style={
                                                                                 "cursor": "pointer"
                                                                             },
-                                                                            id="strict-match-label",
+                                                                            id="include-reports-label",
                                                                         ),
                                                                         dbc.Tooltip(
                                                                             "Whether to search for advanced reports - use if intending to download them, otherwise leave unchecked for performance.",
