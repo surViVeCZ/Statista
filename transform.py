@@ -1,11 +1,12 @@
 import os
-import pandas as pd
 import logging
 import warnings
-import openpyxl
-from openpyxl import Workbook
+from get_topic_overview import get_overview
+import pandas as pd
 import re
 from datetime import datetime
+from openpyxl import Workbook, load_workbook
+from openpyxl.utils.dataframe import dataframe_to_rows
 
 
 warnings.filterwarnings("ignore", category=UserWarning, module="openpyxl")
@@ -141,14 +142,14 @@ def tr1_remove_sheets(selected_files, base_dir="statista_data"):
                 data = pd.read_excel(xls, sheet_name=sheet, header=None)
 
                 # Clean all sheets by removing superscripts and converting to numbers if possible
-                data = data.applymap(
+                data = data.map(
                     lambda x: (
                         re.sub(r"[\u00B9\u00B2\u00B3\u2070\u2074-\u2079]", "", str(x))
                         if isinstance(x, str)
                         else x
                     )
                 )
-                data = data.applymap(
+                data = data.map(
                     lambda x: (
                         pd.to_numeric(x, errors="ignore")
                         if isinstance(x, str) and x.isdigit()
@@ -300,10 +301,6 @@ def tr5_removing_total_percentages_income_demography(
     return process_files(selected_files, base_dir, process_function)
 
 
-import pandas as pd
-import re
-
-
 def tr6_append_questions(selected_files, base_dir="statista_data"):
     def process_function(xls):
         sheet_data = {}
@@ -371,12 +368,8 @@ def tr6_append_questions(selected_files, base_dir="statista_data"):
 
 
 def tr7_merging_sheets(selected_files, base_dir="statista_data"):
-    import openpyxl
-    from openpyxl import Workbook
-    from openpyxl.utils.dataframe import dataframe_to_rows
-
     def process_function(xls):
-        wb = openpyxl.load_workbook(xls)
+        wb = load_workbook(xls)
         new_wb = Workbook()
         merged_sheet = new_wb.active
         merged_sheet.title = "Merged Data"
@@ -398,8 +391,6 @@ def tr7_merging_sheets(selected_files, base_dir="statista_data"):
         merged_sheet.delete_rows(1)
 
         # Convert merged sheet to a Pandas DataFrame for easier processing
-        import pandas as pd
-
         data = [[cell.value for cell in row] for row in merged_sheet.iter_rows()]
         df = pd.DataFrame(data)
 
@@ -518,7 +509,6 @@ def tr10_map_age(selected_files, base_dir="statista_data"):
     """
     Dynamically map generational categories to specific age ranges in the format "x - y years".
     """
-    from datetime import datetime
 
     current_year = datetime.now().year
 
@@ -551,7 +541,7 @@ def tr10_map_age(selected_files, base_dir="statista_data"):
             df = pd.read_excel(xls, sheet_name=sheet)
 
             # Apply mapping to all columns where generation categories might appear
-            df = df.applymap(map_generation_to_age)
+            df = df.map(map_generation_to_age)
 
             sheet_data[sheet] = df
 
@@ -591,7 +581,7 @@ def tr11_filter_advanced_files(selected_files, base_dir="statista_data"):
             df = pd.read_excel(xls, header=1, sheet_name=sheet)
 
             # Remove superscripts or exponents from all cells
-            df = df.applymap(clean_exponent)
+            df = df.map(clean_exponent)
 
             # Skip the first row and apply the filter to subsequent rows
             first_row = df.iloc[0:1]
@@ -734,11 +724,6 @@ def tr12_transform_to_probability(selected_files, base_dir="statista_data"):
         combined_df.to_csv(csv_output_path, index=False)
         logging.info(f"Transformed data saved as CSV: {csv_output_path}")
 
-        # Remove the original `.xlsx` file
-        if os.path.exists(file_path):
-            os.remove(file_path)
-            logging.info(f"Original file removed: {file_path}")
-
         return combined_df
 
     def process_files(files, base_dir, process_function):
@@ -765,6 +750,37 @@ def tr12_transform_to_probability(selected_files, base_dir="statista_data"):
     ]
     logging.info(f"Advanced files to process: {advanced_files}")
     return process_files(advanced_files, base_dir, process_function)
+
+def tr13_generate_clone_attributes(selected_files, base_dir="statista_data"):
+
+    def process_files(files, base_dir):
+        processed_dataframes = {}
+
+        for file in files:
+            file_path = os.path.join(base_dir, file)
+            logging.info(f"Processing file: {file_path}")
+
+            if os.path.exists(file_path):
+                try:
+                    processed_dataframes[file] = get_overview(str(file_path), False)
+                except Exception as e:
+                    logging.error(f"Error processing file '{file_path}': {e}")
+            else:
+                logging.warning(f"File not found: {file_path}")
+
+            # Remove the original `.xlsx` file
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                logging.info(f"Original file removed: {file_path}")
+
+        return processed_dataframes
+
+    # Process only files with "adv" in their filenames
+    advanced_files = [
+        file for file in selected_files if "adv" in os.path.basename(file).lower()
+    ]
+    logging.info(f"Advanced files to process: {advanced_files}")
+    return process_files(advanced_files, base_dir)
 
 
 def pipeline_transform(selected_files, base_dir="statista_data"):
@@ -826,5 +842,9 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
     logging.info("Step 12: Transforming to probability...")
     transformed_step12 = tr12_transform_to_probability(transformed_step11, base_dir)
 
+    # Step 13: Generate clone.py
+    logging.info("Step 13: Generating clone.py...")
+    transformed_step13 = tr13_generate_clone_attributes(transformed_step12, base_dir)
+
     logging.info("Transformation pipeline completed.")
-    return transformed_step12
+    return transformed_step13

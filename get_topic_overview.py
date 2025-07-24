@@ -1,15 +1,13 @@
 import os
 import pandas as pd
 import json
-import re
 import concurrent.futures
-from openai import OpenAI
 from tqdm import tqdm
 from dotenv import load_dotenv  # Import dotenv
 import requests
 
 # Load environment variables from the .env file in the parent directory
-load_dotenv(dotenv_path="../.env")
+load_dotenv(dotenv_path="../.env")  #remove ../ when running alone
 
 headers = {
     "Content-Type": "application/json",
@@ -47,14 +45,16 @@ def summarize_text(text):
 
 def get_overview(file_path: str, save_json_coverage: bool = False):
     class_name = (
-        file_path.replace(".csv", "").replace(" ", "_").title().replace("_", "")
+        file_path.replace(".csv", "").replace(".xlsx", "").replace(" ", "_").title().replace("_", "")
     )
+    class_name = class_name.split('/')[-1]
 
     # Load csv
-    df = pd.read_csv(file_path)
+    df = pd.read_excel(file_path)
 
     # Identify base columns as primary questions
     base_columns = [col for col in df.columns if col.lower().endswith("base")]
+    assert len(base_columns) > 0, "No base columns found."
 
     # Group columns by their base question
     question_groups = {col: [] for col in base_columns}
@@ -65,7 +65,7 @@ def get_overview(file_path: str, save_json_coverage: bool = False):
             ):  # Match with the base column prefix
                 question_groups[base].append(col)  # Keep full column name in answers
                 break
-
+    assert len(question_groups) > 0, "No questions extracted."
     # Convert data to structured format with suggested shortcuts
     structured_data = []
     for base_question, columns in question_groups.items():
@@ -106,11 +106,11 @@ def get_overview(file_path: str, save_json_coverage: bool = False):
         print(f"JSON saved to {json_output_path}")
 
     # Save the structured Python class to a file with correct formatting
-    output_python_path = f"{class_name}_clone.py"
+    output_python_path = f"statista_data/clone/{class_name}_clone.py"
 
     # Start building the Python script with structured formatting
     python_code = f"""from typing import Optional, Literal\nfrom pydantic import BaseModel, Field\nimport os\n\nclass {class_name}(BaseModel):
-        \"\"\"{class_name} Model with structured formatting.\"\"\"  
+    \"\"\"{class_name} Model with structured formatting.\"\"\"  
     """
 
     # **Parallelize summarization using ThreadPoolExecutor**
@@ -154,20 +154,19 @@ def get_overview(file_path: str, save_json_coverage: bool = False):
 
         literals = [lit for lit in entry["suggested_shortcut"] if lit != "base"]
         if literals:
-            literals_str = ",\n".join(f'            "{lit}"' for lit in literals)
-            field_def = f"""    {question_key}: Optional[
-            Literal[
-    {literals_str}
+            literals_str = ",\n".join(f'\t\t\t"{lit}"' for lit in literals)
+            field_def = f"""{question_key}: Optional[\n\t\tLiteral[\n{literals_str}
             ]
-        ] = Field(default=None, description=\"{entry['question']}\")\n"""
+    ] = Field(default=None, description=\"{entry['question']}\")\n    """
             python_code += field_def
 
     # Save to file
-    with open(output_python_path, "w", encoding="utf-8") as file:
-        file.write(python_code)
+
+    if not os.path.exists(output_python_path):
+        with open(output_python_path, "w", encoding="utf-8") as file:
+            file.write(python_code)
 
     print(f"Python class saved to {output_python_path}")
 
-
 if __name__ == "__main__":
-    get_overview(file_path="digital_lifestyle.csv", save_json_coverage=True)
+    get_overview("statista_data/transformed/Food and Nutrition in Italy 2021 adv.xlsx", False)

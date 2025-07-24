@@ -804,7 +804,7 @@ app_layout = dbc.Container(
                                                                             "justify-content": "space-between",
                                                                             "align-items": "center",
                                                                             "font-weight": "bold",
-                                                                            "font-size": "12px",
+                                                                            "font-size": "10px",
                                                                         },
                                                                         children=[
                                                                             html.Div(
@@ -814,7 +814,7 @@ app_layout = dbc.Container(
                                                                                 },
                                                                             )
                                                                             for i in range(
-                                                                                12
+                                                                                13
                                                                             )  # 11 step labels
                                                                         ],
                                                                     ),
@@ -850,7 +850,7 @@ app_layout = dbc.Container(
                                                                                 className="progress-step",
                                                                             )
                                                                             for i in range(
-                                                                                12
+                                                                                13
                                                                             )  # 11 circles
                                                                         ],
                                                                     ),

@@ -49,6 +49,7 @@ from transform import (
     tr10_map_age,
     tr11_filter_advanced_files,
     tr12_transform_to_probability,
+    tr13_generate_clone_attributes
 )
 from metrics import calculate_sheet_score
 
@@ -993,10 +994,7 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
         ("Removing header rows and empty columns", tr2_remove_header_and_empty_column),
         ("Removing metadata rows", tr3_remove_metadata),
         ("Reducing empty lines", tr4_reduce_empty_lines),
-        (
-            "Removing columns with 'Grand Total' and 'in %'",
-            tr5_removing_total_percentages_income_demography,
-        ),
+        ("Removing columns with 'Grand Total' and 'in %'",tr5_removing_total_percentages_income_demography),
         ("Appending questions to options", tr6_append_questions),
         ("Merging sheets", tr7_merging_sheets),
         ("Joining tables", tr8_join_tables),
@@ -1004,6 +1002,7 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
         ("Mapping age categories", tr10_map_age),
         ("Filtering advanced files", tr11_filter_advanced_files),
         ("Transforming to probability", tr12_transform_to_probability),
+        ("Generating clone.py", tr13_generate_clone_attributes),
     ]
 
     total_steps = len(steps)
@@ -1029,7 +1028,7 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
 
 
 @app.callback(
-    [Output(f"step-{i}", "className") for i in range(12)]
+    [Output(f"step-{i}", "className") for i in range(13)]
     + [
         Output("progress-bar-transform", "value"),
         Output("progress-bar-transform", "className"),
@@ -1043,7 +1042,7 @@ def pipeline_transform(selected_files, base_dir="statista_data"):
 def handle_progress_and_steps(n_clicks, n_intervals, selected_files):
     global pipeline_progress
 
-    total_steps = 12  # Number of steps (circles)
+    total_steps = 13  # Number of steps (circles)
     step_progress = 100 / (total_steps - 1)  # Percentage per step
 
     # Handle pipeline start
