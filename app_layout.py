@@ -370,7 +370,9 @@ app_layout = dbc.Container(
                                                                             id="include-reports-checkbox",
                                                                             value=True,
                                                                             className="me-1",
-                                                                            style={"margin-left": "2rem"},
+                                                                            style={
+                                                                                "margin-left": "2rem"
+                                                                            },
                                                                         ),
                                                                         dbc.Label(
                                                                             "Include reports",

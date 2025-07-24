@@ -751,6 +751,7 @@ def tr12_transform_to_probability(selected_files, base_dir="statista_data"):
     logging.info(f"Advanced files to process: {advanced_files}")
     return process_files(advanced_files, base_dir, process_function)
 
+
 def tr13_generate_clone_attributes(selected_files, base_dir="statista_data"):
 
     def process_files(files, base_dir):

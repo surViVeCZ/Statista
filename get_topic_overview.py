@@ -7,7 +7,7 @@ from dotenv import load_dotenv  # Import dotenv
 import requests
 
 # Load environment variables from the .env file in the parent directory
-load_dotenv(dotenv_path="../.env")  #remove ../ when running alone
+load_dotenv(dotenv_path=".env")  # remove ../ when running alone
 
 headers = {
     "Content-Type": "application/json",
@@ -45,12 +45,23 @@ def summarize_text(text):
 
 def get_overview(file_path: str, save_json_coverage: bool = False):
     class_name = (
-        file_path.replace(".csv", "").replace(".xlsx", "").replace(" ", "_").title().replace("_", "")
+        file_path.replace(".csv", "")
+        .replace(".xlsx", "")
+        .replace(" ", "_")
+        .title()
+        .replace("_", "")
     )
-    class_name = class_name.split('/')[-1]
+    class_name = class_name.split("/")[-1]
 
     # Load csv
-    df = pd.read_excel(file_path)
+    if file_path.endswith(".xlsx"):
+        df = pd.read_excel(file_path)
+    elif file_path.endswith(".csv"):
+        df = pd.read_csv(file_path)
+    else:
+        raise ValueError(
+            f"Unsupported file extension in {file_path}. Expected types are .csv or .xlsx."
+        )
 
     # Identify base columns as primary questions
     base_columns = [col for col in df.columns if col.lower().endswith("base")]
@@ -107,6 +118,10 @@ def get_overview(file_path: str, save_json_coverage: bool = False):
 
     # Save the structured Python class to a file with correct formatting
     output_python_path = f"statista_data/clone/{class_name}_clone.py"
+    parent_dir = os.path.dirname(output_python_path)
+
+    # Create parent directory if it doesn't exist
+    os.makedirs(parent_dir, exist_ok=True)
 
     # Start building the Python script with structured formatting
     python_code = f"""from typing import Optional, Literal\nfrom pydantic import BaseModel, Field\nimport os\n\nclass {class_name}(BaseModel):
@@ -168,5 +183,9 @@ def get_overview(file_path: str, save_json_coverage: bool = False):
 
     print(f"Python class saved to {output_python_path}")
 
+
 if __name__ == "__main__":
-    get_overview("statista_data/transformed/Food and Nutrition in Italy 2021 adv.xlsx", False)
+    get_overview(
+        "statista_data/transformed/Food and Nutrition in Italy 2021 adv_transformed.csv",
+        False,
+    )
