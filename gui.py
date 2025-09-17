@@ -34,6 +34,7 @@ from scraper import (
     scrape_topic,
     get_files_to_be_downloaded,
     get_failed_downloads,
+    download_xlsx,
 )
 from transform import (
     pipeline_transform,
@@ -59,8 +60,9 @@ from metrics import calculate_sheet_score
 log_data = []  # Log messages stored in memory
 driver = None  # Web driver for scraper
 session_topics = []  # Topics for the current session
-selected_topic_url = None  # URL of the selected topic
-selected_topic_name = None  # Name of the selected topic
+session_sorted_topics = []  # Sorted topics with match types for current session
+selected_topics = []  # List of selected topics (name, url)
+selected_topic_names = []  # List of selected topic names for easy comparison
 downloaded_files = []  # List of downloaded files
 failed_downloads = []  # List of failed downloads
 files_to_be_downloaded = 0  # Count of files to download
@@ -120,6 +122,397 @@ def determine_match_type(input_topic, result_topic):
         return "Close match"
     else:
         return "Somewhat match"
+
+
+def determine_multi_country_match_type(input_topic, result_topic, selected_countries):
+    """Classify match type for multi-country searches based on exact topic match."""
+    import re
+
+    input_topic_lower = input_topic.lower().strip()
+    result_topic_lower = result_topic.lower().strip()
+
+    # Country name mappings to handle variations
+    country_variants = {
+        "czech republic": ["czech", "czech republic", "czechia"],
+        "germany": ["germany", "german"],
+        "spain": ["spain", "spanish"],
+        "uk": ["uk", "united kingdom", "britain", "british"],
+        "france": ["france", "french"],
+        "italy": ["italy", "italian"],
+    }
+
+    # Build pattern to match exact topic + country variations
+    country_patterns = []
+    for country in selected_countries:
+        country_names = country_variants.get(country, [country])
+        for country_name in country_names:
+            # Exact match patterns like "internet usage in germany" or "internet usage - germany"
+            patterns = [
+                f"{input_topic_lower} in {country_name.lower()}",
+                f"{input_topic_lower} - {country_name.lower()}",
+                f"{input_topic_lower} in the {country_name.lower()}",
+                f"{input_topic_lower} ({country_name.lower()})",
+            ]
+            country_patterns.extend(patterns)
+
+    # Check for exact matches
+    for pattern in country_patterns:
+        if pattern == result_topic_lower or result_topic_lower.startswith(pattern):
+            return "Exact match"
+
+    # Check if the input topic is contained in the result (close match)
+    if input_topic_lower in result_topic_lower:
+        return "Close match"
+
+    # Otherwise, it's a somewhat match (should rarely happen with our filtering)
+    return "Somewhat match"
+
+
+def get_topic_file_details(topic_url):
+    """Get detailed file information for a topic including names for duplicate analysis."""
+    try:
+        from bs4 import BeautifulSoup
+        from urllib.parse import urljoin
+        import requests
+
+        response = requests.get(topic_url)
+        if response.status_code != 200:
+            return []
+
+        soup = BeautifulSoup(response.text, "html.parser")
+        sources_section = soup.find("section", id="statisticChapter")
+        if not sources_section:
+            return []
+
+        file_details = []
+        for chapter in sources_section.find_all("div", class_="statisticChapter"):
+            for item in chapter.find_all("li", class_="statisticChapter__item"):
+                link = item.find("a")
+                if link:
+                    file_name = link.get_text(strip=True)
+                    file_url = urljoin("https://www.statista.com", link["href"])
+                    file_details.append({"name": file_name, "url": file_url})
+
+        return file_details
+    except Exception as e:
+        logging.error(f"Error getting file details for {topic_url}: {e}")
+        return []
+
+
+def get_common_files_across_topics(selected_topics_with_urls):
+    """Get files that exist in ALL selected topics."""
+    if len(selected_topics_with_urls) < 2:
+        return []
+
+    # Get file details for each topic
+    topic_files = {}
+    for topic_name, topic_url in selected_topics_with_urls:
+        file_details = get_topic_file_details(topic_url)
+        topic_files[topic_name] = file_details
+
+    # Find files that exist in ALL topics
+    all_file_names = {}
+    for topic_name, files in topic_files.items():
+        for file_info in files:
+            file_name = file_info["name"].lower().strip()
+            if file_name not in all_file_names:
+                all_file_names[file_name] = []
+            all_file_names[file_name].append(
+                {
+                    "topic": topic_name,
+                    "url": file_info["url"],
+                    "original_name": file_info["name"],
+                }
+            )
+
+    # Return only files that appear in ALL topics
+    common_files = []
+    for file_name, file_instances in all_file_names.items():
+        if len(file_instances) == len(selected_topics_with_urls):
+            # This file exists in all topics
+            common_files.append(
+                {
+                    "name": file_instances[0][
+                        "original_name"
+                    ],  # Use original name from first instance
+                    "urls": [instance["url"] for instance in file_instances],
+                    "topics": [instance["topic"] for instance in file_instances],
+                }
+            )
+
+    return common_files
+
+
+def analyze_duplicate_files(selected_topics_with_urls):
+    """Analyze files across multiple topics to find duplicates by name."""
+    if len(selected_topics_with_urls) < 2:
+        return {"total_unique": 0, "total_duplicates": 0, "duplicate_details": []}
+
+    # Get file details for each topic
+    topic_files = {}
+    for topic_name, topic_url in selected_topics_with_urls:
+        file_details = get_topic_file_details(topic_url)
+        topic_files[topic_name] = file_details
+
+    # Find duplicates by comparing file names
+    all_file_names = {}
+    for topic_name, files in topic_files.items():
+        for file_info in files:
+            file_name = file_info["name"].lower().strip()
+            if file_name not in all_file_names:
+                all_file_names[file_name] = []
+            all_file_names[file_name].append(topic_name)
+
+    # Identify duplicates (files that appear in multiple topics)
+    duplicate_files = {
+        name: topics for name, topics in all_file_names.items() if len(topics) > 1
+    }
+
+    # Calculate statistics
+    total_files = sum(len(files) for files in topic_files.values())
+    unique_files = len(all_file_names)
+    duplicate_count = sum(len(topics) - 1 for topics in duplicate_files.values())
+
+    duplicate_details = [
+        {"file_name": file_name, "topics": topics, "count": len(topics)}
+        for file_name, topics in duplicate_files.items()
+    ]
+
+    return {
+        "total_files": total_files,
+        "total_unique": unique_files,
+        "total_duplicates": duplicate_count,
+        "duplicate_details": duplicate_details,
+        "topics_analyzed": list(topic_files.keys()),
+    }
+
+
+def generate_result_cards(sorted_topics, current_selected_topics):
+    """Generate result cards with proper styling based on selected topics."""
+    result_cards = []
+    # Handle both single topic (string) and multiple topics (list) for backward compatibility
+    if isinstance(current_selected_topics, str):
+        current_selected_topics = (
+            [current_selected_topics] if current_selected_topics else []
+        )
+    elif current_selected_topics is None:
+        current_selected_topics = []
+
+    for idx, (name, url, match_type) in enumerate(sorted_topics):
+        match_color = {
+            "Exact match": "#28a745",
+            "Close match": "#ffc107",
+            "Somewhat match": "#dc3545",
+        }.get(match_type, "#6c757d")
+
+        # Check if this topic is currently selected
+        topic_name = name.split(" -")[0]
+        is_selected = topic_name in current_selected_topics
+
+        # Define different styles for selected vs unselected topics
+        card_style = {
+            "margin-bottom": "10px",
+            "padding": "8px",
+            "border": "2px solid #007bff" if is_selected else "1px solid #dee2e6",
+            "background-color": "#e7f3ff" if is_selected else "white",
+            "box-shadow": (
+                "0 4px 8px rgba(0, 123, 255, 0.3)"
+                if is_selected
+                else "0 2px 4px rgba(0,0,0,0.1)"
+            ),
+            "transform": "scale(1.02)" if is_selected else "scale(1)",
+            "transition": "all 0.3s ease",
+        }
+
+        button_text = "Remove" if is_selected else "Add"
+        button_class = "btn btn-danger" if is_selected else "btn btn-outline-primary"
+
+        result_cards.append(
+            dbc.Card(
+                dbc.CardBody(
+                    html.Div(
+                        [
+                            html.Div(
+                                [
+                                    html.Div(
+                                        topic_name,
+                                        className="card-title",
+                                        style={
+                                            "font-weight": "bold",
+                                            "font-size": "1.1em",
+                                            "margin-bottom": "5px",
+                                            "color": (
+                                                "#0056b3" if is_selected else "inherit"
+                                            ),
+                                        },
+                                    ),
+                                    html.Div(
+                                        match_type,
+                                        style={
+                                            "color": match_color,
+                                            "font-weight": "bold",
+                                            "font-size": "0.9em",
+                                        },
+                                    ),
+                                ],
+                                style={"flex": "1", "padding-right": "10px"},
+                            ),
+                            html.Div(
+                                html.Button(
+                                    button_text,
+                                    id={"type": "search-result", "index": idx},
+                                    className=button_class,
+                                ),
+                                style={"align-self": "center"},
+                            ),
+                        ],
+                        style={
+                            "display": "flex",
+                            "align-items": "center",
+                            "justify-content": "space-between",
+                        },
+                    )
+                ),
+                id={"type": "result-card", "index": idx},
+                style=card_style,
+            )
+        )
+    return result_cards
+
+
+def search_multi_country_topics(
+    driver,
+    topic_input,
+    selected_countries,
+    all_countries_checkbox,
+    strict_match_checkbox,
+    max_results_input,
+):
+    """Search for topics across multiple countries and optionally filter for topics present in all countries."""
+    if not topic_input or topic_input.strip() == "":
+        logging.warning("Empty topic input provided to search_multi_country_topics")
+        return []
+
+    if not selected_countries:
+        # If no countries selected, perform regular search
+        return search_topic(
+            driver, topic_input, strict_match_checkbox, max_results_input
+        )
+
+    # Country name mappings to handle variations
+    country_variants = {
+        "czech republic": ["czech", "czech republic", "czechia"],
+        "germany": ["germany", "german"],
+        "spain": ["spain", "spanish"],
+        "uk": ["uk", "united kingdom", "britain", "british"],
+        "france": ["france", "french"],
+        "italy": ["italy", "italian"],
+    }
+
+    all_results = {}  # Dictionary to store results by country
+    topic_counts = {}  # Count how many countries each topic appears in
+
+    # First, do a broad search with just the topic to get a good pool of results
+    logging.info(f"🔍 Searching for broad topic: '{topic_input}'")
+    broad_results = search_topic(
+        driver, topic_input, False, max_results_input * 5
+    )  # Use non-strict for broader search
+
+    # Also try searching with each country name to ensure we get country-specific results
+    for country in selected_countries:
+        country_names = country_variants.get(country, [country])
+        for country_name in country_names[:2]:  # Try top 2 variants
+            country_query = f"{topic_input} {country_name}"
+            logging.info(f"🔍 Additional search for: '{country_query}'")
+            additional_results = search_topic(
+                driver, country_query, False, max_results_input
+            )
+            broad_results.extend(additional_results)
+
+    # Remove duplicates from broad results
+    seen_urls = set()
+    unique_broad_results = []
+    for topic_name, topic_url in broad_results:
+        if topic_url not in seen_urls:
+            seen_urls.add(topic_url)
+            unique_broad_results.append((topic_name, topic_url))
+
+    logging.info(f"📊 Total unique results to filter: {len(unique_broad_results)}")
+
+    # Filter results for each selected country
+    for country in selected_countries:
+        country_results = []
+        country_names = country_variants.get(country, [country])
+
+        logging.info(f"🔍 Filtering results for {country.title()}: {country_names}")
+
+        for topic_name, topic_url in unique_broad_results:
+            topic_name_lower = topic_name.lower()
+
+            # Check if any variant of the country name appears in the topic
+            found_match = False
+            for country_variant in country_names:
+                if country_variant.lower() in topic_name_lower:
+                    # Make sure it's not a substring of another word
+                    import re
+
+                    pattern = r"\b" + re.escape(country_variant.lower()) + r"\b"
+                    if re.search(pattern, topic_name_lower):
+                        country_results.append((topic_name, topic_url))
+                        found_match = True
+                        break
+
+            if found_match:
+                logging.info(f"  ✅ Found match for {country}: {topic_name}")
+
+        logging.info(f"🎯 Found {len(country_results)} results for {country.title()}")
+        all_results[country] = country_results
+
+        # Count topic occurrences across countries for the "all countries" feature
+        for topic_name, topic_url in country_results:
+            # Create a normalized topic key (remove country-specific parts)
+            normalized_topic = topic_input.lower()
+            if normalized_topic not in topic_counts:
+                topic_counts[normalized_topic] = {
+                    "count": 0,
+                    "entries": [],
+                    "countries": set(),
+                }
+            if country not in topic_counts[normalized_topic]["countries"]:
+                topic_counts[normalized_topic]["count"] += 1
+                topic_counts[normalized_topic]["countries"].add(country)
+            topic_counts[normalized_topic]["entries"].append(
+                (topic_name, topic_url, country)
+            )
+
+    # Filter results based on the "all countries" checkbox
+    final_results = []
+    if all_countries_checkbox:
+        # Only include topics that appear in ALL selected countries
+        required_count = len(selected_countries)
+        for topic_key, data in topic_counts.items():
+            if data["count"] >= required_count:
+                # Add all variations of this topic from different countries
+                for topic_name, topic_url, country in data["entries"]:
+                    final_results.append((f"{topic_name}", topic_url))
+    else:
+        # Include all topics from all selected countries
+        for country, country_results in all_results.items():
+            for topic_name, topic_url in country_results:
+                final_results.append((topic_name, topic_url))
+
+    # Remove duplicates while preserving order
+    seen = set()
+    unique_results = []
+    for topic_name, topic_url in final_results:
+        if topic_url not in seen:
+            seen.add(topic_url)
+            unique_results.append((topic_name, topic_url))
+
+    logging.info(
+        f"🎉 Found {len(unique_results)} matching topics across {len(selected_countries)} countries"
+    )
+    return unique_results
 
 
 # ===========================
@@ -309,6 +702,68 @@ def update_files_to_download_display(files_to_be_downloaded):
 
 
 @app.callback(
+    Output("duplicate-files-display", "children"),
+    [
+        Input("show-duplicates-checkbox", "value"),
+        Input("selected-topic-name-store", "data"),
+    ],
+    prevent_initial_call=True,
+)
+def update_duplicate_files_display(show_common_files_value, selected_topics):
+    """Update the common files display based on checkbox and selected topics."""
+    global session_topics
+
+    # Check if the checkbox is enabled
+    checkbox_enabled = (
+        "enabled" in show_common_files_value if show_common_files_value else False
+    )
+
+    if not checkbox_enabled:
+        return ""
+
+    # Check if we have multiple topics selected
+    if (
+        not selected_topics
+        or not isinstance(selected_topics, list)
+        or len(selected_topics) < 2
+    ):
+        return "Select at least 2 topics to download only common files."
+
+    try:
+        # Get URLs for selected topics
+        selected_topics_with_urls = []
+        for topic_name in selected_topics:
+            for name, url in session_topics:
+                if name.split(" -")[0] == topic_name:
+                    selected_topics_with_urls.append((topic_name, url))
+                    break
+
+        if len(selected_topics_with_urls) < 2:
+            return "Could not find URLs for selected topics."
+
+        # Perform duplicate analysis to find common files
+        duplicate_analysis = analyze_duplicate_files(selected_topics_with_urls)
+
+        # Count files that exist in ALL selected topics
+        common_files = [
+            detail
+            for detail in duplicate_analysis["duplicate_details"]
+            if detail["count"] == len(selected_topics)
+        ]
+
+        common_count = len(common_files)
+
+        if common_count == 0:
+            return f"⚠️ No common files found across all {len(selected_topics)} topics. Regular download will include all files."
+
+        return f"✅ {common_count} common file{'s' if common_count != 1 else ''} will be downloaded (present in all {len(selected_topics)} topics)"
+
+    except Exception as e:
+        logging.error(f"Error in common files analysis: {e}")
+        return f"Error analyzing common files: {str(e)}"
+
+
+@app.callback(
     [
         Output("search-results-container", "children"),
         Output("scrape-card", "style"),
@@ -317,6 +772,7 @@ def update_files_to_download_display(files_to_be_downloaded):
         Output("search-button", "disabled"),
         Output("advanced-matches-store", "data"),  # Update advanced_matches
         Output("files-to-download-store", "data", allow_duplicate=True),
+        Output("selected-topic-name-store", "data"),  # Update selected topic
     ],
     [
         Input("search-button", "n_clicks"),
@@ -331,6 +787,10 @@ def update_files_to_download_display(files_to_be_downloaded):
         State("strict-match-checkbox", "value"),
         State("max-results-input", "value"),
         State("include-reports-checkbox", "value"),
+        State("country-selection", "value"),
+        State("all-countries-checkbox", "value"),
+        State("selected-topic-name-store", "data"),  # Current selected topics
+        State("show-duplicates-checkbox", "value"),  # Common files only checkbox
     ],
     prevent_initial_call=True,
 )
@@ -345,8 +805,12 @@ def handle_search_selection_scraping(
     strict_match_checkbox,
     max_results_input,
     include_reports_checkbox,
+    selected_countries,
+    all_countries_checkbox,
+    current_selected_topics,
+    common_files_checkbox,
 ):
-    global session_topics, selected_topic_url, selected_topic_name, driver, advanced_reports
+    global session_topics, session_sorted_topics, selected_topics, selected_topic_names, driver, advanced_reports
     checkbox_enabled = "enabled" in checkbox_value if checkbox_value else False
 
     advanced_reports = []
@@ -354,9 +818,34 @@ def handle_search_selection_scraping(
 
     # Handle search
     if ctx.triggered_id == "search-button":
-        topics = search_topic(
-            driver, topic_input, strict_match_checkbox, max_results_input
-        )
+        # Check if topic_input is provided
+        if not topic_input or topic_input.strip() == "":
+            return (
+                current_results,
+                inactive_card_style,
+                True,
+                "Please enter a search topic.",
+                False,
+                advanced_matches,
+                files_to_be_downloaded,
+                current_selected_topics,
+            )
+
+        # Use multi-country search if countries are selected, otherwise use regular search
+        if selected_countries:
+            topics = search_multi_country_topics(
+                driver,
+                topic_input,
+                selected_countries,
+                all_countries_checkbox,
+                strict_match_checkbox,
+                max_results_input,
+            )
+        else:
+            topics = search_topic(
+                driver, topic_input, strict_match_checkbox, max_results_input
+            )
+
         if include_reports_checkbox:
             advanced_reports, advanced_matches = extract_report_results(
                 driver, topic_input
@@ -379,69 +868,31 @@ def handle_search_selection_scraping(
 
         # Sort topics by match priority
         match_priority_map = {"Exact match": 1, "Close match": 2, "Somewhat match": 3}
-        temp_topics = [
-            (name, url, determine_match_type(topic_input, name.split(" -")[0]))
-            for name, url in topics
-        ]
+
+        # For multi-country searches, use specialized match type logic
+        if selected_countries:
+            temp_topics = [
+                (
+                    name,
+                    url,
+                    determine_multi_country_match_type(
+                        topic_input, name, selected_countries
+                    ),
+                )
+                for name, url in topics
+            ]
+        else:
+            temp_topics = [
+                (name, url, determine_match_type(topic_input, name.split(" -")[0]))
+                for name, url in topics
+            ]
+
         sorted_topics = sorted(temp_topics, key=lambda x: match_priority_map[x[2]])
         session_topics = [(name, url) for (name, url, mtype) in sorted_topics]
+        session_sorted_topics = sorted_topics  # Store for later use in selection
 
-        # Create result cards
-        result_cards = []
-        for idx, (name, url, match_type) in enumerate(sorted_topics):
-            match_color = {
-                "Exact match": "#28a745",
-                "Close match": "#ffc107",
-                "Somewhat match": "#dc3545",
-            }.get(match_type, "#6c757d")
-
-            result_cards.append(
-                dbc.Card(
-                    dbc.CardBody(
-                        html.Div(
-                            [
-                                html.Div(
-                                    [
-                                        html.Div(
-                                            name.split(" -")[0],
-                                            className="card-title",
-                                            style={
-                                                "font-weight": "bold",
-                                                "font-size": "1.1em",
-                                                "margin-bottom": "5px",
-                                            },
-                                        ),
-                                        html.Div(
-                                            match_type,
-                                            style={
-                                                "color": match_color,
-                                                "font-weight": "bold",
-                                                "font-size": "0.9em",
-                                            },
-                                        ),
-                                    ],
-                                    style={"flex": "1", "padding-right": "10px"},
-                                ),
-                                html.Div(
-                                    html.Button(
-                                        "Select",
-                                        id={"type": "search-result", "index": idx},
-                                        className="btn btn-outline-primary",
-                                    ),
-                                    style={"align-self": "center"},
-                                ),
-                            ],
-                            style={
-                                "display": "flex",
-                                "align-items": "center",
-                                "justify-content": "space-between",
-                            },
-                        )
-                    ),
-                    id={"type": "result-card", "index": idx},
-                    style={"margin-bottom": "10px", "padding": "8px"},
-                )
-            )
+        # Create result cards using helper function
+        result_cards = generate_result_cards(sorted_topics, current_selected_topics)
 
         return (
             result_cards,
@@ -451,53 +902,183 @@ def handle_search_selection_scraping(
             False,
             advanced_matches,
             0,  # Reset files_to_be_downloaded
+            current_selected_topics,  # Keep current selected topics
         )
 
-    # Handle selection
+    # Handle selection (toggle topics)
     if ctx.triggered_id and "search-result" in str(ctx.triggered_id):
         selected_index = ctx.triggered_id["index"]
         selected_topic_name, selected_topic_url = session_topics[selected_index]
-        files_to_be_downloaded = get_files_to_be_downloaded(selected_topic_url) + 2
-        logging.info(f"Selected topic: {selected_topic_name}")
+        topic_name = selected_topic_name.split(" -")[0]
+
+        if not isinstance(current_selected_topics, list):
+            current_selected_topics = (
+                [current_selected_topics] if current_selected_topics else []
+            )
+
+        if topic_name in current_selected_topics:
+            current_selected_topics.remove(topic_name)
+            logging.info(f"Removed topic: {topic_name}")
+            status_message = f"Removed: {topic_name}"
+        else:
+            current_selected_topics.append(topic_name)
+            logging.info(f"Added topic: {topic_name}")
+            status_message = f"Added: {topic_name}"
+
+        try:
+            selected_topics_with_urls = []
+            for topic_name_calc in current_selected_topics:
+                for name, url in session_topics:
+                    if name.split(" -")[0] == topic_name_calc:
+                        selected_topics_with_urls.append((topic_name_calc, url))
+                        break
+
+            total_files = 0
+            for topic_name_selected in current_selected_topics:
+                for name, url in session_topics:
+                    if name.split(" -")[0] == topic_name_selected:
+                        total_files += get_files_to_be_downloaded(url) + 2
+                        break
+
+        except Exception as e:
+            logging.error(f"Error calculating file count: {e}")
+            total_files = 0
+
+        updated_result_cards = generate_result_cards(
+            session_sorted_topics, current_selected_topics
+        )
+
+        selected_count = len(current_selected_topics)
+        if selected_count == 0:
+            final_status = "No topics selected."
+            card_style = inactive_card_style
+            scrape_disabled = True
+        else:
+            final_status = f"{selected_count} topic{'s' if selected_count != 1 else ''} selected. {status_message}"
+            card_style = active_card_style
+            scrape_disabled = False
+
         return (
-            current_results,
-            active_card_style,
+            updated_result_cards,  # Updated cards with new styling
+            card_style,
+            scrape_disabled,
+            final_status,
             False,
-            f"Selected Topic: {selected_topic_name}",
-            False,
-            dash.no_update,  # Keep advanced_matches unchanged
-            files_to_be_downloaded,  # Update files-to-download-store
+            dash.no_update,
+            total_files,
+            current_selected_topics,
         )
 
     # Handle scraping
     if ctx.triggered_id == "scrape-button":
-        if not selected_topic_url:
-            logging.error("No topic selected for scraping.")
+        if not current_selected_topics or len(current_selected_topics) == 0:
+            logging.error("No topics selected for scraping.")
             return (
                 dash.no_update,
                 dash.no_update,
                 dash.no_update,
-                "Error: No topic selected for scraping.",
+                "Error: No topics selected for scraping.",
                 False,
                 dash.no_update,
                 dash.no_update,
+                current_selected_topics,
             )
-        logging.info(f"Starting scraping for topic: {selected_topic_name}")
+        # Check if common files only mode is enabled
+        common_files_enabled = (
+            "enabled" in common_files_checkbox if common_files_checkbox else False
+        )
 
-        scrape_topic(selected_topic_url)
+        if common_files_enabled and len(current_selected_topics) >= 2:
+            # scrape only common files across all topics
+            logging.info(
+                "Common files mode enabled - analyzing common files across topics"
+            )
 
-        if checkbox_enabled:
-            logging.info("Triggering report download due to checkbox being enabled.")
-            download_reports(driver, advanced_reports, selected_topic_name)
+            # Get URLs for selected topics
+            selected_topics_with_urls = []
+            for topic_name in current_selected_topics:
+                for name, url in session_topics:
+                    if name.split(" -")[0] == topic_name:
+                        selected_topics_with_urls.append((topic_name, url))
+                        break
+
+            # Get common files
+            common_files = get_common_files_across_topics(selected_topics_with_urls)
+
+            if not common_files:
+                status_msg = f"No common files found across {len(current_selected_topics)} topics. No scraping performed."
+            else:
+                # Scrape only the common files
+                scraped_files = []
+                for common_file in common_files:
+                    try:
+                        # Use the first URL (from the first topic) to download the file
+                        file_url = common_file["urls"][0]
+                        topic_name = current_selected_topics[
+                            0
+                        ]  # Use first topic name for folder structure
+                        logging.info(
+                            f"Scraping common file: {common_file['name']} from {file_url}"
+                        )
+
+                        # Create a base folder for common files
+                        base_folder = os.path.join(
+                            "statista_data",
+                            f"common_files_{'-'.join(current_selected_topics)}",
+                        )
+
+                        # Download the individual file
+                        from tqdm import tqdm
+
+                        with tqdm(
+                            total=1, desc=f"Downloading {common_file['name']}"
+                        ) as pbar:
+                            download_xlsx(
+                                file_url, base_folder, pbar, subfolder="common_files"
+                            )
+
+                        scraped_files.append(common_file["name"])
+                        logging.info(
+                            f"Successfully downloaded common file: {common_file['name']}"
+                        )
+
+                    except Exception as e:
+                        logging.error(
+                            f"Error downloading common file {common_file['name']}: {e}"
+                        )
+
+                status_msg = f"Downloaded {len(scraped_files)} common files across {len(current_selected_topics)} topics"
+
+        else:
+            # Regular scraping: scrape all files from all selected topics
+            scraped_topics = []
+            for topic_name_selected in current_selected_topics:
+                # Find the URL for this topic name
+                for name, url in session_topics:
+                    if name.split(" -")[0] == topic_name_selected:
+                        logging.info(f"Starting scraping for topic: {name}")
+                        scrape_topic(url)
+                        scraped_topics.append(name)
+
+                        if checkbox_enabled:
+                            logging.info(
+                                f"Triggering report download for topic: {name}"
+                            )
+                            download_reports(driver, advanced_reports, name)
+                        break
+
+            topic_count = len(scraped_topics)
+            status_msg = f"Scraping started for {topic_count} topic{'s' if topic_count != 1 else ''}: {', '.join([t.split(' -')[0] for t in scraped_topics])}"
 
         return (
             dash.no_update,
             dash.no_update,
             dash.no_update,
-            f"Scraping started for topic: {selected_topic_name}.",
+            status_msg,
             True,
             dash.no_update,
             dash.no_update,
+            current_selected_topics,
         )
 
     return (
@@ -508,6 +1089,7 @@ def handle_search_selection_scraping(
         False,
         dash.no_update,
         dash.no_update,
+        current_selected_topics,
     )
 
 

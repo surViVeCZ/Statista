@@ -172,6 +172,11 @@ def search_topic(driver, topic, strict_match=True, max_results=100):
     the user's query (country name or its demonym)."""
     log.info(f'🔍 1/2 Searching for topics related to: "{topic}"...')
 
+    # Check if topic is None or empty
+    if not topic:
+        log.warning("Empty or None topic provided to search_topic")
+        return []
+
     # # Get the demonym for the input topic
     demonym = get_demonym(topic)
     # # Pre-lowercase them for easy matching

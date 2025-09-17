@@ -61,6 +61,9 @@ app_layout = dbc.Container(
         dcc.Store(
             id="selected-topic-name-store", data=None
         ),  # Store the selected topic name
+        dcc.Store(
+            id="selected-topics-store", data=[]
+        ),  # Store multiple selected topics
         # Background Pattern
         html.Div(
             style={
@@ -326,6 +329,109 @@ app_layout = dbc.Container(
                                                         type="text",
                                                         className="mb-2 form-control",
                                                     ),
+                                                    # Multi-country selection section
+                                                    html.Div(
+                                                        [
+                                                            html.Label(
+                                                                "Multi-Country Search:",
+                                                                style={
+                                                                    "font-weight": "bold",
+                                                                    "margin-bottom": "5px",
+                                                                    "font-size": "0.9rem",
+                                                                },
+                                                            ),
+                                                            dbc.Row(
+                                                                [
+                                                                    dbc.Col(
+                                                                        dcc.Checklist(
+                                                                            id="country-selection",
+                                                                            options=[
+                                                                                {
+                                                                                    "label": "Czech Republic",
+                                                                                    "value": "czech republic",
+                                                                                },
+                                                                                {
+                                                                                    "label": "Germany",
+                                                                                    "value": "germany",
+                                                                                },
+                                                                                {
+                                                                                    "label": "Spain",
+                                                                                    "value": "spain",
+                                                                                },
+                                                                                {
+                                                                                    "label": "UK",
+                                                                                    "value": "uk",
+                                                                                },
+                                                                                {
+                                                                                    "label": "France",
+                                                                                    "value": "france",
+                                                                                },
+                                                                                {
+                                                                                    "label": "Italy",
+                                                                                    "value": "italy",
+                                                                                },
+                                                                            ],
+                                                                            value=[],
+                                                                            inline=True,
+                                                                            style={
+                                                                                "font-size": "0.85rem",
+                                                                                "display": "flex",
+                                                                                "flex-wrap": "wrap",
+                                                                                "gap": "15px",
+                                                                            },
+                                                                            inputStyle={
+                                                                                "margin-right": "5px"
+                                                                            },
+                                                                            labelStyle={
+                                                                                "margin-right": "15px",
+                                                                                "display": "flex",
+                                                                                "align-items": "center",
+                                                                            },
+                                                                        ),
+                                                                        width=8,
+                                                                    ),
+                                                                    dbc.Col(
+                                                                        html.Div(
+                                                                            [
+                                                                                dbc.Checkbox(
+                                                                                    id="all-countries-checkbox",
+                                                                                    value=False,
+                                                                                    className="me-1",
+                                                                                ),
+                                                                                dbc.Label(
+                                                                                    "Must exist in all",
+                                                                                    html_for="all-countries-checkbox",
+                                                                                    className="mb-0",
+                                                                                    style={
+                                                                                        "cursor": "pointer",
+                                                                                        "font-size": "0.85rem",
+                                                                                    },
+                                                                                    id="all-countries-label",
+                                                                                ),
+                                                                                dbc.Tooltip(
+                                                                                    "When checked, only topics that exist in ALL selected countries will be shown.",
+                                                                                    target="all-countries-label",
+                                                                                    placement="top",
+                                                                                    style={
+                                                                                        "font-size": "0.8rem"
+                                                                                    },
+                                                                                ),
+                                                                            ],
+                                                                            className="d-flex align-items-center",
+                                                                        ),
+                                                                        width=4,
+                                                                    ),
+                                                                ],
+                                                                className="mb-2",
+                                                            ),
+                                                        ],
+                                                        className="mb-3 p-2",
+                                                        style={
+                                                            "background-color": "#f8f9fa",
+                                                            "border-radius": "5px",
+                                                            "border": "1px solid #e9ecef",
+                                                        },
+                                                    ),
                                                     dbc.Row(
                                                         [
                                                             dbc.Col(
@@ -548,6 +654,83 @@ app_layout = dbc.Container(
                                                         justify="start",
                                                         className="align-items-center",
                                                     ),
+                                                    # Duplicate Files Analysis Checkbox
+                                                    dbc.Row(
+                                                        [
+                                                            dbc.Col(
+                                                                html.Div(
+                                                                    [
+                                                                        html.Label(
+                                                                            [
+                                                                                dcc.Checklist(
+                                                                                    id="show-duplicates-checkbox",
+                                                                                    options=[
+                                                                                        {
+                                                                                            "label": "",
+                                                                                            "value": "enabled",
+                                                                                        }
+                                                                                    ],
+                                                                                    value=[],  # Initially unchecked
+                                                                                    style={
+                                                                                        "transform": "scale(1.5)",
+                                                                                        "margin-right": "10px",
+                                                                                        "margin-top": "-10px",
+                                                                                    },
+                                                                                    inputClassName="custom-checkbox",
+                                                                                    labelClassName="custom-checkbox-label",
+                                                                                ),
+                                                                                html.Span(
+                                                                                    "Download Only Common Files",
+                                                                                    style={
+                                                                                        "margin-right": "5px",
+                                                                                        "font-weight": "bold",
+                                                                                        "font-size": "0.9rem",
+                                                                                    },
+                                                                                ),
+                                                                                html.Span(
+                                                                                    "?",
+                                                                                    id="duplicates-analysis-hint",
+                                                                                    style={
+                                                                                        "color": "white",
+                                                                                        "background-color": "#007bff",
+                                                                                        "cursor": "pointer",
+                                                                                        "font-weight": "bold",
+                                                                                        "font-size": "0.9rem",
+                                                                                        "border-radius": "50%",
+                                                                                        "display": "inline-flex",
+                                                                                        "justify-content": "center",
+                                                                                        "align-items": "center",
+                                                                                        "width": "20px",
+                                                                                        "height": "20px",
+                                                                                        "box-shadow": "0 2px 4px rgba(0, 0, 0, 0.1)",
+                                                                                        "margin-left": "5px",
+                                                                                        "margin-top": "-15px",
+                                                                                    },
+                                                                                ),
+                                                                                dbc.Tooltip(
+                                                                                    "When enabled, only downloads files that exist in ALL selected topics. This helps you get only the common files across different countries/regions instead of downloading everything.",
+                                                                                    target="duplicates-analysis-hint",
+                                                                                    placement="top",
+                                                                                    style={
+                                                                                        "font-size": "0.9rem"
+                                                                                    },
+                                                                                ),
+                                                                            ],
+                                                                            style={
+                                                                                "display": "flex",
+                                                                                "align-items": "center",
+                                                                            },
+                                                                        ),
+                                                                    ],
+                                                                ),
+                                                                width="auto",
+                                                            ),
+                                                        ],
+                                                        align="center",
+                                                        justify="start",
+                                                        className="align-items-center",
+                                                        style={"margin-top": "10px"},
+                                                    ),
                                                     html.Div(
                                                         id="scrape-status",
                                                         children="No scraping started.",
@@ -560,6 +743,15 @@ app_layout = dbc.Container(
                                                         style={
                                                             "margin-top": "10px",
                                                             "font-weight": "bold",
+                                                        },
+                                                    ),
+                                                    html.Div(
+                                                        id="duplicate-files-display",
+                                                        children="",  # Will be populated when checkbox is enabled
+                                                        style={
+                                                            "margin-top": "5px",
+                                                            "font-size": "0.9rem",
+                                                            "color": "#6c757d",
                                                         },
                                                     ),
                                                     html.Hr(),

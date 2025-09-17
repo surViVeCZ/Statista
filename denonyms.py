@@ -77,7 +77,9 @@ def get_demonym(country_name):
     # Build a reversed map, e.g. "french" -> "france"
     reversed_map = {v: k for k, v in demonym_map.items()}
 
-    # Normalize
+    # Normalize and handle None input
+    if country_name is None:
+        return None
     normalized = country_name.strip().lower()
 
     # If it's a known country, return its demonym
